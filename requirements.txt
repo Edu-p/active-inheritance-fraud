@@ -1,0 +1,11 @@
+numpy>=1.26
+scikit-learn>=1.4
+pandas>=2.0
+python-dotenv>=1.0
+
+# learner (BERT)
+torch>=2.0
+transformers>=4.40
+
+# opcional — apenas para --generator openai
+openai>=1.30
