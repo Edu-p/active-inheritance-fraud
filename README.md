@@ -20,19 +20,21 @@ Em vez de gerar dados sintéticos de forma estática e passiva (o que frequentem
 
 ## ⚙️ Instalação e Configuração
 
-Recomenda-se o uso de Python 3.9+.
+Recomenda-se o uso de [uv](https://docs.astral.sh/uv/) (Python 3.9+).
 
 ```bash
+# Instala o uv (uma vez)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
 # Clone o repositório
 git clone https://github.com/seu-usuario/active-inheritance-fraud.git
 cd active-inheritance-fraud
 
-# Crie e ative o ambiente virtual
-python3 -m venv .venv
-source .venv/bin/activate  # No Windows: .venv\Scripts\activate
+# Cria o venv (.venv) e instala as dependências do pyproject.toml
+uv sync
 
-# Instale as dependências
-pip install -r requirements.txt
+# Opcional, sem GPU: troca o torch pelo build CPU-only (bem menor)
+uv remove torch && uv add torch --index https://download.pytorch.org/whl/cpu
 ```
 
 Para o gerador via LLM, copie `.env.example` para `.env` e preencha:
@@ -49,11 +51,14 @@ OPENAI_MODEL=deepseek-flash
 
 ```bash
 # Modo mock (offline, sem LLM — perturba notícias fake reais)
-python main.py --generator mock --epochs 5 --top-k 16 --batch-size 64
+uv run python main.py --generator mock --epochs 5 --top-k 16 --batch-size 64
 
 # Modo LLM (endpoint OpenAI-compatible)
-python main.py --generator openai --model deepseek-flash \
+uv run python main.py --generator openai --model deepseek-flash \
   --base-url https://api.deepseek.com --epochs 5 --top-k 16
+
+# Self-check do núcleo (sem torch)
+uv run python tests/test_core.py
 ```
 
 ### Principais argumentos

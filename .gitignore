@@ -1,5 +1,21 @@
-.env*
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
 
-*/__pycache__/*
+# uv (venv local; uv.lock é versionado de propósito)
+.venv/
 
-__pycache__/ 
+# segredos / ambiente (mantém .env.example como template)
+.env
+.env.*
+!.env.example
+
+# saídas do pipeline
+outputs/
+
+dataset/
+
+docs/

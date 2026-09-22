@@ -1,0 +1,14 @@
+[project]
+name = "active-inheritance-fraud"
+version = "0.1.0"
+description = "Geração Sintética Guiada por Herança Ativa para detecção de textos fraudulentos"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.26",
+    "scikit-learn>=1.4",
+    "pandas>=2.0",
+    "python-dotenv>=1.0",
+    "torch>=2.0",
+    "transformers>=4.40",
+    "openai>=1.30",
+]
