@@ -70,7 +70,7 @@ uv run python tests/test_core.py
 | `--batch-size` | `64` | tamanho do lote sintético gerado por ciclo |
 | `--top-k` | `16` | amostras herdadas por ciclo |
 | `--model` | `deepseek-flash` | modelo da LLM (gerador) |
-| `--learner-model` | `neuralmind/bert-base-portuguese-cased` | BERT do learner |
+| `--learner-model` | `prajjwal1/bert-tiny` | BERT do learner (~4M params, rápido pra testar a arquitetura) |
 | `--learner-epochs` | `3` | épocas de fine-tune do learner por ciclo |
 | `--learner-batch-size` | `16` | batch do fine-tune do learner |
 | `--lr` | `2e-5` | learning rate do learner |

@@ -41,7 +41,7 @@ def parse_args() -> Config:
 
     # Learner (BERT)
     p.add_argument(
-        "--learner-model", default="neuralmind/bert-base-portuguese-cased"
+        "--learner-model", default="prajjwal1/bert-tiny"
     )
     p.add_argument("--lr", dest="learner_lr", type=float, default=2e-5)
     p.add_argument("--learner-epochs", type=int, default=3)

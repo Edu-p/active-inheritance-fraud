@@ -22,7 +22,7 @@ class Config:
     max_features: int = 10_000
 
     # ---- Learner (BERT) ----
-    learner_model: str = "neuralmind/bert-base-portuguese-cased"
+    learner_model: str = "prajjwal1/bert-tiny"
     learner_lr: float = 2e-5
     learner_epochs: int = 3
     learner_batch_size: int = 16
