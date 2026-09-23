@@ -1,4 +1,4 @@
-"""Configuração do pipeline de Herança Ativa."""
+"""Active Inheritance pipeline configuration."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -7,11 +7,11 @@ from pathlib import Path
 
 @dataclass
 class Config:
-    # ---- Dados ----
+    # ---- Data ----
     csv_path: Path = Path("dataset/pre-processed.csv")
     text_col: str = "preprocessed_news"
     label_col: str = "label"
-    positive_label: str = "fake"  # classe gerada sinteticamente (fraudulenta)
+    positive_label: str = "fake"  # class generated synthetically (fraudulent)
 
     # ---- Split ----
     test_size: float = 0.2
@@ -27,20 +27,20 @@ class Config:
     learner_epochs: int = 3
     learner_batch_size: int = 16
     max_length: int = 256
-    device: str = ""  # vazio -> auto (cuda se disponível)
+    device: str = ""  # empty -> auto (cuda if available)
 
-    # ---- Gerador ----
+    # ---- Generator ----
     generator: str = "mock"  # "mock" | "openai"
     batch_size: int = 64
     openai_model: str = "gpt-4o-mini"
-    openai_base_url: str = ""  # vazio -> endpoint padrão da OpenAI
+    openai_base_url: str = ""  # empty -> OpenAI default endpoint
 
-    # ---- Loop de Herança Ativa ----
+    # ---- Active Inheritance loop ----
     epochs: int = 5            # T
-    top_k: int = 16            # amostras herdadas por ciclo
+    top_k: int = 16            # samples inherited per cycle
     w_error: float = 0.4
     w_uncertainty: float = 0.4
     w_diversity: float = 0.2
 
-    # ---- Saída ----
+    # ---- Output ----
     output_dir: Path = Path("outputs")

@@ -1,4 +1,4 @@
-"""Embedders de texto. TF-IDF é o padrão (sem dependências pesadas)."""
+"""Text embedders. TF-IDF is the default (fast, no heavy dependencies)."""
 from __future__ import annotations
 
 from sklearn.feature_extraction.text import TfidfVectorizer

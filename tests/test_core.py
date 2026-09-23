@@ -1,6 +1,6 @@
-"""Self-check do núcleo (sem torch): scoring multiobjetivo + mock generator + métricas.
+"""Self-check of the core (no torch): multi-objective scoring + mock generator + metrics.
 
-Roda com: python tests/test_core.py
+Run with: python tests/test_core.py
 """
 import numpy as np
 
@@ -11,7 +11,7 @@ from src.metrics import classification_metrics, diversity_metrics
 
 
 class StubLearner:
-    """Erro constante, incerteza crescente → o score deve eleger a última amostra."""
+    """Constant error, increasing uncertainty → the score should pick the last sample."""
 
     def error(self, texts, y):
         return np.full(len(texts), 0.5)
@@ -21,7 +21,7 @@ class StubLearner:
 
 
 def main() -> None:
-    seeds = [f"notícia fake número {i} para teste" for i in range(10)]
+    seeds = [f"fake news number {i} for testing" for i in range(10)]
 
     gen = MockGenerator(seeds, random_state=0)
     batch = gen.generate_batch([], 8)
@@ -30,7 +30,7 @@ def main() -> None:
     emb = TfidfEmbedder(max_features=500).fit(seeds)
     ev = AdversarialEvaluator(StubLearner(), emb)
     selected, mean_score, parts = ev.select(batch, [1] * 8, [], 4)
-    assert len(selected) == 4 and selected[0] == batch[-1]  # maior incerteza
+    assert len(selected) == 4 and selected[0] == batch[-1]  # highest uncertainty
     assert 0.0 <= mean_score <= 1.0
     assert set(parts) == {"error", "uncertainty", "diversity"}
 
@@ -40,7 +40,7 @@ def main() -> None:
     d = diversity_metrics(seeds, emb)
     assert 0.0 <= d["mean_pairwise_sim"] <= 1.0
 
-    print("OK — núcleo (scoring, gerador mock, métricas) passou.")
+    print("OK — core (scoring, mock generator, metrics) passed.")
 
 
 if __name__ == "__main__":

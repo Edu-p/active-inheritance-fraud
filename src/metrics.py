@@ -1,4 +1,4 @@
-"""Métricas das três dimensões da proposta."""
+"""Metrics for the three dimensions of the proposal."""
 from __future__ import annotations
 
 import numpy as np
@@ -16,7 +16,7 @@ def classification_metrics(y_true, y_pred):
 
 
 def diversity_metrics(texts, embedder):
-    """Similaridade média par-a-par (proxy de colapso modal)."""
+    """Mean pairwise similarity (modal-collapse proxy)."""
     if len(texts) < 2:
         return {"n": len(texts), "mean_pairwise_sim": 1.0}
     X = embedder.transform(texts)

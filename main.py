@@ -1,4 +1,4 @@
-"""Ponto de entrada CLI do pipeline de Herança Ativa."""
+"""CLI entry point for the Active Inheritance pipeline."""
 from __future__ import annotations
 
 import argparse
@@ -17,7 +17,7 @@ from src.pipeline import ActiveInheritancePipeline
 
 def parse_args() -> Config:
     p = argparse.ArgumentParser(
-        description="Geração Sintética Guiada por Herança Ativa"
+        description="Active-Inheritance Guided Synthetic Generation"
     )
     p.add_argument(
         "--csv", dest="csv_path", type=Path,
@@ -28,21 +28,19 @@ def parse_args() -> Config:
     p.add_argument("--batch-size", type=int, default=64)
     p.add_argument("--top-k", type=int, default=16)
 
-    # LLM (gerador)
+    # LLM (generator)
     p.add_argument(
         "--model", dest="openai_model",
         default=os.getenv("OPENAI_MODEL", "deepseek-flash"),
-        help="modelo da LLM (ex.: deepseek-flash)",
+        help="LLM model (e.g. deepseek-flash)",
     )
     p.add_argument(
         "--base-url", dest="openai_base_url", default="",
-        help="base_url OpenAI-compatible (ex.: https://api.deepseek.com)",
+        help="OpenAI-compatible base_url (e.g. https://api.deepseek.com)",
     )
 
     # Learner (BERT)
-    p.add_argument(
-        "--learner-model", default="prajjwal1/bert-tiny"
-    )
+    p.add_argument("--learner-model", default="prajjwal1/bert-tiny")
     p.add_argument("--lr", dest="learner_lr", type=float, default=2e-5)
     p.add_argument("--learner-epochs", type=int, default=3)
     p.add_argument("--learner-batch-size", type=int, default=16)
@@ -85,7 +83,7 @@ def main() -> None:
     pipeline = ActiveInheritancePipeline(cfg, learner, embedder, generator, evaluator)
     history, test_metrics = pipeline.run(train, val, test)
 
-    print("\n=== Herança Ativa — por época ===")
+    print("\n=== Active Inheritance — per epoch ===")
     print(
         f"{'epoch':>5} {'loss':>8} {'val_f1':>8} {'val_prec':>9} {'val_rec':>9} "
         f"{'pool_n':>7} {'pool_sim':>9} {'score':>7} {'tokens':>8}"
@@ -99,7 +97,7 @@ def main() -> None:
             f"{h['mean_score_topk']:>7.3f} {h['tokens_used']:>8}"
         )
 
-    print("\n=== Teste downstream ===")
+    print("\n=== Downstream test ===")
     for k, v in test_metrics.items():
         print(f"  {k:>10}: {v:.4f}")
     total_tokens = history[-1]["tokens_used"] if history else 0
@@ -110,7 +108,7 @@ def main() -> None:
     (cfg.output_dir / "results.json").write_text(
         json.dumps(out, indent=2, ensure_ascii=False)
     )
-    print(f"\nResultados salvos em {cfg.output_dir / 'results.json'}")
+    print(f"\nResults saved to {cfg.output_dir / 'results.json'}")
 
 
 if __name__ == "__main__":

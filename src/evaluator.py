@@ -1,6 +1,6 @@
-"""Avaliador adversarial: pontua amostras sintéticas para herança.
+"""Adversarial evaluator: scores synthetic samples for inheritance.
 
-score(x) = w_err·erro + w_unc·incerteza + w_div·diversidade
+score(x) = w_err·error + w_unc·uncertainty + w_div·diversity
 """
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ class AdversarialEvaluator:
         self.w_diversity = w_diversity
 
     def diversity(self, texts: list[str], inherited_texts: list[str]) -> np.ndarray:
-        """1 - max cos-sim com o pool herdado → [0, 1]."""
+        """1 - max cos-sim against the inherited pool → [0, 1]."""
         if not inherited_texts:
             return np.ones(len(texts))
         X = self.embedder.transform(texts)
@@ -43,7 +43,7 @@ class AdversarialEvaluator:
         y_synth: list[int],
         inherited_texts: list[str],
     ) -> tuple[np.ndarray, dict[str, float]]:
-        """Score multiobjetivo por amostra + médias dos componentes."""
+        """Per-sample multi-objective score + component averages."""
         err = _minmax(self.learner.error(texts, y_synth))
         unc = self.learner.compute_uncertainty(texts)
         div = self.diversity(texts, inherited_texts)
@@ -62,7 +62,7 @@ class AdversarialEvaluator:
         inherited_texts: list[str],
         k: int,
     ) -> tuple[list[str], float, dict[str, float]]:
-        """Top-K amostras que maximizam o score multiobjetivo."""
+        """Top-K samples that maximize the multi-objective score."""
         total, parts = self.score(texts, y_synth, inherited_texts)
         order = np.argsort(-total)
         selected = [texts[i] for i in order[:k]]

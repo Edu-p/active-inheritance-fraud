@@ -1,4 +1,4 @@
-"""Loop central de Herança Ativa."""
+"""Central Active Inheritance loop."""
 from __future__ import annotations
 
 from .metrics import classification_metrics, diversity_metrics
@@ -21,7 +21,7 @@ class ActiveInheritancePipeline:
         inherited: list[str] = []
         history = []
 
-        # t = 0: warm-up apenas com Data 0
+        # t = 0: warm-up on Data 0 only
         init_loss = self.learner.fit(tr_texts, tr_y, epochs=cfg.learner_epochs)
         print(f"[t=0] loss={init_loss:.4f} (Data 0)")
 
@@ -31,10 +31,10 @@ class ActiveInheritancePipeline:
                 if x and x.strip()
             ]
             if not batch:
-                print(f"[epoch {t}] lote vazio — pulando")
+                print(f"[epoch {t}] empty batch — skipping")
                 continue
 
-            y_synth = [1] * len(batch)  # sintéticos são sempre "fake"
+            y_synth = [1] * len(batch)  # synthetic samples are always "fake"
             selected, mean_score, parts = self.evaluator.select(
                 batch, y_synth, inherited, min(cfg.top_k, len(batch))
             )
@@ -49,9 +49,9 @@ class ActiveInheritancePipeline:
             val_metrics = self._evaluate(va_texts, va_y)
 
             print(
-                f"[epoch {t}] loss={loss:.4f} | lote: score={mean_score:.3f} "
+                f"[epoch {t}] loss={loss:.4f} | batch: score={mean_score:.3f} "
                 f"(err={parts['error']:.3f}, unc={parts['uncertainty']:.3f}, "
-                f"div={parts['diversity']:.3f}) | herdados={len(inherited)} | "
+                f"div={parts['diversity']:.3f}) | inherited={len(inherited)} | "
                 f"val_f1={val_metrics['f1']:.4f}"
             )
 

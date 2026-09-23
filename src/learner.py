@@ -1,7 +1,7 @@
-"""Classificador downstream (o 'learner') — BERT pequeno via PyTorch/HF.
+"""Downstream classifier (the "learner") — small BERT via PyTorch/HF.
 
-Expõe a API pedida: train_step (um passo de backprop), predict (softmax)
-e compute_uncertainty (entropia do softmax).
+Exposes the required API: train_step (one backprop step), predict (softmax)
+and compute_uncertainty (softmax entropy).
 """
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 class Learner:
     def __init__(
         self,
-        model_name: str = "neuralmind/bert-base-portuguese-cased",
+        model_name: str = "prajjwal1/bert-tiny",
         lr: float = 2e-5,
         batch_size: int = 16,
         max_length: int = 256,
@@ -44,7 +44,7 @@ class Learner:
         return {k: v.to(self.device) for k, v in enc.items()}
 
     def train_step(self, texts: list[str], y: list[int]) -> float:
-        """Um passo de backprop sobre um lote; retorna o loss."""
+        """One backprop step over a batch; returns the loss."""
         self.model.train()
         labels = torch.tensor(y, dtype=torch.long, device=self.device)
         out = self.model(**self._encode(texts), labels=labels)
@@ -55,7 +55,7 @@ class Learner:
 
     @torch.no_grad()
     def predict(self, texts: list[str]) -> np.ndarray:
-        """Softmax P(y|x) → matriz (n, 2)."""
+        """Softmax P(y|x) → (n, 2) matrix."""
         self.model.eval()
         probs: list[np.ndarray] = []
         for i in range(0, len(texts), self.batch_size):
@@ -67,18 +67,18 @@ class Learner:
         return self.predict(texts).argmax(axis=1)
 
     def compute_uncertainty(self, texts: list[str]) -> np.ndarray:
-        """Entropia normalizada do softmax → [0, 1]."""
+        """Normalized softmax entropy → [0, 1]."""
         p = np.clip(self.predict(texts), 1e-12, 1.0)
         return -(p * np.log(p)).sum(axis=1) / np.log(2.0)
 
     def error(self, texts: list[str], y: list[int]) -> np.ndarray:
-        """Log-loss por amostra: -log P(classe verdadeira)."""
+        """Per-sample log-loss: -log P(true class)."""
         p = self.predict(texts)
         p_true = p[np.arange(len(y)), np.asarray(y, dtype=int)]
         return -np.log(np.clip(p_true, 1e-12, 1.0))
 
     def fit(self, texts: list[str], y: list[int], epochs: int = 3) -> float:
-        """Fine-tune (warm-start) sobre real + herdados; retorna o loss médio."""
+        """Warm-start fine-tune over real + inherited; returns the mean loss."""
         order = np.random.permutation(len(texts))
         losses: list[float] = []
         for _ in range(epochs):

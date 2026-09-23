@@ -1,7 +1,7 @@
 [project]
 name = "active-inheritance-fraud"
 version = "0.1.0"
-description = "Geração Sintética Guiada por Herança Ativa para detecção de textos fraudulentos"
+description = "Active-Inheritance Guided Synthetic Generation for fraudulent text detection"
 requires-python = ">=3.9"
 dependencies = [
     "numpy>=1.26",

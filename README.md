@@ -1,43 +1,43 @@
-# Geração Sintética Guiada por Herança Ativa 🧬🤖
+# Active-Inheritance Guided Synthetic Generation 🧬🤖
 
-Este repositório contém a implementação do *framework* de **Herança Ativa** focado na geração de dados sintéticos para tarefas de cibersegurança e detecção de textos fraudulentos (ex: Phishing, Fake News, Anúncios Falsos).
+This repository implements the **Active Inheritance** framework for synthetic data generation in cybersecurity and fraudulent text detection tasks (e.g. phishing, fake news, fake ads).
 
-Em vez de gerar dados sintéticos de forma estática e passiva (o que frequentemente leva ao colapso do modelo), este pipeline utiliza um **Avaliador Adversarial** guiado por um modelo *learner* (BERT). Apenas as amostras sintéticas que maximizam a incerteza, o erro do modelo atual e a diversidade do pool são "herdadas" para o próximo ciclo de treinamento, atuando como *prática deliberada*.
+Instead of generating synthetic data statically and passively (which often leads to model collapse), this pipeline uses an **Adversarial Evaluator** guided by a *learner* model (BERT). Only the synthetic samples that maximize the learner's uncertainty and error while keeping pool diversity are "inherited" into the next training cycle — acting as *deliberate practice*.
 
-📄 **Documentação Completa:** [`docs/implementacao.md`](docs/implementacao.md)
-
----
-
-## 🏗️ Arquitetura do Pipeline
-
-1. **Data 0 (Dados Reais):** O conjunto inicial (ex: *Fake.br-Corpus*).
-2. **Gerador Sintético:** LLMs (como DeepSeek) instruídos a gerar novos exemplos fraudulentos.
-3. **Learner (BERT):** Um classificador *downstream* que está sendo treinado para detectar as fraudes.
-4. **Avaliador Adversarial:** Filtra o lote gerado pelo LLM, calculando a entropia (incerteza) e o erro do Learner, somado à distância de cosseno (diversidade via TF-IDF/Embeddings).
-5. **Herança Ativa:** O Top-K mais "desafiador" é selecionado, injetado no dataset de treino, e o ciclo reinicia.
+📄 **Full documentation:** [`docs/implementation.md`](docs/implementation.md)
 
 ---
 
-## ⚙️ Instalação e Configuração
+## 🏗️ Pipeline Architecture
 
-Recomenda-se o uso de [uv](https://docs.astral.sh/uv/) (Python 3.9+).
+1. **Data 0 (real data):** the initial dataset (e.g. *Fake.br-Corpus*).
+2. **Synthetic Generator:** LLMs (such as DeepSeek) instructed to generate new fraudulent examples.
+3. **Learner (BERT):** a downstream classifier being trained to detect fraud.
+4. **Adversarial Evaluator:** filters the LLM batch by computing the entropy (uncertainty) and error of the learner, plus the cosine distance (diversity via TF-IDF/embeddings).
+5. **Active Inheritance:** the most challenging Top-K is selected, injected into the training set, and the cycle restarts.
+
+---
+
+## ⚙️ Installation & Setup
+
+[uv](https://docs.astral.sh/uv/) recommended (Python 3.9+).
 
 ```bash
-# Instala o uv (uma vez)
+# Install uv (once)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Clone o repositório
+# Clone the repository
 git clone https://github.com/seu-usuario/active-inheritance-fraud.git
 cd active-inheritance-fraud
 
-# Cria o venv (.venv) e instala as dependências do pyproject.toml
+# Create the venv (.venv) and install dependencies from pyproject.toml
 uv sync
 
-# Opcional, sem GPU: troca o torch pelo build CPU-only (bem menor)
+# Optional, no GPU: swap torch for the CPU-only build (much smaller)
 uv remove torch && uv add torch --index https://download.pytorch.org/whl/cpu
 ```
 
-Para o gerador via LLM, copie `.env.example` para `.env` e preencha:
+For the LLM generator, copy `.env.example` to `.env` and fill it in:
 
 ```bash
 OPENAI_API_KEY=sk-...
@@ -47,34 +47,34 @@ OPENAI_MODEL=deepseek-flash
 
 ---
 
-## 🚀 Uso
+## 🚀 Usage
 
 ```bash
-# Modo mock (offline, sem LLM — perturba notícias fake reais)
+# Mock mode (offline, no LLM — perturbs real fake news)
 uv run python main.py --generator mock --epochs 5 --top-k 16 --batch-size 64
 
-# Modo LLM (endpoint OpenAI-compatible)
+# LLM mode (OpenAI-compatible endpoint)
 uv run python main.py --generator openai --model deepseek-flash \
   --base-url https://api.deepseek.com --epochs 5 --top-k 16
 
-# Self-check do núcleo (sem torch)
+# Core self-check (no torch)
 uv run python tests/test_core.py
 ```
 
-### Principais argumentos
+### Main arguments
 
-| Argumento | Padrão | Descrição |
+| Argument | Default | Description |
 |-----------|--------|-----------|
-| `--generator` | `mock` | `mock` ou `openai` |
-| `--epochs` | `5` | ciclos de Herança Ativa (T) |
-| `--batch-size` | `64` | tamanho do lote sintético gerado por ciclo |
-| `--top-k` | `16` | amostras herdadas por ciclo |
-| `--model` | `deepseek-flash` | modelo da LLM (gerador) |
-| `--learner-model` | `prajjwal1/bert-tiny` | BERT do learner (~4M params, rápido pra testar a arquitetura) |
-| `--learner-epochs` | `3` | épocas de fine-tune do learner por ciclo |
-| `--learner-batch-size` | `16` | batch do fine-tune do learner |
-| `--lr` | `2e-5` | learning rate do learner |
-| `--csv` | `dataset/pre-processed.csv` | caminho do Data 0 |
-| `--device` | auto | `cuda`/`cpu` (vazio = auto) |
+| `--generator` | `mock` | `mock` or `openai` |
+| `--epochs` | `5` | Active Inheritance cycles (T) |
+| `--batch-size` | `64` | synthetic batch size generated per cycle |
+| `--top-k` | `16` | samples inherited per cycle |
+| `--model` | `deepseek-flash` | LLM model (generator) |
+| `--learner-model` | `prajjwal1/bert-tiny` | learner BERT (~4M params, fast architecture test) |
+| `--learner-epochs` | `3` | learner fine-tune epochs per cycle |
+| `--learner-batch-size` | `16` | learner fine-tune batch size |
+| `--lr` | `2e-5` | learner learning rate |
+| `--csv` | `dataset/pre-processed.csv` | Data 0 path |
+| `--device` | auto | `cuda`/`cpu` (empty = auto) |
 
-Os resultados por época são salvos em `outputs/results.json`.
+Per-epoch results are saved to `outputs/results.json`.

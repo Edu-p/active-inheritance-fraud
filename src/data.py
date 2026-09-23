@@ -1,4 +1,4 @@
-"""Carrega e particiona o Fake.br-Corpus pré-processado (Data 0)."""
+"""Loads and splits the pre-processed Fake.br-Corpus (Data 0)."""
 from __future__ import annotations
 
 import pandas as pd

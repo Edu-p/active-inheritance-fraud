@@ -1,7 +1,7 @@
-"""Geradores de texto sintético.
+"""Synthetic text generators.
 
-- MockGenerator: perturba notícias fake reais, permitindo rodar offline.
-- OpenAIGenerator: usa uma LLM (API compatível com OpenAI).
+- MockGenerator: perturbs real fake news, so the pipeline runs offline.
+- OpenAIGenerator: uses an LLM (OpenAI-compatible API).
 """
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ class BaseGenerator:
 
 
 class MockGenerator(BaseGenerator):
-    """Simula geração sintética perturbando notícias fake reais."""
+    """Simulates synthetic generation by perturbing real fake news."""
 
     def __init__(self, seed_fake_texts, random_state: int = 42):
         super().__init__()
@@ -61,7 +61,7 @@ class OpenAIGenerator(BaseGenerator):
 
         if not api_key:
             raise ValueError(
-                "Defina OPENAI_API_KEY (ou DEEPSEEK_API_KEY) no ambiente ou em .env"
+                "Set OPENAI_API_KEY (or DEEPSEEK_API_KEY) in the environment or .env"
             )
 
         self.client = OpenAI(api_key=api_key, base_url=base_url)
@@ -69,17 +69,17 @@ class OpenAIGenerator(BaseGenerator):
 
     def _prompt(self, inherited_texts):
         system = (
-            "Você gera notícias fraudulentas (fake news) em português, "
-            "no mesmo estilo dos exemplos fornecidos."
+            "You generate fraudulent news (fake news) in Portuguese, "
+            "in the same style as the examples provided."
         )
         if inherited_texts:
             examples = "\n\n".join(
-                f"Exemplo {i + 1}:\n{t[:1200]}"
+                f"Example {i + 1}:\n{t[:1200]}"
                 for i, t in enumerate(inherited_texts[:5])
             )
-            user = f"{examples}\n\nGere uma nova notícia fraudulenta em português:"
+            user = f"{examples}\n\nGenerate a new fraudulent news article in Portuguese:"
         else:
-            user = "Gere uma notícia fraudulenta plausível em português:"
+            user = "Generate a plausible fraudulent news article in Portuguese:"
         return system, user
 
     def generate_batch(self, inherited_texts, n):
