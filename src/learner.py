@@ -26,7 +26,7 @@ class Learner:
         self.batch_size = batch_size
         self.max_length = max_length
 
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
         self.model = AutoModelForSequenceClassification.from_pretrained(
             model_name, num_labels=2
         )

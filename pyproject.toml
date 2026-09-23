@@ -9,6 +9,6 @@ dependencies = [
     "pandas>=2.0",
     "python-dotenv>=1.0",
     "torch>=2.0",
-    "transformers>=4.40",
+    "transformers>=4.40,<5",
     "openai>=1.30",
 ]
