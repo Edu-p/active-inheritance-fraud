@@ -1,30 +1,29 @@
-"""Loads and splits the pre-processed Fake.br-Corpus (Data 0)."""
+"""Loads the scarce train pool + the balanced holdout (Data 0)."""
 from __future__ import annotations
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
 
-def load_data(cfg):
-    df = pd.read_csv(cfg.csv_path)
+def _texts_labels(df, cfg):
     df = df[[cfg.label_col, cfg.text_col]].dropna()
     texts = df[cfg.text_col].astype(str).tolist()
     y = (df[cfg.label_col] == cfg.positive_label).astype(int).tolist()
     return texts, y
 
 
-def split_data(texts, y, cfg):
-    X_tr, X_te, y_tr, y_te = train_test_split(
-        texts, y,
-        test_size=cfg.test_size,
+def load_experiment_data(cfg):
+    """train/val = scarce pool (10% fake); test = balanced holdout (intacto)."""
+    train_df = pd.read_csv(cfg.csv_path)
+    test_df = pd.read_csv(cfg.test_csv_path)
+
+    tr_texts, tr_y = _texts_labels(train_df, cfg)
+    te_texts, te_y = _texts_labels(test_df, cfg)
+
+    tr_texts, va_texts, tr_y, va_y = train_test_split(
+        tr_texts, tr_y,
+        test_size=cfg.val_size,
         random_state=cfg.random_state,
-        stratify=y,
+        stratify=tr_y,
     )
-    val_frac = cfg.val_size / (1.0 - cfg.test_size)
-    X_tr, X_va, y_tr, y_va = train_test_split(
-        X_tr, y_tr,
-        test_size=val_frac,
-        random_state=cfg.random_state,
-        stratify=y_tr,
-    )
-    return (X_tr, y_tr), (X_va, y_va), (X_te, y_te)
+    return (tr_texts, tr_y), (va_texts, va_y), (te_texts, te_y)

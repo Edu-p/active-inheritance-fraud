@@ -35,7 +35,7 @@ class AdversarialEvaluator:
             return np.ones(len(texts))
         X = self.embedder.transform(texts)
         P = self.embedder.transform(inherited_texts)
-        return 1.0 - cosine_similarity(X, P).max(axis=1)
+        return np.clip(1.0 - cosine_similarity(X, P).max(axis=1), 0.0, 1.0)
 
     def score(
         self,

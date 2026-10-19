@@ -1,80 +1,103 @@
 # Active-Inheritance Guided Synthetic Generation 🧬🤖
 
-This repository implements the **Active Inheritance** framework for synthetic data generation in cybersecurity and fraudulent text detection tasks (e.g. phishing, fake news, fake ads).
+**Repo:** https://github.com/Edu-p/active-inheritance-fraud
 
-Instead of generating synthetic data statically and passively (which often leads to model collapse), this pipeline uses an **Adversarial Evaluator** guided by a *learner* model (BERT). Only the synthetic samples that maximize the learner's uncertainty and error while keeping pool diversity are "inherited" into the next training cycle — acting as *deliberate practice*.
+Implements **Active Inheritance**: a cyclic LLM generation loop for fraudulent-text detection, guided by an **adversarial evaluator** that scores synthetic samples by the downstream classifier's *error + uncertainty + diversity*, inheriting only the top-k (decision boundary) into the next cycle.
 
-📄 **Full documentation:** [`docs/implementation.md`](docs/implementation.md)
+Baseline: [profile2gen](https://github.com/szanara/profile2gen) (Maynara et al., ICML 2025).
 
----
-
-## 🏗️ Pipeline Architecture
-
-1. **Data 0 (real data):** the initial dataset (e.g. *Fake.br-Corpus*).
-2. **Synthetic Generator:** LLMs (such as DeepSeek) instructed to generate new fraudulent examples.
-3. **Learner (BERT):** a downstream classifier being trained to detect fraud.
-4. **Adversarial Evaluator:** filters the LLM batch by computing the entropy (uncertainty) and error of the learner, plus the cosine distance (diversity via TF-IDF/embeddings).
-5. **Active Inheritance:** the most challenging Top-K is selected, injected into the training set, and the cycle restarts.
+📄 Docs: [`docs/implementation.md`](docs/implementation.md) · [`planning/PLAN.md`](planning/PLAN.md) · [`planning/RUN.md`](planning/RUN.md) · [`planning/HANDOFF.md`](planning/HANDOFF.md)
 
 ---
 
-## ⚙️ Installation & Setup
+## Results (Fake.br-Corpus, cenário de escassez: 10% fake)
 
-[uv](https://docs.astral.sh/uv/) recommended (Python 3.9+).
+| Braço | F1 (teste) | tokens/run |
+|---|---|---|
+| Real (sem sintético) | 0.887 ± 0.026 | 0 |
+| Static N=32 | 0.789 ± 0.113 | ~20k |
+| Static N=79 | 0.852 ± 0.034 | ~53k |
+| Static N=158 | 0.916 ± 0.013 | ~103k |
+| **ActiveInheritance** | **0.924 ± 0.007** | ~645k |
+
+> ActiveInheritance é o mais consistente (menor desvio entre seeds) e atinge o topo de F1, mas **não** supera o Static em eficiência de tokens na config atual (batch 64 × 5 ciclos). Análise completa em `report-latex/main.pdf`.
+
+---
+
+## Pipeline
+
+1. **Data 0** — Fake.br-Corpus: treino escasso (10% fake) + holdout balanceado.
+2. **LLM generator** — DeepSeek `deepseek-chat`, condicionado ao pool herdado.
+3. **Learner** — BERTimbau (`neuralmind/bert-base-portuguese-cased`).
+4. **Adversarial evaluator** — `score = w1·erro + w2·incerteza + w3·diversidade`.
+5. **Active inheritance** — top-k → pool → retreina → próximo ciclo.
+
+---
+
+## Install
 
 ```bash
-# Install uv (once)
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Clone the repository
-git clone https://github.com/seu-usuario/active-inheritance-fraud.git
+git clone https://github.com/Edu-p/active-inheritance-fraud.git
 cd active-inheritance-fraud
-
-# Create the venv (.venv) and install dependencies from pyproject.toml
-uv sync
-
-# Optional, no GPU: swap torch for the CPU-only build (much smaller)
-uv remove torch && uv add torch --index https://download.pytorch.org/whl/cpu
+uv sync              # torch cu124 já configurado no pyproject (GPU)
+cp .env.example .env # edite a chave
 ```
 
-For the LLM generator, copy `.env.example` to `.env` and fill it in:
+`.env`:
 
 ```bash
 OPENAI_API_KEY=sk-...
 OPENAI_BASE_URL=https://api.deepseek.com
-OPENAI_MODEL=deepseek-flash
+OPENAI_MODEL=deepseek-chat   # NÃO use deepseek-flash (reasoning, recusa fake news)
 ```
 
 ---
 
-## 🚀 Usage
+## Usage
 
 ```bash
-# Mock mode (offline, no LLM — perturbs real fake news)
-uv run python main.py --generator mock --epochs 5 --top-k 16 --batch-size 64
+# 1. dataset escasso + holdout (uma vez só)
+uv run python scripts/make_imbalanced.py
 
-# LLM mode (OpenAI-compatible endpoint)
-uv run python main.py --generator openai --model deepseek-flash \
-  --base-url https://api.deepseek.com --epochs 5 --top-k 16
+# 2. braços
+uv run python baseline.py --arm real --seed 42
+uv run python baseline.py --arm static --generator openai --model deepseek-chat --n-samples 158 --seed 42
+uv run python main.py --generator openai --model deepseek-chat --seed 42
 
-# Core self-check (no torch)
-uv run python tests/test_core.py
+# 3. grade completa E1–E5 (background)
+nohup bash scripts/run_grid.sh > outputs/grid_console.log 2>&1 &
+
+# 4. figuras + estatística
+uv run python plots.py
+uv run python scripts/stats.py
+
+# 5. self-check (sem torch)
+uv run python -m tests.test_core
 ```
 
-### Main arguments
+## Outputs
 
-| Argument | Default | Description |
-|-----------|--------|-----------|
-| `--generator` | `mock` | `mock` or `openai` |
-| `--epochs` | `5` | Active Inheritance cycles (T) |
-| `--batch-size` | `64` | synthetic batch size generated per cycle |
-| `--top-k` | `16` | samples inherited per cycle |
-| `--model` | `deepseek-flash` | LLM model (generator) |
-| `--learner-model` | `prajjwal1/bert-tiny` | learner BERT (~4M params, fast architecture test) |
-| `--learner-epochs` | `3` | learner fine-tune epochs per cycle |
-| `--learner-batch-size` | `16` | learner fine-tune batch size |
-| `--lr` | `2e-5` | learner learning rate |
-| `--csv` | `dataset/pre-processed.csv` | Data 0 path |
-| `--device` | auto | `cuda`/`cpu` (empty = auto) |
+```
+outputs/
+├── e1/   # Real
+├── e2/   # Static
+├── e3/   # ActiveInheritance
+├── e4/   # ablação: pesos
+├── e5/   # ablação: top-k
+└── sandbox/
+```
 
-Per-epoch results are saved to `outputs/results.json`.
+Cada run: `outputs/<exp>/<arm>-s<seed>-<timestamp>/results.json`.
+
+## Main arguments (`main.py`)
+
+| Argument | Default | Descrição |
+|---|---|---|
+| `--generator` | `mock` | `mock` \| `openai` |
+| `--epochs` | `5` | ciclos T |
+| `--batch-size` | `64` | lote sintético/ciclo |
+| `--top-k` | `16` | herdados/ciclo |
+| `--model` | `deepseek-chat` | LLM |
+| `--learner-model` | `neuralmind/bert-base-portuguese-cased` | learner |
+| `--embedder` | `semantic` | `semantic` \| `tfidf` |
+| `--seed` | `42` | semente |

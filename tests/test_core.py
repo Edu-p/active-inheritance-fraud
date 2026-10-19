@@ -8,6 +8,7 @@ from src.embedder import TfidfEmbedder
 from src.generator import MockGenerator
 from src.evaluator import AdversarialEvaluator
 from src.metrics import classification_metrics, diversity_metrics
+from src.runs import experiment_tag
 
 
 class StubLearner:
@@ -39,6 +40,27 @@ def main() -> None:
 
     d = diversity_metrics(seeds, emb)
     assert 0.0 <= d["mean_pairwise_sim"] <= 1.0
+
+    # mapeamento experimento -> subdiretório
+    class Cfg:
+        top_k = 16
+        w_error = 0.4
+        w_uncertainty = 0.4
+        w_diversity = 0.2
+    assert experiment_tag(Cfg(), "real") == "e1"
+    assert experiment_tag(Cfg(), "static") == "e2"
+    assert experiment_tag(Cfg(), "ai") == "e3"
+
+    class Weights(Cfg):
+        w_error = 0.7
+        w_uncertainty = 0.2
+        w_diversity = 0.1
+    assert experiment_tag(Weights(), "ai") == "e4"
+
+    class TopK(Cfg):
+        top_k = 8
+    assert experiment_tag(TopK(), "ai") == "e5"
+    assert experiment_tag(Cfg(), "weird") == "sandbox"
 
     print("OK — core (scoring, mock generator, metrics) passed.")
 

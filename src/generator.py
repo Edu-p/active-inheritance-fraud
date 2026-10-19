@@ -66,6 +66,7 @@ class OpenAIGenerator(BaseGenerator):
 
         self.client = OpenAI(api_key=api_key, base_url=base_url)
         self.model = model
+        self.max_tokens = cfg.gen_max_tokens
 
     def _prompt(self, inherited_texts):
         system = (
@@ -92,7 +93,7 @@ class OpenAIGenerator(BaseGenerator):
                     {"role": "system", "content": system},
                     {"role": "user", "content": user},
                 ],
-                max_tokens=256,
+                max_completion_tokens=self.max_tokens,
                 temperature=0.9,
             )
             batch.append(resp.choices[0].message.content or "")

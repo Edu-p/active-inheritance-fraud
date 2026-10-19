@@ -16,6 +16,10 @@ __pycache__/
 # saídas do pipeline
 outputs/
 
+______to_del/
+
 dataset/
 
-docs/
+docs
+
+planning/

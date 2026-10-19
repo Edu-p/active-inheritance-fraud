@@ -63,10 +63,11 @@ class ActiveInheritancePipeline:
                 "pool_diversity": diversity_metrics(inherited, self.embedder),
                 "tokens_used": int(self.generator.tokens_used),
                 "mean_score_topk": mean_score,
+                "score_parts": parts,
             })
 
         test_metrics = self._evaluate(te_texts, te_y)
-        return history, test_metrics
+        return history, test_metrics, inherited
 
     def _evaluate(self, texts, y):
         pred = self.learner.predict_class(texts)

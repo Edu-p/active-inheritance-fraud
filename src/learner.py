@@ -22,6 +22,8 @@ class Learner:
     ) -> None:
         torch.manual_seed(random_state)
         np.random.seed(random_state)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.batch_size = batch_size
         self.max_length = max_length
