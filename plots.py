@@ -15,6 +15,8 @@ FIG = Path("figures")
 def load_runs():
     runs = []
     for f in sorted(OUT.rglob("results.json")):
+        if f.parent.parent.name not in {"e1", "e2", "e3", "e4", "e5"}:
+            continue  # figuras históricas: não misturar experimentos de 5%/probe
         runs.append(json.loads(f.read_text()))
     return runs
 

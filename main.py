@@ -9,8 +9,10 @@ from src.config import Config
 from src.data import load_experiment_data
 from src.embedder import SemanticEmbedder, TfidfEmbedder
 from src.learner import Learner
+from src.probe import SemanticProbe
 from src.generator import MockGenerator, OpenAIGenerator
 from src.evaluator import AdversarialEvaluator
+from src.decision_scorer import LayaScorer
 from src.metrics import synthetic_quality
 from src.pipeline import ActiveInheritancePipeline
 from src.runs import save_run
@@ -36,9 +38,15 @@ def parse_args() -> Config:
     p.add_argument("--model", dest="openai_model",
                    default=os.getenv("OPENAI_MODEL", "deepseek-flash"))
     p.add_argument("--base-url", dest="openai_base_url", default="")
+    p.add_argument("--prompt-version", choices=["v1", "v2"], default="v1")
+    p.add_argument("--max-run-tokens", type=int, default=1_000_000)
+    p.add_argument("--run-group", choices=["e6-5pct", "e7-probe", "e8-generators", "e10-laya-gate", "sandbox"], default="")
+    p.add_argument("--evaluator", dest="evaluator_kind", choices=["learner", "laya"], default="learner")
+    p.add_argument("--laya-url", default="http://127.0.0.1:8018")
 
     # Learner (BERT)
     p.add_argument("--learner-model", default="neuralmind/bert-base-portuguese-cased")
+    p.add_argument("--learner-kind", choices=["bert", "semantic-probe"], default="bert")
     p.add_argument("--lr", dest="learner_lr", type=float, default=2e-5)
     p.add_argument("--learner-epochs", type=int, default=3)
     p.add_argument("--learner-batch-size", type=int, default=16)
@@ -65,14 +73,19 @@ def main() -> None:
     train, val, test = load_experiment_data(cfg)
     embedder = build_embedder(cfg, train[0])
 
-    learner = Learner(
-        model_name=cfg.learner_model,
-        lr=cfg.learner_lr,
-        batch_size=cfg.learner_batch_size,
-        max_length=cfg.max_length,
-        device=cfg.device or None,
-        random_state=cfg.random_state,
-    )
+    if cfg.learner_kind == "semantic-probe":
+        if cfg.embedder != "semantic":
+            raise ValueError("semantic-probe exige --embedder semantic")
+        learner = SemanticProbe(embedder)
+    else:
+        learner = Learner(
+            model_name=cfg.learner_model,
+            lr=cfg.learner_lr,
+            batch_size=cfg.learner_batch_size,
+            max_length=cfg.max_length,
+            device=cfg.device or None,
+            random_state=cfg.random_state,
+        )
 
     if cfg.generator == "mock":
         seed_fake = [t for t, lab in zip(train[0], train[1]) if lab == 1]
@@ -80,8 +93,11 @@ def main() -> None:
     else:
         generator = OpenAIGenerator(cfg)
 
+    if cfg.evaluator_kind == "laya" and cfg.run_group != "e10-laya-gate":
+        raise ValueError("Laya evaluator exige --run-group e10-laya-gate")
+    scorer = LayaScorer(cfg.laya_url) if cfg.evaluator_kind == "laya" else learner
     evaluator = AdversarialEvaluator(
-        learner, embedder,
+        scorer, embedder,
         w_error=cfg.w_error,
         w_uncertainty=cfg.w_uncertainty,
         w_diversity=cfg.w_diversity,

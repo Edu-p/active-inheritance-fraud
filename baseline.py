@@ -10,6 +10,7 @@ from src.data import load_experiment_data
 from src.embedder import SemanticEmbedder, TfidfEmbedder
 from src.generator import MockGenerator, OpenAIGenerator
 from src.learner import Learner
+from src.probe import SemanticProbe
 from src.metrics import classification_metrics, synthetic_quality
 from src.runs import save_run
 
@@ -27,8 +28,12 @@ def parse_args() -> Config:
     p.add_argument("--model", dest="openai_model",
                    default=os.getenv("OPENAI_MODEL", "deepseek-flash"))
     p.add_argument("--base-url", dest="openai_base_url", default="")
+    p.add_argument("--prompt-version", choices=["v1", "v2"], default="v1")
+    p.add_argument("--max-run-tokens", type=int, default=1_000_000)
+    p.add_argument("--run-group", choices=["e6-5pct", "e7-probe", "e8-generators", "sandbox"], default="")
 
     p.add_argument("--learner-model", default="neuralmind/bert-base-portuguese-cased")
+    p.add_argument("--learner-kind", choices=["bert", "semantic-probe"], default="bert")
     p.add_argument("--lr", dest="learner_lr", type=float, default=2e-5)
     p.add_argument("--learner-epochs", type=int, default=3)
     p.add_argument("--learner-batch-size", type=int, default=16)
@@ -49,7 +54,11 @@ def build_embedder(cfg, texts):
     return SemanticEmbedder(cfg.semantic_model).fit(texts)
 
 
-def new_learner(cfg):
+def new_learner(cfg, embedder=None):
+    if cfg.learner_kind == "semantic-probe":
+        if cfg.embedder != "semantic" or embedder is None:
+            raise ValueError("semantic-probe exige --embedder semantic")
+        return SemanticProbe(embedder)
     return Learner(
         model_name=cfg.learner_model,
         lr=cfg.learner_lr,
@@ -64,8 +73,8 @@ def evaluate(learner, test):
     return classification_metrics(test[1], learner.predict_class(test[0]))
 
 
-def run_real(cfg, train, test):
-    learner = new_learner(cfg)
+def run_real(cfg, train, test, embedder):
+    learner = new_learner(cfg, embedder)
     loss = learner.fit(train[0], train[1], epochs=cfg.learner_epochs)
     return {
         "arm": "real",
@@ -86,7 +95,7 @@ def run_static(cfg, train, test, embedder, n_samples):
 
     synth = [x for x in generator.generate_batch([], n_samples) if x and x.strip()]
 
-    learner = new_learner(cfg)
+    learner = new_learner(cfg, embedder)
     combined_texts = train[0] + synth
     combined_y = train[1] + [1] * len(synth)
     loss = learner.fit(combined_texts, combined_y, epochs=cfg.learner_epochs)
@@ -108,7 +117,7 @@ def main() -> None:
     embedder = build_embedder(cfg, train[0])
 
     if cfg.arm == "real":
-        out = run_real(cfg, train, test)
+        out = run_real(cfg, train, test, embedder)
         out["quality"] = synthetic_quality(embedder, train[0], [])
     else:
         out = run_static(cfg, train, test, embedder, cfg.n_samples)

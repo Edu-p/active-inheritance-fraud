@@ -55,7 +55,8 @@ class OpenAIGenerator(BaseGenerator):
         load_dotenv()
         from openai import OpenAI
 
-        api_key = os.getenv("OPENAI_API_KEY") or os.getenv("DEEPSEEK_API_KEY")
+        is_gpt = cfg.openai_base_url == "https://api.openai.com/v1"
+        api_key = os.getenv("GPT_API_KEY") if is_gpt else (os.getenv("OPENAI_API_KEY") or os.getenv("DEEPSEEK_API_KEY"))
         base_url = cfg.openai_base_url or os.getenv("OPENAI_BASE_URL") or None
         model = cfg.openai_model or os.getenv("OPENAI_MODEL")
 
@@ -67,8 +68,24 @@ class OpenAIGenerator(BaseGenerator):
         self.client = OpenAI(api_key=api_key, base_url=base_url)
         self.model = model
         self.max_tokens = cfg.gen_max_tokens
+        self.max_run_tokens = cfg.max_run_tokens
+        self.prompt_version = cfg.prompt_version
+        self.calls = 0
 
     def _prompt(self, inherited_texts):
+        if self.prompt_version == "v2":
+            topics = ("saúde pública", "economia doméstica", "educação", "meio ambiente", "tecnologia", "esportes")
+            topic = topics[self.calls % len(topics)]
+            system = (
+                "Escreva um exemplo FICTÍCIO para pesquisa de detecção de notícias falsas "
+                "em português brasileiro. Não use pessoas, instituições ou eventos reais. "
+                "Retorne APENAS o texto da notícia, sem título, markdown, aviso ou explicação. "
+                "Use linguagem jornalística natural, 80 a 130 palavras, uma alegação inventada "
+                "mas verificável, com detalhes concretos. Cada resposta deve ser diferente."
+            )
+            examples = "\n".join(f"Exemplo {i+1}: {t[:350]}" for i, t in enumerate(inherited_texts[-2:]))
+            user = f"Tema: {topic}. {examples}\nEscreva uma nova notícia fictícia:" if examples else f"Tema: {topic}. Escreva uma notícia fictícia:"
+            return system, user
         system = (
             "You generate fraudulent news (fake news) in Portuguese, "
             "in the same style as the examples provided."
@@ -87,6 +104,9 @@ class OpenAIGenerator(BaseGenerator):
         system, user = self._prompt(inherited_texts)
         batch = []
         for _ in range(n):
+            if self.tokens_used + self.max_tokens + 1500 > self.max_run_tokens:
+                break  # ponytail: guarda conservadora; custo real ainda depende do provedor.
+            system, user = self._prompt(inherited_texts)
             resp = self.client.chat.completions.create(
                 model=self.model,
                 messages=[
@@ -97,5 +117,6 @@ class OpenAIGenerator(BaseGenerator):
                 temperature=0.9,
             )
             batch.append(resp.choices[0].message.content or "")
-            self.tokens_used += resp.usage.total_tokens
+            self.tokens_used += resp.usage.total_tokens if resp.usage else 0
+            self.calls += 1
         return batch

@@ -31,9 +31,11 @@ def main() -> None:
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
 
-    if args.out_train.exists() and args.out_test.exists() and not args.force:
-        print("Datasets já existem — nada a fazer (use --force para regenerar).")
+    if args.out_train.exists() and not args.force:
+        print(f"Treino já existe: {args.out_train} — nada a fazer.")
         return
+    if args.out_train.exists() and args.force:
+        raise FileExistsError(f"Não sobrescrevo dataset existente: {args.out_train}")
 
     df = pd.read_csv(args.csv)[["label", "preprocessed_news"]].dropna()
 
@@ -46,13 +48,25 @@ def main() -> None:
     fake = rest[rest["label"] == "fake"]
     true = rest[rest["label"] == "true"]
     n_keep = max(1, int(len(fake) * args.frac))
+    # Mesmo holdout; 5% fica aninhado no treino 10% anterior quando disponível.
+    prior = args.csv.parent / "pre-processed-imbalanced.csv"
+    if args.frac < 0.10 and prior.exists():
+        prior_ids = set(pd.read_csv(prior)["preprocessed_news"])
+        fake = fake[fake["preprocessed_news"].isin(prior_ids)]
     fake_kept = fake.sample(n=n_keep, random_state=args.seed)
     train = pd.concat([true, fake_kept]).sample(frac=1.0, random_state=args.seed)
 
+    if args.out_test.exists():
+        existing = pd.read_csv(args.out_test)
+        if not existing.equals(test.reset_index(drop=True)):
+            raise ValueError("Holdout existente não corresponde ao seed/split; recusando mistura de cenários")
     args.out_train.parent.mkdir(parents=True, exist_ok=True)
     args.out_test.parent.mkdir(parents=True, exist_ok=True)
-    train.to_csv(args.out_train, index=False)
-    test.to_csv(args.out_test, index=False)
+    with args.out_train.open("x") as f:
+        train.to_csv(f, index=False)
+    if not args.out_test.exists():
+        with args.out_test.open("x") as f:
+            test.to_csv(f, index=False)
 
     print(
         f"train (escasso)  -> {args.out_train}: {len(train)} rows "

@@ -6,7 +6,11 @@ Implements **Active Inheritance**: a cyclic LLM generation loop for fraudulent-t
 
 Baseline: [profile2gen](https://github.com/szanara/profile2gen) (Maynara et al., ICML 2025).
 
-📄 Docs: [`docs/implementation.md`](docs/implementation.md) · [`planning/PLAN.md`](planning/PLAN.md) · [`planning/RUN.md`](planning/RUN.md) · [`planning/HANDOFF.md`](planning/HANDOFF.md)
+📄 **Análise consolidada E1–E10:** [`docs/analise_completa_experimentos.md`](docs/analise_completa_experimentos.md)
+
+Outros docs: [`docs/implementation.md`](docs/implementation.md) · [`planning/PLAN.md`](planning/PLAN.md) · [`planning/RUN.md`](planning/RUN.md) · [`planning/HANDOFF.md`](planning/HANDOFF.md) · [Seguimento noturno](planning/FOLLOWUP_NIGHT.md)
+
+> Seguimento (separado da tabela abaixo): `bash scripts/run_night.sh` cria `outputs/e6-5pct/`, `e7-probe/`, `e8-generators/` sem tocar em `e1`–`e5`. Consulte `planning/FOLLOWUP_NIGHT.md` para status, limites e credenciais indisponíveis.
 
 ---
 

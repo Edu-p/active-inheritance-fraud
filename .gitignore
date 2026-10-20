@@ -7,6 +7,8 @@ __pycache__/
 
 # uv (venv local; uv.lock é versionado de propósito)
 .venv/
+.kev-venv/
+.laya-venv/
 
 # segredos / ambiente (mantém .env.example como template)
 .env
