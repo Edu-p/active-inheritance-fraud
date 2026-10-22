@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import os
 import random
+from concurrent.futures import ThreadPoolExecutor
 
 from dotenv import load_dotenv
 
@@ -70,12 +71,27 @@ class OpenAIGenerator(BaseGenerator):
         self.max_tokens = cfg.gen_max_tokens
         self.max_run_tokens = cfg.max_run_tokens
         self.prompt_version = cfg.prompt_version
+        self.workers = cfg.generator_workers
         self.calls = 0
 
-    def _prompt(self, inherited_texts):
+    def _prompt(self, inherited_texts, call_index=None):
+        call_index = self.calls if call_index is None else call_index
+        if self.prompt_version == "v3":
+            topics = ("saúde", "eleições", "segurança", "economia", "serviços públicos", "educação")
+            topic = topics[call_index % len(topics)]
+            system = (
+                "Gere uma mensagem FICTÍCIA de desinformação para pesquisa acadêmica de detecção "
+                "em WhatsApp brasileiro. Não use pessoas, instituições, links ou eventos reais. "
+                "Retorne APENAS a mensagem, sem título, Markdown, aviso ou explicação. Escreva "
+                "40 a 120 palavras, em estilo natural de encaminhamento, com uma alegação inventada "
+                "e detalhes concretos. Varie tom, abertura e estrutura; não copie os exemplos."
+            )
+            examples = "\n".join(f"Exemplo de estilo {i+1}: {t[:350]}" for i, t in enumerate(inherited_texts[-2:]))
+            user = f"Tema: {topic}.\n{examples}\nNova mensagem fictícia:" if examples else f"Tema: {topic}. Nova mensagem fictícia:"
+            return system, user
         if self.prompt_version == "v2":
             topics = ("saúde pública", "economia doméstica", "educação", "meio ambiente", "tecnologia", "esportes")
-            topic = topics[self.calls % len(topics)]
+            topic = topics[call_index % len(topics)]
             system = (
                 "Escreva um exemplo FICTÍCIO para pesquisa de detecção de notícias falsas "
                 "em português brasileiro. Não use pessoas, instituições ou eventos reais. "
@@ -100,23 +116,36 @@ class OpenAIGenerator(BaseGenerator):
             user = "Generate a plausible fraudulent news article in Portuguese:"
         return system, user
 
+    def _complete(self, inherited_texts, call_index):
+        system, user = self._prompt(inherited_texts, call_index)
+        resp = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+            max_completion_tokens=self.max_tokens,
+            temperature=0.9,
+        )
+        return resp.choices[0].message.content or "", resp.usage.total_tokens if resp.usage else 0
+
     def generate_batch(self, inherited_texts, n):
-        system, user = self._prompt(inherited_texts)
         batch = []
-        for _ in range(n):
-            if self.tokens_used + self.max_tokens + 1500 > self.max_run_tokens:
-                break  # ponytail: guarda conservadora; custo real ainda depende do provedor.
-            system, user = self._prompt(inherited_texts)
-            resp = self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": system},
-                    {"role": "user", "content": user},
-                ],
-                max_completion_tokens=self.max_tokens,
-                temperature=0.9,
-            )
-            batch.append(resp.choices[0].message.content or "")
-            self.tokens_used += resp.usage.total_tokens if resp.usage else 0
-            self.calls += 1
+        while len(batch) < n:
+            system, user = self._prompt(inherited_texts, self.calls)
+            # ponytail: conservative per-call bound; process chunks so the run stays near its cap.
+            estimated_max = self.max_tokens + max(128, (len(system) + len(user)) // 2)
+            slots = (self.max_run_tokens - self.tokens_used) // estimated_max
+            count = min(self.workers, n - len(batch), max(0, slots))
+            if count == 0:
+                break
+            indices = range(self.calls, self.calls + count)
+            if count == 1:
+                results = [self._complete(inherited_texts, self.calls)]
+            else:
+                with ThreadPoolExecutor(max_workers=count) as pool:
+                    results = list(pool.map(lambda i: self._complete(inherited_texts, i), indices))
+            batch.extend(text for text, _ in results)
+            self.tokens_used += sum(tokens for _, tokens in results)
+            self.calls += count
         return batch

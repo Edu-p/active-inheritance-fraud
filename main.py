@@ -26,6 +26,7 @@ def parse_args() -> Config:
                    default=Path("dataset/pre-processed-imbalanced.csv"))
     p.add_argument("--test-csv", dest="test_csv_path", type=Path,
                    default=Path("dataset/pre-processed-test.csv"))
+    p.add_argument("--val-csv", dest="val_csv_path", type=Path, default=None)
     p.add_argument("--generator", choices=["mock", "openai"], default="mock")
     p.add_argument("--epochs", type=int, default=5)
     p.add_argument("--batch-size", type=int, default=64)
@@ -38,9 +39,11 @@ def parse_args() -> Config:
     p.add_argument("--model", dest="openai_model",
                    default=os.getenv("OPENAI_MODEL", "deepseek-flash"))
     p.add_argument("--base-url", dest="openai_base_url", default="")
-    p.add_argument("--prompt-version", choices=["v1", "v2"], default="v1")
+    p.add_argument("--prompt-version", choices=["v1", "v2", "v3"], default="v1")
     p.add_argument("--max-run-tokens", type=int, default=1_000_000)
-    p.add_argument("--run-group", choices=["e6-5pct", "e7-probe", "e8-generators", "e10-laya-gate", "sandbox"], default="")
+    p.add_argument("--gen-max-tokens", type=int, default=1024)
+    p.add_argument("--generator-workers", type=int, default=1)
+    p.add_argument("--run-group", choices=["e6-5pct", "e7-probe", "e8-generators", "e10-laya-gate", "fakewhatsapp-full", "fakewhatsapp-10pct", "fakewhatsapp-5pct", "sandbox"], default="")
     p.add_argument("--evaluator", dest="evaluator_kind", choices=["learner", "laya"], default="learner")
     p.add_argument("--laya-url", default="http://127.0.0.1:8018")
 

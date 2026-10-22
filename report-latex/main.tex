@@ -3,209 +3,343 @@
 \usepackage[T1]{fontenc}
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage{algorithmic}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{booktabs}
-\usepackage{hyperref}
-\usepackage{float}
+\usepackage[hidelinks]{hyperref}
 \usepackage{url}
 \usepackage{balance}
-\usepackage{flushend}
-\graphicspath{{./images/}{./}} 
-
-\setlength{\textfloatsep}{4pt plus 1pt minus 1pt}
-\setlength{\intextsep}{4pt plus 1pt minus 1pt}
-\setlength{\floatsep}{4pt plus 1pt minus 1pt}
-\setlength{\abovedisplayskip}{3pt}
-\setlength{\belowdisplayskip}{3pt}
-\setlength{\abovedisplayshortskip}{0pt}
-\setlength{\belowdisplayshortskip}{3pt}
-
-\linespread{0.98}
-
 \usepackage{enumitem}
-\setlist{nosep, leftmargin=*}
-
+\graphicspath{{./images/}{./}}
+\setlist{nosep,leftmargin=*}
+\setlength{\textfloatsep}{6pt plus 1pt minus 1pt}
+\setlength{\intextsep}{5pt plus 1pt minus 1pt}
+\setlength{\floatsep}{5pt plus 1pt minus 1pt}
 \widowpenalty=10000
 \clubpenalty=10000
 
-
 \begin{document}
 
-\title{Gera\c{c}\~ao Sint\'etica Guiada por Heran\c{c}a Ativa para Detec\c{c}\~ao de Textos Fraudulentos}
+\title{Geração Sintética Guiada por Herança Ativa para Detecção de Textos Fraudulentos}
 
 \author{
-    \IEEEauthorblockN{Eduardo Alexandre de Amorim\textsuperscript{1}, Cleber Zanchettin\textsuperscript{1}}
-    \IEEEauthorblockA{\textsuperscript{1}Centro de Inform\'atica, Universidade Federal de Pernambuco, Recife, PE, Brazil}
-    \IEEEauthorblockA{\{eaa5, cz\}@cin.ufpe.br}
+\IEEEauthorblockN{Eduardo Alexandre de Amorim\textsuperscript{1}, Cleber Zanchettin\textsuperscript{1}}
+\IEEEauthorblockA{\textsuperscript{1}Centro de Informática, Universidade Federal de Pernambuco, Recife, PE, Brasil\\
+\{eaa5, cz\}@cin.ufpe.br}
 }
 
 \maketitle
 
-% --- AVISO DE COPYRIGHT PARA O ARXIV ---
-\def\thefootnote{}\footnotetext{\copyright~2026 IEEE. Personal use of this material is permitted. Permission from IEEE must be obtained for all other uses, in any current or future media, including reprinting/republishing this material for advertising or promotional purposes, creating new collective works, for resale or redistribution to servers or lists, or reuse of any copyrighted component of this work in other works.}
-% ---------------------------------------
-
-
 \begin{abstract}
-A escassez e o desbalanceamento de dados reais em ciberseguran\c{c}a dificultam o treinamento de classificadores robustos contra textos fraudulentos. A gera\c{c}\~ao de dados sint\'eticos via modelos de linguagem \'e uma alternativa, mas processos gerativos est\'aticos podem causar colapso de distribui\c{c}\~ao e baixa cobertura de casos raros. Este trabalho investiga a \emph{Heran\c{c}a Ativa}: um loop gerativo c\'iclico em que um avaliador adversarial prioriza amostras sint\'eticas com base no erro, na incerteza e na diversidade de um classificador. Em experimentos com o corpus Fake.br em cen\'ario de escassez (10\% da classe fraudulenta), o m\'etodo alcan\c{c}ou F1 de $0.924$, superior \`a gera\c{c}\~ao est\'atica ($0.916$) e ao treino sem dados sint\'eticos ($0.887$), com a menor vari\^ancia entre sementes (desvio padr\~ao $0.007$). Entretanto, a hip\'otese de efici\^encia computacional n\~ao foi confirmada: o m\'etodo consome mais tokens que a gera\c{c}\~ao est\'atica para atingir o mesmo F1.
+A escassez de exemplos de textos fraudulentos limita classificadores robustos, enquanto geração sintética indiscriminada pode introduzir redundância, artefatos e ruído. Este trabalho propõe \emph{ActiveInheritance}, um processo cíclico em que um modelo de linguagem gera candidatos e um avaliador herda somente amostras com alto erro, incerteza e diversidade para retreinar um classificador downstream. Realizamos 60 runs oficiais em dois corpora em português: Fake.br-Corpus e FakeWhatsApp.Br, incluindo cenários com 10\% e 5\% da classe positiva, comparação com geração estática, ablações, dois geradores e um decision model multilíngue. No Fake.br com 10\%, ActiveInheritance obteve o maior F1 e a menor variabilidade ($0{,}924\pm0{,}007$), contra $0{,}916\pm0{,}013$ da geração estática e $0{,}887\pm0{,}026$ do treino real, mas consumiu aproximadamente 6,3 vezes mais tokens que o melhor baseline sintético. Em avaliação temporal no FakeWhatsApp.Br, a geração estática apresentou a maior média no cenário completo ($0{,}715\pm0{,}014$), enquanto ActiveInheritance foi semelhante e mais estável ($0{,}708\pm0{,}002$), usando 64 amostras herdadas contra aproximadamente 347 do baseline. Sob escassez extrema, todos os métodos sofreram colapso de recall. Os resultados indicam que a herança ativa é principalmente um mecanismo de curadoria e estabilidade, condicionado à qualidade inicial do learner, e não uma melhoria universal de desempenho ou eficiência de tokens.
 \end{abstract}
 
 \begin{IEEEkeywords}
-synthetic data generation, large language models, fake news detection, data-centric AI, active inheritance
+data-centric AI, synthetic data, misinformation detection, active learning, large language models, Portuguese NLP
 \end{IEEEkeywords}
 
-\section*{Reproducibility}
-C\'odigo do projeto: \url{https://github.com/Edu-p/active-inheritance-fraud}. Baseline: \url{https://github.com/szanara/profile2gen}. Dados: Fake.br-Corpus ($7{,}200$ not\'icias, $3{,}600$ falsas e $3{,}600$ verdadeiras). Cen\'ario de escassez: treino com $10\%$ da classe falsa ($288$ falsas, $2{,}880$ verdadeiras) e holdout balanceado intacto ($720$/$720$). Classificador: BERTimbau (\texttt{neuralmind/bert-base-portuguese-cased}). Embeddings: MiniLM multil\'ingue (\texttt{paraphrase-multilingual-MiniLM-L12-v2}). Gerador: \texttt{deepseek-chat}. Sementes: $42$, $43$, $44$. GPU: NVIDIA RTX 4060 (8\,GB).
+\section{Introdução}
 
-\section{Introdu\c{c}\~ao}
-A detec\c{c}\~ao de textos fraudulentos (not\'icias falsas, phishing, an\'uncios enganosos) sofre com a escassez e o desbalanceamento de dados reais~\cite{souza2025}. Embora a gera\c{c}\~ao de dados sint\'eticos via modelos de linguagem seja uma alternativa, processos est\'aticos frequentemente resultam em colapso do modelo e baixa cobertura de casos raros~\cite{shumailov2024}. Este trabalho adapta o framework \emph{Profile2Gen}~\cite{souza2025} --- originalmente proposto para dados tabulares de regress\~ao --- ao dom\'inio textual de classifica\c{c}\~ao, introduzindo um \emph{avaliador adversarial} no loop gerativo. A diferen\c{c}a conceitual central \'e uma invers\~ao do baseline: enquanto o Profile2Gen \emph{remove} amostras dif\'iceis no p\'os-processamento, a Heran\c{c}a Ativa \emph{herda} as amostras dif\'iceis/incertas como ``treino deliberado'' para o classificador.
+A identificação automática de notícias falsas e mensagens de desinformação é dificultada por escassez, mudança de domínio e custo de anotação. Modelos de linguagem permitem produzir dados sintéticos, mas volume não garante utilidade: gerações podem repetir templates, afastar-se da distribuição real ou receber rótulos presumidos incorretos. Treinar recursivamente em dados sintéticos também pode reduzir diversidade e confiabilidade~\cite{shumailov2024}.
 
-As contribui\c{c}\~oes s\~ao: (i) um loop gerativo c\'iclico guiado por erro, incerteza e diversidade; (ii) uma avalia\c{c}\~ao no corpus Fake.br em cen\'ario de escassez; e (iii) uma an\'alise das dimens\~oes de robustez, diversidade e custo computacional.
+Este projeto adapta a perspectiva data-centric do Profile2Gen~\cite{souza2025}, originalmente proposta para dados tabulares e regressão, à classificação textual. Enquanto o Profile2Gen remove hard samples no pós-processamento, investigamos a inversão: herdar textos que desafiam o classificador, como treino deliberado. A pergunta central é:
 
-\section{Solu\c{c}\~ao Proposta}
-O pipeline (Algoritmo~\ref{alg:ai}) opera em ciclos. A cada ciclo $t$, o LLM gera um lote $S_t$ condicionado ao pool herdado $H$ (few-shot). Um classificador (\emph{learner}) produz $p(y|x)$ e o erro por amostra; um codificador produz embeddings para a diversidade. O avaliador adversarial atribui a cada amostra um escore multiobjetivo:
+\begin{quote}
+A seleção cíclica por erro, incerteza e diversidade produz dados mais úteis, estáveis e eficientes que geração estática?
+\end{quote}
+
+As contribuições são: (i) um pipeline completo de herança ativa para português; (ii) comparação com baselines Real e Static sob diferentes níveis de escassez; (iii) avaliação em artigos e mensagens de WhatsApp, com split temporal; (iv) análise de custo, diversidade, fidelidade e artefatos; e (v) resultados negativos que delimitam quando o método deixa de funcionar.
+
+\section{Método Proposto}
+
+\subsection{Loop de Herança Ativa}
+
+Dado um treino real $D_0$, um learner $f$ e um pool herdado $H$, o gerador produz um lote $S_t$ em cada ciclo. Para cada texto $x$, o avaliador calcula:
 
 \begin{equation}
-score(x) = w_1 \cdot err(x) + w_2 \cdot unc(x) + w_3 \cdot div(x),
+ s(x)=w_e\,e(x)+w_u\,u(x)+w_d\,d(x),
+ \label{eq:score}
 \end{equation}
 
-onde $err$ \'e o log-loss do learner, $unc$ \'e a entropia normalizada de $p(y|x)$, e $div$ \'e a dist\^ancia de cosseno m\'axima ao pool herdado (diversidade). As $k$ amostras de maior escore (fronteira de decis\~ao) s\~ao herdadas para o pr\'oximo ciclo e injetadas no treino. Usamos $w_1{=}w_2{=}0.4$ e $w_3{=}0.2$.
+onde $e$ é erro, $u$ é incerteza e $d$ é diversidade. O top-$k$ é anexado a $H$, e $f$ é retreinado em $D_0\cup H$. Na configuração principal, $(w_e,w_u,w_d)=(0{,}4,0{,}4,0{,}2)$, $T=5$, batch 64 e top-$k=16$.
 
-\begin{figure}[t]
-\caption{Heran\c{c}a Ativa (loop c\'iclico).}
-\label{alg:ai}
-\begin{algorithmic}[1]
-\STATE Treina learner $f$ em Data 0 (treino escasso)
-\STATE Pool herdado $H \leftarrow \emptyset$
-\FOR{$t = 0$ \TO $T-1$}
-  \STATE Gera lote $S_t$ via LLM condicionado em $H$
-  \STATE $\forall x \in S_t$: $score(x) = w_1 err(x) + w_2 unc(x) + w_3 div(x)$
-  \STATE $H_t \leftarrow \text{top-}k(S_t, score)$
-  \STATE $H \leftarrow H \cup H_t$
-  \STATE Retreina $f$ em Data 0 $\cup H$
-\ENDFOR
-\RETURN avalia $f$ no holdout de teste
-\end{algorithmic}
-\end{figure}
+Como todos os candidatos sintéticos recebem o rótulo \texttt{fake}, o erro é o log-loss:
 
-\section{Experimentos}
-\subsection{Configura\c{c}\~ao}
-Tr\^es bra\c{c}os s\~ao comparados: \textbf{Real} (treina apenas no treino escasso), \textbf{Static} (gera\c{c}\~ao est\'atica: o LLM gera $N$ amostras com prompt gen\'erico e todas s\~ao adicionadas) e \textbf{ActiveInheritance} (m\'etodo proposto, $T{=}5$, lote $64$, top-$k$ $16$). M\'etricas: F1, precis\~ao e revoca\c{c}\~ao no holdout balanceado; diversidade (similaridade de cosseno m\'edia do pool); fidelidade (dist\^ancia de Wasserstein entre embeddings reais e sint\'eticos, projetados nas top-3 componentes PCA dos reais); e custo (tokens acumulados). O Static varia o or\c{c}amento: $N \in \{32, 79, 158\}$.
+\begin{equation}
+ e(x)=-\log p_f(\texttt{fake}\mid x),
+\end{equation}
 
-\subsection{Resultados}
-A Tabela~\ref{tab:res} resume o desempenho (m\'edia $\pm$ desvio entre sementes).
+normalizado por min-max dentro do lote. A incerteza é a entropia binária normalizada:
+
+\begin{equation}
+ u(x)=-\frac{\sum_{c\in\{0,1\}}p_f(c\mid x)\log p_f(c\mid x)}{\log 2}.
+ \label{eq:entropy}
+\end{equation}
+
+Logo, $u=1$ quando $p(\texttt{fake})=0{,}5$ e tende a zero quando a probabilidade tende a 0 ou 1. Erro e incerteza são complementares: uma predição confiante e errada possui erro alto, mas incerteza baixa.
+
+A diversidade individual é um menos a maior similaridade de cosseno entre o embedding do candidato e os embeddings herdados. No primeiro ciclo, $d=1$. Usamos MiniLM multilíngue para embeddings. A distância de Wasserstein \emph{não participa da seleção}; ela é calculada após a run como proxy de fidelidade entre distribuições real e sintética, após PCA em três componentes.
+
+\subsection{Baselines}
+
+\begin{itemize}
+\item \textbf{Real}: BERTimbau treinado somente com dados reais.
+\item \textbf{Static}: o LLM gera textos e todos são adicionados, sem gate.
+\item \textbf{ActiveInheritance (AI)}: somente top-$k$ por Eq.~\ref{eq:score} é herdado.
+\end{itemize}
+
+O Profile2Gen é o baseline acadêmico/conceitual; Real e Static são os controles executados.
+
+\section{Configuração Experimental}
+
+\subsection{Datasets e Splits}
 
 \begin{table}[t]
-\caption{F1 no teste e custo por bra\c{c}o (m\'edia $\pm$ desvio entre 3 sementes).}
-\label{tab:res}
-\begin{tabular}{lcc}
+\caption{Splits utilizados. A classe positiva é fake/misinformation.}
+\label{tab:data}
+\centering
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{llrrr}
 \toprule
-Bra\c{c}o & F1 & tokens/run \\
+Corpus & Split/cenário & Pos. & Neg. & Total\\
 \midrule
-Real & $0.887 \pm 0.026$ & 0 \\
-Static ($N{=}32$) & $0.789 \pm 0.113$ & $\sim$20k \\
-Static ($N{=}79$) & $0.852 \pm 0.034$ & $\sim$53k \\
-Static ($N{=}158$) & $0.916 \pm 0.013$ & $\sim$103k \\
-\textbf{ActiveInheritance} & $\mathbf{0.924 \pm 0.007}$ & $\sim$645k \\
+Fake.br & treino 10\% & 288 & 2880 & 3168\\
+Fake.br & treino 5\% & 144 & 2880 & 3024\\
+Fake.br & teste fixo & 720 & 720 & 1440\\
 \midrule
-Abla\c{c}\~ao pesos (E4) & $0.930$ & $\sim$651k \\
-Abla\c{c}\~ao top-$k{=}8$ (E5) & $0.919$ & $\sim$657k \\
+FakeWhatsApp & treino full (jul--ago) & 474 & 683 & 1157\\
+FakeWhatsApp & treino 10\% & 47 & 683 & 730\\
+FakeWhatsApp & treino 5\% & 23 & 683 & 706\\
+FakeWhatsApp & validação (setembro) & 1094 & 1308 & 2402\\
+FakeWhatsApp & teste (outubro) & 1733 & 1634 & 3367\\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
-\section{Figuras e An\'alise}
-A Figura~\ref{fig:f1tokens} compara o F1 em fun\c{c}\~ao dos tokens acumulados: o m\'etodo proposto atinge o maior F1, mas \`a custa de um or\c{c}amento de tokens cerca de $6\times$ maior que o melhor Static. A Figura~\ref{fig:f1cycle} mostra o F1 por ciclo, evidenciando o ganho incremental do pool herdado. A Figura~\ref{fig:wass} mostra que a fidelidade (Wasserstein) \'e semelhante entre os m\'etodos. A Figura~\ref{fig:div} mostra que a diversidade do pool cai ao longo dos ciclos --- o canal de diversidade n\~ao impede o top-$k$ de concentrar amostras similares. A Figura~\ref{fig:box} evidencia a menor vari\^ancia entre sementes do m\'etodo proposto. A Figura~\ref{fig:score} decomp\~oe o escore por ciclo.
+O Fake.br~\cite{monteiro2018} contém artigos alinhados em português. Criamos escassez somente no treino e mantivemos holdout balanceado. Uma duplicata textual verdadeira preexistente entre treino/teste foi mantida para preservar comparabilidade e é reportada como limitação.
+
+O FakeWhatsApp.Br~\cite{cabral2021} contém 6.926 mensagens textuais únicas, manualmente rotuladas, de grupos públicos nas eleições de 2018. Usamos texto raw e split temporal: julho--agosto para treino, setembro para validação e outubro para teste. IDs anônimos podem reaparecer entre meses, mas não entram como features.
+
+\subsection{Modelos, Geradores e Protocolo}
+
+O learner principal é BERTimbau~\cite{souza2020}, com três épocas por fit, batch 16 e comprimento máximo 256. A geração principal usa \texttt{deepseek-chat}; uma comparação pequena usa \texttt{gpt-4o-mini}. Três prompts foram avaliados: v1 (notícia genérica), v2 (notícia fictícia curta) e v3 (mensagem fictícia de WhatsApp).
+
+As grades principais usam seeds 42, 43 e 44. No FakeWhatsApp, Static e AI recebem o mesmo teto de 100 mil tokens/run. Static usa em média 347 textos e AI herda 64. Foram também testados um semantic probe (MiniLM congelado + regressão logística) e Laya multilingual como decision model congelado.
+
+\subsection{Métricas}
+
+Reportamos F1, precisão, recall e acurácia da classe positiva, média e desvio populacional entre seeds, tokens, similaridade média, trigram TTR e Wasserstein. Valores menores de similaridade indicam maior diversidade; Wasserstein menor indica maior proximidade ao real no proxy, não veracidade factual. Com somente três seeds, testes não paramétricos têm baixo poder: no Wilcoxon bilateral, o menor $p$ possível é 0,25.
+
+\section{Resultados no Fake.br}
+
+\begin{table}[t]
+\caption{Resultados principais no Fake.br (média $\pm$ desvio).}
+\label{tab:fakebr}
+\centering
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{llrrr}
+\toprule
+Cenário & Braço & F1 & Recall & Tokens/run\\
+\midrule
+10\% & Real & $0{,}887\pm0{,}026$ & 0,803 & 0\\
+10\% & Static 32 & $0{,}789\pm0{,}113$ & 0,669 & 20k\\
+10\% & Static 79 & $0{,}852\pm0{,}034$ & 0,749 & 52k\\
+10\% & Static 158 & $0{,}916\pm0{,}013$ & 0,861 & 103k\\
+10\% & \textbf{AI} & $\mathbf{0{,}924\pm0{,}007}$ & 0,863 & 645k\\
+\midrule
+5\% & \textbf{Real} & $\mathbf{0{,}860\pm0{,}020}$ & 0,759 & 0\\
+5\% & Static 158 & $0{,}855\pm0{,}046$ & 0,753 & 102k\\
+5\% & AI & $0{,}855\pm0{,}015$ & 0,750 & 633k\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+No cenário 10\%, AI alcança o maior F1 e menor variância, mas melhora apenas 0,008 sobre Static 158 usando 6,3 vezes mais tokens. Static com 32 textos colapsa em uma seed (F1 0,629), evidenciando instabilidade em baixo volume. Com 5\%, sintético deixa de ajudar: Real, Static e AI ficam praticamente empatados. A queda do AI de 0,924 para 0,855 sugere que o gate depende de um learner inicial competente.
+
+As ablações com uma seed mostram F1 0,930 ao priorizar erro $(0{,}7,0{,}2,0{,}1)$ e 0,919 ao reduzir top-$k$ a 8. Top-$k$ menor reduz o pool, mas quase não reduz tokens porque o mesmo lote continua sendo gerado.
+
+\section{Experimentos Exploratórios E7--E10}
+
+\begin{table}[t]
+\caption{Experimentos exploratórios (uma seed por configuração).}
+\label{tab:explore}
+\centering
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lllrr}
+\toprule
+Exp. & Configuração & Braço & F1 & Tokens\\
+\midrule
+E7 & semantic probe + v2 & Real & 0,684 & 0\\
+E7 & semantic probe + v2 & Static & 0,487 & 50k\\
+E7 & semantic probe + v2 & AI & 0,578 & 148k\\
+E8 & DeepSeek, N=32 & Static & 0,643 & 10,2k\\
+E8 & GPT-4o-mini, N=32 & Static & 0,645 & 8,0k\\
+E9 & Laya zero-shot & -- & 0,000 & 0\\
+E10 & Laya gate + BERT & AI reduzido & 0,784 & 42k\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+O semantic probe não substitui BERTimbau; sintético reduz seu desempenho. Contudo, o prompt v2 elimina Markdown/recusas, reduz o texto de aproximadamente 359 para 119 palavras e corta pela metade o custo Static. DeepSeek e GPT empatam no pequeno teste; GPT usa 21\% menos tokens. DeepSeek apresenta menor similaridade média do pool (0,426 contra 0,533) e menor Wasserstein (0,189 contra 0,238), sendo mais diverso e próximo do real nesses proxies.
+
+Laya multilingual classifica 1.439 de 1.440 textos como true (ROC-AUC 0,509; F1 fake zero), demonstrando falha zero-shot e calibração inadequada. O piloto Laya-gate não é comparável ao AI completo por usar menos ciclos/épocas; além disso, min-max pode ampliar diferenças sem sinal nas probabilidades.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=.98\textwidth]{full_performance.png}
+\caption{F1 nos experimentos principais. Barras mostram média e desvio em três seeds. ActiveInheritance lidera no Fake.br 10\%; Static lidera nos cenários temporais do FakeWhatsApp.Br.}
+\label{fig:performance}
+\end{figure*}
+
+\section{Resultados no FakeWhatsApp.Br}
+
+\begin{table}[t]
+\caption{FakeWhatsApp.Br com split temporal e orçamento pareado ($\sim$100k tokens).}
+\label{tab:wapp}
+\centering
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{llrrr}
+\toprule
+Cenário & Braço & F1 & Precisão & Recall\\
+\midrule
+Full & Real & $0{,}676\pm0{,}037$ & 0,736 & 0,637\\
+Full & \textbf{Static} & $\mathbf{0{,}715\pm0{,}014}$ & 0,668 & 0,774\\
+Full & AI & $0{,}708\pm0{,}002$ & 0,727 & 0,691\\
+\midrule
+10\% & Real & $0{,}075\pm0{,}024$ & 0,885 & 0,040\\
+10\% & \textbf{Static} & $\mathbf{0{,}229\pm0{,}150}$ & 0,799 & 0,148\\
+10\% & AI & $0{,}179\pm0{,}032$ & 0,783 & 0,101\\
+\midrule
+5\% & Real & $0{,}000\pm0{,}000$ & 0,000 & 0,000\\
+5\% & \textbf{Static} & $\mathbf{0{,}099\pm0{,}105}$ & 0,681 & 0,058\\
+5\% & AI & $0{,}055\pm0{,}019$ & 0,764 & 0,029\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+O novo corpus é substancialmente mais difícil. No cenário full, Static possui maior média, mas AI fica apenas 0,007 abaixo e reduz fortemente a variância. AI usa somente 64 herdados contra cerca de 347 textos Static, indicando eficiência de dados de treino, mas ambos consomem o mesmo orçamento de geração.
+
+Com 10\%/5\%, o learner colapsa para a classe majoritária. Precisão alta mascara recall de 4\% ou zero no Real. Static melhora recall por também rebalancear o treino por volume. AI herda poucos textos (64), insuficientes para compensar 683 negativos, e seu gate recebe sinal fraco do learner inicial. A Fig.~\ref{fig:recall} evidencia que escassez afeta sobretudo o recall.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{fig_f1_vs_tokens.png}
-\caption{F1 $\times$ tokens acumulados (log). AI atinge o topo com mais tokens.}
-\label{fig:f1tokens}
+\includegraphics[width=\columnwidth]{full_recall.png}
+\caption{Recall da classe positiva por corpus e nível de escassez. A queda extrema explica o F1 baixo no FakeWhatsApp.Br.}
+\label{fig:recall}
 \end{figure}
+
+\section{Análise do Mecanismo}
+
+\subsection{Saturação da Incerteza}
+
+A Fig.~\ref{fig:uncertainty} mostra que a incerteza cai rapidamente após o primeiro ciclo. O learner aprende o estilo sintético e torna-se confiante; nos ciclos finais, o termo de entropia quase deixa de contribuir. A seleção passa a depender de erro relativo e diversidade. Isso explica platôs de validação e sustenta early stopping, ensemble/MC-dropout ou recalibração.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{fig_f1_per_cycle.png}
-\caption{F1 por ciclo do ActiveInheritance.}
-\label{fig:f1cycle}
+\includegraphics[width=\columnwidth]{full_uncertainty.png}
+\caption{Incerteza média dos batches AI. Após o primeiro ciclo, o sinal satura em quase todos os cenários.}
+\label{fig:uncertainty}
 \end{figure}
+
+\subsection{Diversidade versus Fidelidade}
+
+A seleção de diversidade reduz repetição no pool, mas não garante realismo: distância de cosseno é calculada contra herdados, não contra dados reais. Wasserstein apenas avalia o resultado. Um candidato pode ser novo e ainda estar fora da distribuição. Esse problema aparece claramente no prompt WhatsApp.
+
+\subsection{Colapso de Template}
+
+Embora v3 elimine Markdown, recusas e duplicatas exatas, 91--93\% das gerações Static começam por ``URGENTE'' e 85--86\% contêm ``acabei de receber''; no real, aproximadamente 1\% e 0\%. AI reduz esses padrões a 29--36\%, mostrando filtragem parcial, mas não os elimina (Fig.~\ref{fig:templates}). Além disso, fake real tem média aproximada de 159 palavras, contra 95--100 nos sintéticos, limitados a 120. A Tabela~\ref{tab:quality} resume os proxies; TTR maior indica mais variedade lexical, enquanto similaridade e Wasserstein menores são preferíveis sob suas respectivas interpretações.
+
+\begin{table}[t]
+\caption{Qualidade do sintético no FakeWhatsApp.Br.}
+\label{tab:quality}
+\centering
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{llrrrr}
+\toprule
+Cenário & Braço & Pool sim. & TTR & Wasserstein & Palavras\\
+\midrule
+Full & Static & 0,413 & 0,598 & 0,162 & 99,7\\
+Full & AI & 0,434 & 0,792 & 0,176 & 95,4\\
+10\% & Static & 0,411 & 0,598 & 0,184 & 99,6\\
+10\% & AI & 0,389 & 0,831 & 0,192 & 95,8\\
+5\% & Static & 0,417 & 0,597 & 0,183 & 99,1\\
+5\% & AI & 0,386 & 0,826 & 0,187 & 96,6\\
+\bottomrule
+\end{tabular}}
+\end{table}
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{fig_wasserstein.png}
-\caption{Wasserstein real $\times$ sint\'etico (fidelidade).}
-\label{fig:wass}
+\includegraphics[width=\columnwidth]{full_templates.png}
+\caption{Artefatos de template no FakeWhatsApp.Br. AI filtra redundância, mas permanece distante do real.}
+\label{fig:templates}
 \end{figure}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{fig_diversity_cycle.png}
-\caption{Diversidade do pool (similaridade m\'edia) por ciclo.}
-\label{fig:div}
-\end{figure}
+\section{Discussão}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{fig_f1_boxplot.png}
-\caption{Consist\^encia entre sementes (boxplot de F1).}
-\label{fig:box}
-\end{figure}
+\subsection{Por que AI funciona somente em alguns cenários?}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{fig_score_decomp.png}
-\caption{Decomposi\c{c}\~ao do escore (erro, incerteza, diversidade) por ciclo.}
-\label{fig:score}
-\end{figure}
+ActiveInheritance forma um ciclo de feedback: o learner escolhe exemplos que depois alteram o próprio learner. Quando a base inicial é forte, como no Fake.br 10\%, erro/incerteza são sinais razoáveis. Sob escassez severa, o learner prevê quase tudo como true; o gate passa a herdar seus vieses. Além disso, erro alto pode significar exemplo informativo, mas também outlier artificial, texto ambíguo ou rótulo presumido incorreto.
 
-\section{Discuss\~oes}
-Tr\^es achados principais emergem. \textbf{(1) Consist\^encia:} o m\'etodo proposto tem o menor desvio entre sementes ($0.007$), enquanto o Static com $N{=}32$ colapsa em uma semente (F1 $0.63$) --- evid\^encia de que a gera\c{c}\~ao est\'atica em baixo volume pode envenenar a distribui\c{c}\~ao, como alertado por~\cite{souza2025}. \textbf{(2) F1:} o m\'etodo atinge $0.924$, acima do melhor Static ($0.916$) e do Real ($0.887$), embora a diferen\c{c}a n\~ao seja estatisticamente significativa com $n{=}3$ sementes (Wilcoxon $p{=}0.25$; Kruskal-Wallis $p{=}0.15$). \textbf{(3) Efici\^encia:} a hip\'otese de custo n\~ao foi confirmada --- o m\'etodo gera $320$ amostras por run ($\sim$645k tokens) contra $158$ do melhor Static ($\sim$103k tokens) para F1 compar\'avel. Para testar a tese de efici\^encia, seria necess\'ario reduzir o lote do m\'etodo (ex.: lote $32$) para igualar o or\c{c}amento de tokens do Static.
+Static possui uma vantagem adicional: atua como rebalanceamento. No FakeWhatsApp 5\%, Real começa com 23 positivos/683 negativos; AI termina com 87 positivos (23+64), enquanto Static adiciona cerca de 347 e aproxima as classes. Isso explica recall médio maior, mesmo com sintéticos imperfeitos.
 
-\section{Conclus\~ao}
-A Heran\c{c}a Ativa produziu o classificador mais consistente e com o maior F1 no cen\'ario de escassez, mas n\~ao demonstrou vantagem de efici\^encia de tokens na configura\c{c}\~ao atual. Como trabalho futuro, planeja-se: (i) igualar os or\c{c}amentos de tokens entre os bra\c{c}os; (ii) calibrar o canal de diversidade para evitar a concentra\c{c}\~ao do pool; e (iii) avaliar o protocolo TSTR (treinar apenas no sint\'etico).
+\subsection{O que foi e não foi confirmado}
 
+Os dados apoiam parcialmente que AI:
+
+\begin{itemize}
+\item reduz variância entre seeds;
+\item filtra templates e redundância;
+\item alcança desempenho próximo ao Static com pool herdado menor;
+\item funciona melhor quando o learner inicial é competente.
+\end{itemize}
+
+Não apoiam que AI:
+
+\begin{itemize}
+\item seja mais eficiente em tokens;
+\item supere consistentemente geração estática;
+\item resolva escassez extrema;
+\item funcione com qualquer decision model zero-shot.
+\end{itemize}
+
+\subsection{Limitações}
+
+Além do baixo número de seeds, rótulos sintéticos são assumidos como fake sem checagem factual humana. No Fake.br, real pré-processado e sintético raw podem criar atalhos. No FakeWhatsApp, usuários podem reaparecer temporalmente, embora ID não seja feature. O BERT não usa class weighting/sampler balanceado, confundindo qualidade sintética com política de treino. Veracidade factual pode exigir evidência externa, não apenas estilo. Métricas de embedding são proxies, e TTR depende do tamanho do conjunto.
+
+\section{Próximos Passos}
+
+Prioridades: (i) class weighting ou sampler balanceado no learner; (ii) prompt que amostre aberturas e comprimentos reais e evite templates dominantes; (iii) early stopping e orçamento pareado; (iv) ao menos 10 seeds nas comparações finais; (v) dados raw nos dois lados no Fake.br; (vi) validação humana de sintéticos; (vii) fine-tuning/calibração do decision model em treino/validação; e (viii) terceiro domínio, como COVID19.BR.
+
+\section{Conclusão}
+
+A hipótese de Herança Ativa foi parcialmente confirmada. No Fake.br 10\%, o método alcança maior F1 e menor variabilidade, porém com custo de tokens muito superior. No FakeWhatsApp.Br, Static apresenta maior média, enquanto AI é mais estável, filtra artefatos e obtém desempenho próximo com muito menos amostras herdadas. Sob 10\%/5\%, o baixo recall domina e nenhum método é operacionalmente satisfatório.
+
+Assim, ActiveInheritance deve ser entendido como um mecanismo de \textbf{curadoria e estabilidade}, não como superioridade universal. Seu benefício depende de um learner inicial suficientemente competente, alinhamento entre distribuições real/sintética e um gerador sem templates dominantes. A implementação atual melhora consistência e reduz redundância, mas ainda não melhora eficiência de geração nem resolve escassez extrema.
+
+\section*{Reprodutibilidade}
+
+Foram preservados 60 JSONs oficiais em grupos separados, sem sobrescrita. Código, scripts, metadados e análises estão no repositório público\footnote{\url{https://github.com/Edu-p/active-inheritance-fraud}}. O protocolo completo e as análises detalhadas estão nos diretórios \path{docs/} e \path{planning/}. O FakeWhatsApp foi baixado com SHA-256 verificado; splits e contagens estão em \path{dataset/fakewhatsapp/metadata.json}.
+
+\balance
 \footnotesize
-\bibliographystyle{IEEEtran}
 \begin{thebibliography}{00}
 
 \bibitem{souza2025}
-M.~D. de Souza and C.~Zanchettin,
-``Breaking the Barrier of Hard Samples: A Data-Centric Approach to Synthetic Data for Medical Tasks,''
-in \emph{Proc. ICML}, 2025.
-
-\bibitem{seedat2022}
-N.~Seedat, J.~Crabb\'e, and M.~van der Schaar,
-``Data-IQ: Characterizing subgroups with heterogeneous outcomes in tabular data,''
-in \emph{Proc. NeurIPS}, 2022.
+M.~D. de Souza and C.~Zanchettin, ``Breaking the Barrier of Hard Samples: A Data-Centric Approach to Synthetic Data for Medical Tasks,'' in \emph{Proc. ICML}, 2025.
 
 \bibitem{monteiro2018}
-R.~Monteiro, R.~Santos, T.~Pardo, T.~de Almeida, E.~Ruiz, and O.~Vale,
-``Contributions to the study of fake news in Portuguese: New corpus and automatic detection results,''
-in \emph{Proc. PROPOR}, 2018.
+R.~Monteiro, R.~Santos, T.~Pardo, T.~de Almeida, E.~Ruiz, and O.~Vale, ``Contributions to the Study of Fake News in Portuguese: New Corpus and Automatic Detection Results,'' in \emph{Proc. PROPOR}, 2018.
+
+\bibitem{cabral2021}
+L.~Cabral et al., ``FakeWhatsApp.Br: NLP and Machine Learning Techniques for Misinformation Detection in Brazilian Portuguese WhatsApp Messages,'' in \emph{Proc. ICEIS}, 2021.
 
 \bibitem{souza2020}
-F.~Souza, R.~Nogueira, and R.~Lotufo,
-``BERTimbau: Pretrained BERT models for Brazilian Portuguese,''
-in \emph{Proc. BRACIS}, 2020.
-
-\bibitem{reimers2019}
-N.~Reimers and I.~Gurevych,
-``Sentence-BERT: Sentence embeddings using Siamese BERT-networks,''
-in \emph{Proc. EMNLP}, 2019.
+F.~Souza, R.~Nogueira, and R.~Lotufo, ``BERTimbau: Pretrained BERT Models for Brazilian Portuguese,'' in \emph{Proc. BRACIS}, 2020.
 
 \bibitem{shumailov2024}
-I.~Shumailov et al.,
-``AI models collapse when trained on recursively generated data,''
-\emph{Nature}, vol.~631, 2024.
-
-\bibitem{alaa2022}
-A.~Alaa, B.~van Breugel, E.~Saveliev, and M.~van der Schaar,
-``How faithful is your synthetic data? Sample-level metrics for evaluating and auditing generative models,''
-in \emph{Proc. ICML}, 2022.
+I.~Shumailov et al., ``AI Models Collapse When Trained on Recursively Generated Data,'' \emph{Nature}, vol.~631, 2024.
 
 \end{thebibliography}
 

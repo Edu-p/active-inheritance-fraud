@@ -2,41 +2,56 @@
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
-\citation{souza2025}
 \citation{shumailov2024}
 \citation{souza2025}
-\@writefile{toc}{\contentsline {section}{\numberline {I}Introdu\c {c}\~ao}{1}{section.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Heran\c {c}a Ativa (loop c\'iclico).}}{1}{figure.1}\protected@file@percent }
-\newlabel{alg:ai}{{1}{1}{Heran\c {c}a Ativa (loop c\'iclico)}{figure.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {II}Solu\c {c}\~ao Proposta}{1}{section.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {III}Experimentos}{1}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Configura\c {c}\~ao}{1}{subsection.3.1}\protected@file@percent }
-\citation{souza2025}
-\bibstyle{IEEEtran}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introdução}{1}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {II}Método Proposto}{1}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-A}}Loop de Herança Ativa}{1}{subsection.2.1}\protected@file@percent }
+\newlabel{eq:score}{{1}{1}{Loop de Herança Ativa}{equation.2.1}{}}
+\newlabel{eq:entropy}{{3}{1}{Loop de Herança Ativa}{equation.2.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}Baselines}{1}{subsection.2.2}\protected@file@percent }
+\citation{monteiro2018}
+\citation{cabral2021}
+\citation{souza2020}
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Splits utilizados. A classe positiva é fake/misinformation.}}{2}{table.1}\protected@file@percent }
+\newlabel{tab:data}{{I}{2}{Splits utilizados. A classe positiva é fake/misinformation}{table.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {III}Configuração Experimental}{2}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Datasets e Splits}{2}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Modelos, Geradores e Protocolo}{2}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Métricas}{2}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Resultados no Fake.br}{2}{section.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Resultados principais no Fake.br (média $\pm $ desvio).}}{2}{table.2}\protected@file@percent }
+\newlabel{tab:fakebr}{{II}{2}{Resultados principais no Fake.br (média $\pm $ desvio)}{table.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Experimentos exploratórios (uma seed por configuração).}}{2}{table.3}\protected@file@percent }
+\newlabel{tab:explore}{{III}{2}{Experimentos exploratórios (uma seed por configuração)}{table.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Experimentos Exploratórios E7--E10}{2}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Resultados no FakeWhatsApp.Br}{2}{section.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces F1 nos experimentos principais. Barras mostram média e desvio em três seeds. ActiveInheritance lidera no Fake.br 10\%; Static lidera nos cenários temporais do FakeWhatsApp.Br.}}{3}{figure.1}\protected@file@percent }
+\newlabel{fig:performance}{{1}{3}{F1 nos experimentos principais. Barras mostram média e desvio em três seeds. ActiveInheritance lidera no Fake.br 10\%; Static lidera nos cenários temporais do FakeWhatsApp.Br}{figure.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces FakeWhatsApp.Br com split temporal e orçamento pareado ($\sim $100k tokens).}}{3}{table.4}\protected@file@percent }
+\newlabel{tab:wapp}{{IV}{3}{FakeWhatsApp.Br com split temporal e orçamento pareado ($\sim $100k tokens)}{table.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Recall da classe positiva por corpus e nível de escassez. A queda extrema explica o F1 baixo no FakeWhatsApp.Br.}}{3}{figure.2}\protected@file@percent }
+\newlabel{fig:recall}{{2}{3}{Recall da classe positiva por corpus e nível de escassez. A queda extrema explica o F1 baixo no FakeWhatsApp.Br}{figure.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Análise do Mecanismo}{3}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-A}}Saturação da Incerteza}{3}{subsection.7.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Incerteza média dos batches AI. Após o primeiro ciclo, o sinal satura em quase todos os cenários.}}{3}{figure.3}\protected@file@percent }
+\newlabel{fig:uncertainty}{{3}{3}{Incerteza média dos batches AI. Após o primeiro ciclo, o sinal satura em quase todos os cenários}{figure.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-B}}Diversidade versus Fidelidade}{3}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-C}}Colapso de Template}{3}{subsection.7.3}\protected@file@percent }
 \bibcite{souza2025}{1}
-\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces F1 no teste e custo por bra\c {c}o (m\'edia $\pm $ desvio entre 3 sementes).}}{2}{table.1}\protected@file@percent }
-\newlabel{tab:res}{{I}{2}{F1 no teste e custo por bra\c {c}o (m\'edia $\pm $ desvio entre 3 sementes)}{table.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces F1 $\times $ tokens acumulados (log). AI atinge o topo com mais tokens.}}{2}{figure.2}\protected@file@percent }
-\newlabel{fig:f1tokens}{{2}{2}{F1 $\times $ tokens acumulados (log). AI atinge o topo com mais tokens}{figure.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Resultados}{2}{subsection.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {IV}Figuras e An\'alise}{2}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {V}Discuss\~oes}{2}{section.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces F1 por ciclo do ActiveInheritance.}}{2}{figure.3}\protected@file@percent }
-\newlabel{fig:f1cycle}{{3}{2}{F1 por ciclo do ActiveInheritance}{figure.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Wasserstein real $\times $ sint\'etico (fidelidade).}}{2}{figure.4}\protected@file@percent }
-\newlabel{fig:wass}{{4}{2}{Wasserstein real $\times $ sint\'etico (fidelidade)}{figure.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {VI}Conclus\~ao}{2}{section.6}\protected@file@percent }
-\bibcite{seedat2022}{2}
-\bibcite{monteiro2018}{3}
+\bibcite{monteiro2018}{2}
+\bibcite{cabral2021}{3}
 \bibcite{souza2020}{4}
-\bibcite{reimers2019}{5}
-\bibcite{shumailov2024}{6}
-\bibcite{alaa2022}{7}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Diversidade do pool (similaridade m\'edia) por ciclo.}}{3}{figure.5}\protected@file@percent }
-\newlabel{fig:div}{{5}{3}{Diversidade do pool (similaridade m\'edia) por ciclo}{figure.5}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Consist\^encia entre sementes (boxplot de F1).}}{3}{figure.6}\protected@file@percent }
-\newlabel{fig:box}{{6}{3}{Consist\^encia entre sementes (boxplot de F1)}{figure.6}{}}
-\@writefile{toc}{\contentsline {section}{References}{3}{section*.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Decomposi\c {c}\~ao do escore (erro, incerteza, diversidade) por ciclo.}}{3}{figure.7}\protected@file@percent }
-\newlabel{fig:score}{{7}{3}{Decomposi\c {c}\~ao do escore (erro, incerteza, diversidade) por ciclo}{figure.7}{}}
-\gdef \@abspage@last{3}
+\bibcite{shumailov2024}{5}
+\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Qualidade do sintético no FakeWhatsApp.Br.}}{4}{table.5}\protected@file@percent }
+\newlabel{tab:quality}{{V}{4}{Qualidade do sintético no FakeWhatsApp.Br}{table.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Artefatos de template no FakeWhatsApp.Br. AI filtra redundância, mas permanece distante do real.}}{4}{figure.4}\protected@file@percent }
+\newlabel{fig:templates}{{4}{4}{Artefatos de template no FakeWhatsApp.Br. AI filtra redundância, mas permanece distante do real}{figure.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VIII}Discussão}{4}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-A}}Por que AI funciona somente em alguns cenários?}{4}{subsection.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-B}}O que foi e não foi confirmado}{4}{subsection.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-C}}Limitações}{4}{subsection.8.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {IX}Próximos Passos}{4}{section.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {X}Conclusão}{4}{section.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{References}{4}{section*.2}\protected@file@percent }
+\gdef \@abspage@last{4}

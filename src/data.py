@@ -13,17 +13,19 @@ def _texts_labels(df, cfg):
 
 
 def load_experiment_data(cfg):
-    """train/val = scarce pool (10% fake); test = balanced holdout (intacto)."""
+    """Load fixed train/test; use a supplied temporal validation set or split train."""
     train_df = pd.read_csv(cfg.csv_path)
     test_df = pd.read_csv(cfg.test_csv_path)
 
     tr_texts, tr_y = _texts_labels(train_df, cfg)
     te_texts, te_y = _texts_labels(test_df, cfg)
-
-    tr_texts, va_texts, tr_y, va_y = train_test_split(
-        tr_texts, tr_y,
-        test_size=cfg.val_size,
-        random_state=cfg.random_state,
-        stratify=tr_y,
-    )
+    if cfg.val_csv_path:
+        va_texts, va_y = _texts_labels(pd.read_csv(cfg.val_csv_path), cfg)
+    else:
+        tr_texts, va_texts, tr_y, va_y = train_test_split(
+            tr_texts, tr_y,
+            test_size=cfg.val_size,
+            random_state=cfg.random_state,
+            stratify=tr_y,
+        )
     return (tr_texts, tr_y), (va_texts, va_y), (te_texts, te_y)

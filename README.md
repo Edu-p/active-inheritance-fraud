@@ -6,7 +6,9 @@ Implements **Active Inheritance**: a cyclic LLM generation loop for fraudulent-t
 
 Baseline: [profile2gen](https://github.com/szanara/profile2gen) (Maynara et al., ICML 2025).
 
-📄 **Análise consolidada E1–E10:** [`docs/analise_completa_experimentos.md`](docs/analise_completa_experimentos.md)
+📄 **Histórico completo (ideia, baselines, E1–E10, FakeWhatsApp e conclusões):** [`docs/historico_completo_projeto.md`](docs/historico_completo_projeto.md)
+
+Análises detalhadas: [`docs/analise_completa_experimentos.md`](docs/analise_completa_experimentos.md) · [`docs/analise_fakewhatsapp.md`](docs/analise_fakewhatsapp.md)
 
 Outros docs: [`docs/implementation.md`](docs/implementation.md) · [`planning/PLAN.md`](planning/PLAN.md) · [`planning/RUN.md`](planning/RUN.md) · [`planning/HANDOFF.md`](planning/HANDOFF.md) · [Seguimento noturno](planning/FOLLOWUP_NIGHT.md)
 
@@ -24,7 +26,7 @@ Outros docs: [`docs/implementation.md`](docs/implementation.md) · [`planning/PL
 | Static N=158 | 0.916 ± 0.013 | ~103k |
 | **ActiveInheritance** | **0.924 ± 0.007** | ~645k |
 
-> ActiveInheritance é o mais consistente (menor desvio entre seeds) e atinge o topo de F1, mas **não** supera o Static em eficiência de tokens na config atual (batch 64 × 5 ciclos). Análise completa em `report-latex/main.pdf`.
+> ActiveInheritance é o mais consistente (menor desvio entre seeds) e atinge o topo de F1, mas **não** supera o Static em eficiência de tokens na config atual (batch 64 × 5 ciclos). Relatório completo E1–E10 + FakeWhatsApp em [`report-latex/relatorio-completo-active-inheritance.pdf`](report-latex/relatorio-completo-active-inheritance.pdf).
 
 ---
 

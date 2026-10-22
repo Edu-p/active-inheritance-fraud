@@ -90,6 +90,9 @@ def main() -> None:
     gen.prompt_version, gen.calls = "v2", 0
     system, user = gen._prompt([])
     assert "FICTÍCIO" in system and "saúde pública" in user
+    gen.prompt_version = "v3"
+    system, user = gen._prompt([], 1)
+    assert "WhatsApp" in system and "eleições" in user and "Markdown" in system
 
     class Response:
         def __enter__(self): return self

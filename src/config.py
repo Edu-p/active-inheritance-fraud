@@ -10,6 +10,7 @@ class Config:
     # ---- Data ----
     csv_path: Path = Path("dataset/pre-processed-imbalanced.csv")  # scarce train pool
     test_csv_path: Path = Path("dataset/pre-processed-test.csv")   # balanced holdout
+    val_csv_path: Path | None = None  # optional fixed/temporal validation set
     text_col: str = "preprocessed_news"
     label_col: str = "label"
     positive_label: str = "fake"  # class generated synthetically (fraudulent)
@@ -41,8 +42,9 @@ class Config:
     openai_model: str = "gpt-4o-mini"
     openai_base_url: str = ""  # empty -> OpenAI default endpoint
     gen_max_tokens: int = 1024  # max_completion_tokens por amostra sintética
-    prompt_version: str = "v1"  # "v1" (reprodução anterior) | "v2" (notícia fictícia)
+    prompt_version: str = "v1"  # v1/v2 historical; v3 = WhatsApp misinformation
     max_run_tokens: int = 1_000_000
+    generator_workers: int = 1
 
     # ---- Active Inheritance loop ----
     epochs: int = 5            # T

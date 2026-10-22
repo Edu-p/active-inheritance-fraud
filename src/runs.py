@@ -29,7 +29,7 @@ def experiment_tag(cfg, arm):
 
 def save_run(cfg, out, tag="run"):
     exp = getattr(cfg, "run_group", "") or experiment_tag(cfg, out.get("arm", tag))
-    if exp not in {"e6-5pct", "e7-probe", "e8-generators", "e9-laya", "e10-laya-gate", "sandbox"} and getattr(cfg, "run_group", ""):
+    if exp not in {"e6-5pct", "e7-probe", "e8-generators", "e9-laya", "e10-laya-gate", "fakewhatsapp-full", "fakewhatsapp-10pct", "fakewhatsapp-5pct", "sandbox"} and getattr(cfg, "run_group", ""):
         raise ValueError(f"Run group inválido: {exp}")
     seed = getattr(cfg, "random_state", "?")
     run_dir = cfg.output_dir / exp / (
