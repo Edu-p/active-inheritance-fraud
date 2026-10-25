@@ -11,7 +11,12 @@ from src.embedder import SemanticEmbedder, TfidfEmbedder
 from src.generator import MockGenerator, OpenAIGenerator
 from src.learner import Learner
 from src.probe import SemanticProbe
-from src.metrics import classification_metrics, synthetic_quality
+from src.metrics import (
+    best_threshold,
+    classification_metrics,
+    probabilistic_metrics,
+    synthetic_quality,
+)
 from src.runs import save_run
 
 
@@ -29,11 +34,12 @@ def parse_args() -> Config:
     p.add_argument("--model", dest="openai_model",
                    default=os.getenv("OPENAI_MODEL", "deepseek-flash"))
     p.add_argument("--base-url", dest="openai_base_url", default="")
-    p.add_argument("--prompt-version", choices=["v1", "v2", "v3"], default="v1")
+    p.add_argument("--prompt-version", choices=["v1", "v2", "v3", "v4"], default="v1")
     p.add_argument("--max-run-tokens", type=int, default=1_000_000)
     p.add_argument("--gen-max-tokens", type=int, default=1024)
     p.add_argument("--generator-workers", type=int, default=1)
-    p.add_argument("--run-group", choices=["e6-5pct", "e7-probe", "e8-generators", "fakewhatsapp-full", "fakewhatsapp-10pct", "fakewhatsapp-5pct", "sandbox"], default="")
+    p.add_argument("--zero-shot", dest="zero_shot", action="store_true")
+    p.add_argument("--run-group", default="")
 
     p.add_argument("--learner-model", default="neuralmind/bert-base-portuguese-cased")
     p.add_argument("--learner-kind", choices=["bert", "semantic-probe"], default="bert")
@@ -42,6 +48,9 @@ def parse_args() -> Config:
     p.add_argument("--learner-batch-size", type=int, default=16)
     p.add_argument("--max-length", type=int, default=256)
     p.add_argument("--device", default="")
+    p.add_argument("--class-weight", dest="class_weight", action="store_true")
+    p.add_argument("--final-from-scratch", dest="final_from_scratch", action="store_true")
+    p.add_argument("--threshold-tune", dest="threshold_tune", action="store_true")
 
     p.add_argument("--embedder", choices=["semantic", "tfidf"], default="semantic")
     p.add_argument("--semantic-model",
@@ -69,27 +78,39 @@ def new_learner(cfg, embedder=None):
         max_length=cfg.max_length,
         device=cfg.device or None,
         random_state=cfg.random_state,
+        class_weight=cfg.class_weight,
     )
 
 
-def evaluate(learner, test):
-    return classification_metrics(test[1], learner.predict_class(test[0]))
+def evaluate(learner, texts, y, threshold=None):
+    proba = learner.predict(texts)[:, 1]
+    thr = threshold if threshold is not None else 0.5
+    pred = (proba >= thr).astype(int)
+    out = classification_metrics(y, pred)
+    out.update(probabilistic_metrics(y, proba))
+    out["threshold"] = float(thr)
+    return out
 
 
-def run_real(cfg, train, test, embedder):
+def tune(learner, val):
+    return best_threshold(val[1], learner.predict(val[0])[:, 1])
+
+
+def run_real(cfg, train, val, test, embedder):
     learner = new_learner(cfg, embedder)
     loss = learner.fit(train[0], train[1], epochs=cfg.learner_epochs)
+    thr = tune(learner, val) if cfg.threshold_tune else None
     return {
         "arm": "real",
         "loss": float(loss),
-        "test": evaluate(learner, test),
+        "test": evaluate(learner, test[0], test[1], thr),
         "tokens_used": 0,
         "synthetic": [],
         "n_synthetic": 0,
     }
 
 
-def run_static(cfg, train, test, embedder, n_samples):
+def run_static(cfg, train, val, test, embedder, n_samples):
     if cfg.generator == "mock":
         seed_fake = [t for t, lab in zip(train[0], train[1]) if lab == 1]
         generator = MockGenerator(seed_fake, random_state=cfg.random_state)
@@ -102,12 +123,16 @@ def run_static(cfg, train, test, embedder, n_samples):
     combined_texts = train[0] + synth
     combined_y = train[1] + [1] * len(synth)
     loss = learner.fit(combined_texts, combined_y, epochs=cfg.learner_epochs)
+    thr = tune(learner, val) if cfg.threshold_tune else None
 
     return {
         "arm": "static",
         "loss": float(loss),
-        "test": evaluate(learner, test),
+        "test": evaluate(learner, test[0], test[1], thr),
         "tokens_used": int(generator.tokens_used),
+        "prompt_tokens": int(getattr(generator, "prompt_tokens", 0)),
+        "completion_tokens": int(getattr(generator, "completion_tokens", 0)),
+        "cost_usd": float(getattr(generator, "cost_usd", 0.0)),
         "synthetic": synth,
         "n_synthetic": len(synth),
         "quality": synthetic_quality(embedder, train[0], synth),
@@ -116,14 +141,14 @@ def run_static(cfg, train, test, embedder, n_samples):
 
 def main() -> None:
     cfg = parse_args()
-    train, _, test = load_experiment_data(cfg)
+    train, val, test = load_experiment_data(cfg)
     embedder = build_embedder(cfg, train[0])
 
     if cfg.arm == "real":
-        out = run_real(cfg, train, test, embedder)
+        out = run_real(cfg, train, val, test, embedder)
         out["quality"] = synthetic_quality(embedder, train[0], [])
     else:
-        out = run_static(cfg, train, test, embedder, cfg.n_samples)
+        out = run_static(cfg, train, val, test, embedder, cfg.n_samples)
 
     print(f"\n=== {cfg.arm} — test ===")
     for k, v in out["test"].items():

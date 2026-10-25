@@ -1,7 +1,12 @@
 """Central Active Inheritance loop."""
 from __future__ import annotations
 
-from .metrics import classification_metrics, diversity_metrics
+from .metrics import (
+    best_threshold,
+    classification_metrics,
+    diversity_metrics,
+    probabilistic_metrics,
+)
 
 
 class ActiveInheritancePipeline:
@@ -62,13 +67,41 @@ class ActiveInheritancePipeline:
                 "inherited_total": len(inherited),
                 "pool_diversity": diversity_metrics(inherited, self.embedder),
                 "tokens_used": int(self.generator.tokens_used),
+                "prompt_tokens": int(getattr(self.generator, "prompt_tokens", 0)),
+                "completion_tokens": int(getattr(self.generator, "completion_tokens", 0)),
+                "cost_usd": float(getattr(self.generator, "cost_usd", 0.0)),
                 "mean_score_topk": mean_score,
                 "score_parts": parts,
+                "candidates": batch,   # todos os candidatos do ciclo (p/ Random-k/Easy-k)
+                "selected": selected,
+                "n_fake_real": int(sum(tr_y)),
+                "n_true_real": int(len(tr_y) - sum(tr_y)),
+                "n_fake_train": int(sum(combined_y)),
+                "n_true_train": int(len(combined_y) - sum(combined_y)),
             })
 
-        test_metrics = self._evaluate(te_texts, te_y)
+        # Treino final do zero em D0 ∪ H, igual aos baselines (default off p/ repro histórico).
+        if getattr(cfg, "final_from_scratch", False):
+            self.learner.fit(
+                tr_texts + inherited,
+                tr_y + [1] * len(inherited),
+                epochs=cfg.learner_epochs,
+                from_scratch=True,
+            )
+
+        threshold = self._tune_threshold(va_texts, va_y) if getattr(cfg, "threshold_tune", False) else None
+        test_metrics = self._evaluate(te_texts, te_y, threshold)
         return history, test_metrics, inherited
 
-    def _evaluate(self, texts, y):
-        pred = self.learner.predict_class(texts)
-        return classification_metrics(y, pred)
+    def _tune_threshold(self, texts, y):
+        proba = self.learner.predict(texts)[:, 1]
+        return best_threshold(y, proba)
+
+    def _evaluate(self, texts, y, threshold=None):
+        proba = self.learner.predict(texts)[:, 1]
+        thr = threshold if threshold is not None else 0.5
+        pred = (proba >= thr).astype(int)
+        out = classification_metrics(y, pred)
+        out.update(probabilistic_metrics(y, proba))
+        out["threshold"] = float(thr)
+        return out

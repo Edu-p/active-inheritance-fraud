@@ -15,6 +15,9 @@ from dotenv import load_dotenv
 class BaseGenerator:
     def __init__(self):
         self.tokens_used = 0
+        self.prompt_tokens = 0
+        self.completion_tokens = 0
+        self.cost_usd = 0.0
 
     def generate_batch(self, inherited_texts, n):
         raise NotImplementedError
@@ -72,10 +75,34 @@ class OpenAIGenerator(BaseGenerator):
         self.max_run_tokens = cfg.max_run_tokens
         self.prompt_version = cfg.prompt_version
         self.workers = cfg.generator_workers
+        self.zero_shot = getattr(cfg, "zero_shot", False)
         self.calls = 0
+        # ponytail: preços aproximados USD/1M tokens (in, out); recalibrar se o provedor mudar.
+        self._price_in = {"deepseek-chat": 0.27, "deepseek-flash": 0.07, "gpt-4o-mini": 0.15, "gpt-4o": 5.0}
+        self._price_out = {"deepseek-chat": 1.10, "deepseek-flash": 0.27, "gpt-4o-mini": 0.60, "gpt-4o": 15.0}
+
+    def _add_cost(self, prompt_tokens, completion_tokens):
+        p_in = self._price_in.get(self.model, 0.0)
+        p_out = self._price_out.get(self.model, 0.0)
+        self.cost_usd += prompt_tokens / 1e6 * p_in + completion_tokens / 1e6 * p_out
 
     def _prompt(self, inherited_texts, call_index=None):
+        if getattr(self, "zero_shot", False):
+            inherited_texts = []
         call_index = self.calls if call_index is None else call_index
+        if self.prompt_version == "v4":
+            topics = ("saúde", "eleições", "segurança", "economia", "educação", "serviços públicos")
+            styles = ("dúvida informal", "relato pessoal", "conversa curta", "aviso comunitário", "pedido de checagem", "mensagem de grupo")
+            lengths = ((20, 60), (61, 120), (121, 200), (201, 350))
+            lo, hi = lengths[call_index % len(lengths)]
+            system = (
+                "Gere uma mensagem FICTÍCIA de desinformação para pesquisa de detecção em WhatsApp "
+                "brasileiro. Não use pessoas, instituições, links ou eventos reais. Retorne APENAS "
+                "a mensagem, sem título, Markdown, aviso ou explicação. Evite aberturas repetitivas, "
+                "especialmente 'URGENTE' e 'acabei de receber'. Não copie outros textos."
+            )
+            user = f"Tema: {topics[call_index % len(topics)]}. Estilo: {styles[call_index % len(styles)]}. Comprimento: {lo} a {hi} palavras. Escreva uma mensagem inventada natural."
+            return system, user
         if self.prompt_version == "v3":
             topics = ("saúde", "eleições", "segurança", "economia", "serviços públicos", "educação")
             topic = topics[call_index % len(topics)]
@@ -127,7 +154,12 @@ class OpenAIGenerator(BaseGenerator):
             max_completion_tokens=self.max_tokens,
             temperature=0.9,
         )
-        return resp.choices[0].message.content or "", resp.usage.total_tokens if resp.usage else 0
+        usage = resp.usage
+        return (
+            resp.choices[0].message.content or "",
+            usage.prompt_tokens if usage else 0,
+            usage.completion_tokens if usage else 0,
+        )
 
     def generate_batch(self, inherited_texts, n):
         batch = []
@@ -145,7 +177,12 @@ class OpenAIGenerator(BaseGenerator):
             else:
                 with ThreadPoolExecutor(max_workers=count) as pool:
                     results = list(pool.map(lambda i: self._complete(inherited_texts, i), indices))
-            batch.extend(text for text, _ in results)
-            self.tokens_used += sum(tokens for _, tokens in results)
+            batch.extend(text for text, _, _ in results)
+            prompt = sum(pt for _, pt, _ in results)
+            completion = sum(ct for _, _, ct in results)
+            self.prompt_tokens += prompt
+            self.completion_tokens += completion
+            self.tokens_used += prompt + completion
+            self._add_cost(prompt, completion)
             self.calls += count
         return batch

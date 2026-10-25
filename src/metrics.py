@@ -2,7 +2,14 @@
 from __future__ import annotations
 
 import numpy as np
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
+from sklearn.metrics import (
+    accuracy_score,
+    average_precision_score,
+    f1_score,
+    precision_score,
+    recall_score,
+    roc_auc_score,
+)
 from sklearn.metrics.pairwise import cosine_similarity
 
 
@@ -13,6 +20,24 @@ def classification_metrics(y_true, y_pred):
         "precision": float(precision_score(y_true, y_pred, zero_division=0)),
         "recall": float(recall_score(y_true, y_pred, zero_division=0)),
     }
+
+
+def probabilistic_metrics(y_true, y_prob):
+    """ROC-AUC e PR-AUC da classe positiva a partir das probabilidades P(classe 1)."""
+    return {
+        "roc_auc": float(roc_auc_score(y_true, y_prob)),
+        "pr_auc": float(average_precision_score(y_true, y_prob)),
+    }
+
+
+def best_threshold(y_true, y_prob):
+    """Limiar que maximiza F1 em [0.05, 0.95] — usado na validação."""
+    best_t, best_f = 0.5, -1.0
+    for t in np.linspace(0.05, 0.95, 91):
+        f = f1_score(y_true, (y_prob >= t).astype(int), zero_division=0)
+        if f > best_f:
+            best_f, best_t = f, t
+    return float(best_t)
 
 
 def diversity_metrics(texts, embedder):

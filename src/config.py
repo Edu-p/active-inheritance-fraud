@@ -35,6 +35,9 @@ class Config:
     learner_batch_size: int = 16
     max_length: int = 256
     device: str = ""  # empty -> auto (cuda if available)
+    class_weight: bool = False       # pondera cross-entropy pelos rótulos de cada fit
+    final_from_scratch: bool = False # no fim, treina BERT novo em D0 ∪ H (default off = repro histórico)
+    threshold_tune: bool = False     # ajusta limiar na validação (default off = 0.5)
 
     # ---- Generator ----
     generator: str = "mock"  # "mock" | "openai"
@@ -42,9 +45,10 @@ class Config:
     openai_model: str = "gpt-4o-mini"
     openai_base_url: str = ""  # empty -> OpenAI default endpoint
     gen_max_tokens: int = 1024  # max_completion_tokens por amostra sintética
-    prompt_version: str = "v1"  # v1/v2 historical; v3 = WhatsApp misinformation
+    prompt_version: str = "v1"  # v1/v2 historical; v3 WhatsApp; v4 anti-template
     max_run_tokens: int = 1_000_000
     generator_workers: int = 1
+    zero_shot: bool = False  # prompt sem exemplos herdados (iguala Static e AI)
 
     # ---- Active Inheritance loop ----
     epochs: int = 5            # T

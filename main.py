@@ -39,11 +39,12 @@ def parse_args() -> Config:
     p.add_argument("--model", dest="openai_model",
                    default=os.getenv("OPENAI_MODEL", "deepseek-flash"))
     p.add_argument("--base-url", dest="openai_base_url", default="")
-    p.add_argument("--prompt-version", choices=["v1", "v2", "v3"], default="v1")
+    p.add_argument("--prompt-version", choices=["v1", "v2", "v3", "v4"], default="v1")
     p.add_argument("--max-run-tokens", type=int, default=1_000_000)
     p.add_argument("--gen-max-tokens", type=int, default=1024)
     p.add_argument("--generator-workers", type=int, default=1)
-    p.add_argument("--run-group", choices=["e6-5pct", "e7-probe", "e8-generators", "e10-laya-gate", "fakewhatsapp-full", "fakewhatsapp-10pct", "fakewhatsapp-5pct", "sandbox"], default="")
+    p.add_argument("--zero-shot", dest="zero_shot", action="store_true")
+    p.add_argument("--run-group", default="")
     p.add_argument("--evaluator", dest="evaluator_kind", choices=["learner", "laya"], default="learner")
     p.add_argument("--laya-url", default="http://127.0.0.1:8018")
 
@@ -55,6 +56,9 @@ def parse_args() -> Config:
     p.add_argument("--learner-batch-size", type=int, default=16)
     p.add_argument("--max-length", type=int, default=256)
     p.add_argument("--device", default="")
+    p.add_argument("--class-weight", dest="class_weight", action="store_true")
+    p.add_argument("--final-from-scratch", dest="final_from_scratch", action="store_true")
+    p.add_argument("--threshold-tune", dest="threshold_tune", action="store_true")
 
     # Embeddings
     p.add_argument("--embedder", choices=["semantic", "tfidf"], default="semantic")
@@ -88,6 +92,7 @@ def main() -> None:
             max_length=cfg.max_length,
             device=cfg.device or None,
             random_state=cfg.random_state,
+            class_weight=cfg.class_weight,
         )
 
     if cfg.generator == "mock":
@@ -132,6 +137,9 @@ def main() -> None:
         "history": history,
         "test": test_metrics,
         "tokens_used": int(total_tokens),
+        "prompt_tokens": int(getattr(generator, "prompt_tokens", 0)),
+        "completion_tokens": int(getattr(generator, "completion_tokens", 0)),
+        "cost_usd": float(getattr(generator, "cost_usd", 0.0)),
         "synthetic": inherited,
         "n_synthetic": len(inherited),
         "quality": synthetic_quality(embedder, train[0], inherited),

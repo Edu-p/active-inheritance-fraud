@@ -7,7 +7,12 @@ import numpy as np
 from src.embedder import TfidfEmbedder
 from src.generator import MockGenerator
 from src.evaluator import AdversarialEvaluator
-from src.metrics import classification_metrics, diversity_metrics
+from src.metrics import (
+    best_threshold,
+    classification_metrics,
+    diversity_metrics,
+    probabilistic_metrics,
+)
 from src.runs import experiment_tag, save_run
 from src.probe import SemanticProbe
 from src.config import Config
@@ -16,6 +21,11 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 from src.decision_scorer import LayaScorer
+from src.text import normalize_fakebr
+from scripts.controlled_curatorship import select_indices
+from scripts.revision_status import completed_replays
+from src.learner import Learner
+import random
 
 
 class StubLearner:
@@ -45,6 +55,11 @@ def main() -> None:
     m = classification_metrics([0, 1, 1, 0], [0, 1, 0, 1])
     assert m["f1"] == 0.5 and set(m) == {"accuracy", "f1", "precision", "recall"}
 
+    pm = probabilistic_metrics([0, 1, 1, 0], [0.1, 0.9, 0.8, 0.2])
+    assert set(pm) == {"roc_auc", "pr_auc"} and 0.0 <= pm["roc_auc"] <= 1.0
+    thr = best_threshold([0, 1, 1, 0], [0.1, 0.9, 0.8, 0.2])
+    assert 0.05 <= thr <= 0.95
+
     d = diversity_metrics(seeds, emb)
     assert 0.0 <= d["mean_pairwise_sim"] <= 1.0
 
@@ -71,10 +86,17 @@ def main() -> None:
 
     # Dois saves consecutivos não podem sobrescrever um resultado.
     with TemporaryDirectory() as tmp:
-        cfg = Config(output_dir=Path(tmp), run_group="e6-5pct")
+        cfg = Config(output_dir=Path(tmp), run_group="replay-smoke")
         a = save_run(cfg, {"arm": "real", "test": {"f1": 0.1}}, "real")
         b = save_run(cfg, {"arm": "real", "test": {"f1": 0.2}}, "real")
         assert a != b and (a / "results.json").exists() and (b / "results.json").exists()
+
+    # grupo histórico não pode ser sobrescrito
+    try:
+        save_run(Config(output_dir=Path(tmp), run_group="e1"), {"arm": "real"}, "real")
+        raise AssertionError("deveria ter protegido grupo histórico e1")
+    except ValueError:
+        pass
 
     class StubEmbedder:
         def transform(self, texts):
@@ -93,6 +115,29 @@ def main() -> None:
     gen.prompt_version = "v3"
     system, user = gen._prompt([], 1)
     assert "WhatsApp" in system and "eleições" in user and "Markdown" in system
+    gen.zero_shot = True
+    system, user = gen._prompt(["exemplo herdado que não deve aparecer"])
+    assert "exemplo herdado" not in user
+    gen.prompt_version = "v4"
+    system, user = gen._prompt([], 3)
+    assert "201 a 350" in user and "URGENTE" in system
+    assert normalize_fakebr("Á notícia, e o FATO!") == "noticia fato"
+
+    class Scores:
+        def score(self, candidates, labels, inherited):
+            return np.asarray([0.1, 0.8, 0.4]), {}
+    items = ["a", "b", "c"]
+    assert select_indices("all", items, 1, random.Random(42)) == [0, 1, 2]
+    assert select_indices("easy-k", items, 1, random.Random(42), Scores()) == [0]
+    assert select_indices("score-k", items, 1, random.Random(42), Scores()) == [1]
+    assert select_indices("random-k", items, 2, random.Random(42)) == [0, 2]
+    weights = Learner._class_weights([0, 0, 0, 1]).tolist()
+    assert np.allclose(weights, [4/6, 2.0])
+    with TemporaryDirectory() as tmp:
+        result = Path(tmp) / "progress" / "run" / "results.json"
+        result.parent.mkdir(parents=True)
+        result.write_text('{"arm":"random-k","test":{"f1":0.7},"config":{"random_state":"42"}}')
+        assert (42, "random-k") in completed_replays(Path(tmp), "progress", ("random-k",))
 
     class Response:
         def __enter__(self): return self

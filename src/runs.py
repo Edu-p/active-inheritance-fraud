@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 from datetime import datetime, timezone
 from uuid import uuid4
 
@@ -27,10 +28,19 @@ def experiment_tag(cfg, arm):
     return "sandbox"
 
 
+HISTORICAL_GROUPS = {
+    "e1", "e2", "e3", "e4", "e5", "e6-5pct", "e7-probe", "e8-generators",
+    "e9-laya", "e10-laya-gate", "fakewhatsapp-full", "fakewhatsapp-10pct",
+    "fakewhatsapp-5pct",
+}
+
+
 def save_run(cfg, out, tag="run"):
-    exp = getattr(cfg, "run_group", "") or experiment_tag(cfg, out.get("arm", tag))
-    if exp not in {"e6-5pct", "e7-probe", "e8-generators", "e9-laya", "e10-laya-gate", "fakewhatsapp-full", "fakewhatsapp-10pct", "fakewhatsapp-5pct", "sandbox"} and getattr(cfg, "run_group", ""):
-        raise ValueError(f"Run group inválido: {exp}")
+    exp = getattr(cfg, "run_group", "") or "sandbox"
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]*", exp):
+        raise ValueError(f"Nome de grupo inválido: {exp!r}")
+    if exp in HISTORICAL_GROUPS:
+        raise ValueError(f"Grupo histórico protegido: {exp}. Use --run-group novo.")
     seed = getattr(cfg, "random_state", "?")
     run_dir = cfg.output_dir / exp / (
         f"{tag}-s{seed}-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')}-{uuid4().hex[:8]}"
