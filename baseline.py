@@ -6,16 +6,14 @@ import os
 from pathlib import Path
 
 from src.config import Config
-from src.data import load_experiment_data
-from src.embedder import SemanticEmbedder, TfidfEmbedder
-from src.generator import MockGenerator, OpenAIGenerator
-from src.learner import Learner
-from src.probe import SemanticProbe
-from src.metrics import (
-    best_threshold,
-    classification_metrics,
-    probabilistic_metrics,
-    synthetic_quality,
+from src.helpers import evaluate, tune_threshold
+from src.metrics import synthetic_quality
+from src.registry import (
+    DATASETS,
+    build_embedder,
+    build_generator,
+    build_learner,
+    load_dataset,
 )
 from src.runs import save_run
 
@@ -57,49 +55,15 @@ def parse_args() -> Config:
                    default="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
 
     p.add_argument("--seed", dest="random_state", type=int, default=42)
+    p.add_argument("--dataset", choices=sorted(DATASETS), default="fakebr")
+    p.add_argument("--dataset-variant", choices=["full", "10pct", "5pct"], default="full")
     return p.parse_args(namespace=Config())
 
 
-def build_embedder(cfg, texts):
-    if cfg.embedder == "tfidf":
-        return TfidfEmbedder(max_features=cfg.max_features).fit(texts)
-    return SemanticEmbedder(cfg.semantic_model).fit(texts)
-
-
-def new_learner(cfg, embedder=None):
-    if cfg.learner_kind == "semantic-probe":
-        if cfg.embedder != "semantic" or embedder is None:
-            raise ValueError("semantic-probe exige --embedder semantic")
-        return SemanticProbe(embedder)
-    return Learner(
-        model_name=cfg.learner_model,
-        lr=cfg.learner_lr,
-        batch_size=cfg.learner_batch_size,
-        max_length=cfg.max_length,
-        device=cfg.device or None,
-        random_state=cfg.random_state,
-        class_weight=cfg.class_weight,
-    )
-
-
-def evaluate(learner, texts, y, threshold=None):
-    proba = learner.predict(texts)[:, 1]
-    thr = threshold if threshold is not None else 0.5
-    pred = (proba >= thr).astype(int)
-    out = classification_metrics(y, pred)
-    out.update(probabilistic_metrics(y, proba))
-    out["threshold"] = float(thr)
-    return out
-
-
-def tune(learner, val):
-    return best_threshold(val[1], learner.predict(val[0])[:, 1])
-
-
 def run_real(cfg, train, val, test, embedder):
-    learner = new_learner(cfg, embedder)
+    learner = build_learner(cfg, embedder)
     loss = learner.fit(train[0], train[1], epochs=cfg.learner_epochs)
-    thr = tune(learner, val) if cfg.threshold_tune else None
+    thr = tune_threshold(learner, val) if cfg.threshold_tune else None
     return {
         "arm": "real",
         "loss": float(loss),
@@ -111,19 +75,15 @@ def run_real(cfg, train, val, test, embedder):
 
 
 def run_static(cfg, train, val, test, embedder, n_samples):
-    if cfg.generator == "mock":
-        seed_fake = [t for t, lab in zip(train[0], train[1]) if lab == 1]
-        generator = MockGenerator(seed_fake, random_state=cfg.random_state)
-    else:
-        generator = OpenAIGenerator(cfg)
+    generator = build_generator(cfg, train[0], train[1])
 
     synth = [x for x in generator.generate_batch([], n_samples) if x and x.strip()]
 
-    learner = new_learner(cfg, embedder)
+    learner = build_learner(cfg, embedder)
     combined_texts = train[0] + synth
     combined_y = train[1] + [1] * len(synth)
     loss = learner.fit(combined_texts, combined_y, epochs=cfg.learner_epochs)
-    thr = tune(learner, val) if cfg.threshold_tune else None
+    thr = tune_threshold(learner, val) if cfg.threshold_tune else None
 
     return {
         "arm": "static",
@@ -141,7 +101,7 @@ def run_static(cfg, train, val, test, embedder, n_samples):
 
 def main() -> None:
     cfg = parse_args()
-    train, val, test = load_experiment_data(cfg)
+    train, val, test = load_dataset(cfg)
     embedder = build_embedder(cfg, train[0])
 
     if cfg.arm == "real":

@@ -152,6 +152,37 @@ def main() -> None:
         body = __import__("json").loads(request.call_args.args[0].data)
         assert body["state"] == "texto" and body["questions"]["veracity"]["type"] == "choice"
 
+    # ---- arquitetura: composition root + ports + helpers + report ----
+    from src.registry import (
+        DATASETS, EMBEDDERS, GENERATORS, LEARNERS, SCORERS,
+        _VARIANT_TRAIN, _DATASET_FILES,
+    )
+    assert set(DATASETS) == {"fakebr", "covid19br", "factckbr", "fakewhatsapp"}
+    assert set(GENERATORS) == {"mock", "openai"}
+    assert set(LEARNERS) == {"bert", "semantic-probe"}
+    assert set(EMBEDDERS) == {"semantic", "tfidf"}
+    assert set(SCORERS) == {"learner", "laya"}
+    assert _VARIANT_TRAIN["10pct"] == "train-10pct.csv"
+    assert set(_DATASET_FILES) == {"covid19br", "factckbr", "fakewhatsapp"}
+
+    from src.helpers import evaluate, tune_threshold
+
+    class StubProbe:
+        def predict(self, texts):
+            return np.asarray([[0.9, 0.1], [0.1, 0.9], [0.2, 0.8], [0.8, 0.2]])
+
+    ev = evaluate(StubProbe(), ["a"] * 4, [0, 1, 1, 0])
+    assert set(ev) >= {"f1", "roc_auc", "threshold"} and ev["threshold"] == 0.5
+    thr = tune_threshold(StubProbe(), (["a"] * 4, [0, 1, 1, 0]))
+    assert 0.05 <= thr <= 0.95
+
+    from src.report import latex_table, mean_sd, fmt, esc
+    m, s = mean_sd([0.8, 0.9, 0.85])
+    assert abs(m - 0.85) < 1e-9 and s >= 0
+    t = latex_table(["A", "B"], [["x", fmt((m, s))], ["y", "--"]], caption="C", label="tab:x")
+    assert "\\toprule" in t and "\\caption{C}" in t and "\\label{tab:x}" in t and "x & " in t
+    assert esc("a_b%c") == "a\\_b\\%c"
+
     print("OK — core (scoring, mock generator, metrics) passed.")
 
 

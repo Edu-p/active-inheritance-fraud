@@ -15,6 +15,10 @@ class Config:
     label_col: str = "label"
     positive_label: str = "fake"  # class generated synthetically (fraudulent)
 
+    # ---- Dataset (registrado em src/registry.py) ----
+    dataset: str = "fakebr"  # "fakebr" | "covid19br" | "factckbr" | "fakewhatsapp"
+    dataset_variant: str = "full"  # "full" | "10pct" | "5pct" (datasets preparados)
+
     # ---- Split ----
     test_size: float = 0.2
     val_size: float = 0.2

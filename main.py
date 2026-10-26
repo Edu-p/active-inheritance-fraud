@@ -6,15 +6,16 @@ import os
 from pathlib import Path
 
 from src.config import Config
-from src.data import load_experiment_data
-from src.embedder import SemanticEmbedder, TfidfEmbedder
-from src.learner import Learner
-from src.probe import SemanticProbe
-from src.generator import MockGenerator, OpenAIGenerator
-from src.evaluator import AdversarialEvaluator
-from src.decision_scorer import LayaScorer
 from src.metrics import synthetic_quality
 from src.pipeline import ActiveInheritancePipeline
+from src.registry import (
+    DATASETS,
+    build_embedder,
+    build_evaluator,
+    build_generator,
+    build_learner,
+    load_dataset,
+)
 from src.runs import save_run
 
 
@@ -66,50 +67,21 @@ def parse_args() -> Config:
                    default="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
 
     p.add_argument("--seed", dest="random_state", type=int, default=42)
+    p.add_argument("--dataset", choices=sorted(DATASETS), default="fakebr")
+    p.add_argument("--dataset-variant", choices=["full", "10pct", "5pct"], default="full")
     return p.parse_args(namespace=Config())
-
-
-def build_embedder(cfg, texts):
-    if cfg.embedder == "tfidf":
-        return TfidfEmbedder(max_features=cfg.max_features).fit(texts)
-    return SemanticEmbedder(cfg.semantic_model).fit(texts)
 
 
 def main() -> None:
     cfg = parse_args()
-    train, val, test = load_experiment_data(cfg)
+    train, val, test = load_dataset(cfg)
     embedder = build_embedder(cfg, train[0])
-
-    if cfg.learner_kind == "semantic-probe":
-        if cfg.embedder != "semantic":
-            raise ValueError("semantic-probe exige --embedder semantic")
-        learner = SemanticProbe(embedder)
-    else:
-        learner = Learner(
-            model_name=cfg.learner_model,
-            lr=cfg.learner_lr,
-            batch_size=cfg.learner_batch_size,
-            max_length=cfg.max_length,
-            device=cfg.device or None,
-            random_state=cfg.random_state,
-            class_weight=cfg.class_weight,
-        )
-
-    if cfg.generator == "mock":
-        seed_fake = [t for t, lab in zip(train[0], train[1]) if lab == 1]
-        generator = MockGenerator(seed_fake, random_state=cfg.random_state)
-    else:
-        generator = OpenAIGenerator(cfg)
+    learner = build_learner(cfg, embedder)
+    generator = build_generator(cfg, train[0], train[1])
 
     if cfg.evaluator_kind == "laya" and cfg.run_group != "e10-laya-gate":
         raise ValueError("Laya evaluator exige --run-group e10-laya-gate")
-    scorer = LayaScorer(cfg.laya_url) if cfg.evaluator_kind == "laya" else learner
-    evaluator = AdversarialEvaluator(
-        scorer, embedder,
-        w_error=cfg.w_error,
-        w_uncertainty=cfg.w_uncertainty,
-        w_diversity=cfg.w_diversity,
-    )
+    evaluator = build_evaluator(cfg, learner, embedder)
 
     pipeline = ActiveInheritancePipeline(cfg, learner, embedder, generator, evaluator)
     history, test_metrics, inherited = pipeline.run(train, val, test)
