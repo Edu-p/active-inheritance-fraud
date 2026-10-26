@@ -128,14 +128,14 @@ def run_arm(cfg, train, val, test, batches, arm, fraction, seed, kind):
     return metrics, len(inherited)
 
 
-def already_done(group, seed, arm, fraction):
+def already_done(group, scenario, seed, arm, fraction):
     tag = f"{arm}-f{fraction}"
     for p in (Path("outputs") / group).glob(f"{tag}-s{seed}-*/results.json"):
         try:
             d = json.loads(p.read_text())
         except (OSError, ValueError):
             continue
-        if abs(float(d.get("fraction", 1.0)) - fraction) < 1e-9:
+        if d.get("scenario") == scenario and abs(float(d.get("fraction", 1.0)) - fraction) < 1e-9:
             return True
     return False
 
@@ -174,7 +174,7 @@ def main():
             for fraction in fractions:
                 for arm in arms:
                     tag = f"{arm}-f{fraction}"
-                    if already_done(args.group, seed, arm, fraction):
+                    if already_done(args.group, scenario, seed, arm, fraction):
                         print(f"SKIP {scenario} s{seed} {tag}", flush=True)
                         continue
                     metrics, n_synth = run_arm(cfg, train, val, test, batches, arm, fraction, seed, kind)
