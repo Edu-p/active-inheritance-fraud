@@ -143,7 +143,7 @@ def main() -> None:
         def __enter__(self): return self
         def __exit__(self, *args): pass
         def read(self): return b'{"answers":{"veracity":{"probabilities":{"fake":0.8,"true":0.2}}}}'
-    with patch("src.decision_scorer.urlopen", return_value=Response()) as request:
+    with patch("src.adapters.decision_scorer.urlopen", return_value=Response()) as request:
         scorer = LayaScorer("http://127.0.0.1:8018")
         assert scorer.predict(["texto"])[0, 1] == 0.8
         assert len(scorer.error(["texto"], [1])) == 1
