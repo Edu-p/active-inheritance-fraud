@@ -2,6 +2,7 @@
 # Overnight (zero API): varredura de competência + seleção por faixa intermediária.
 # Reusa candidates.json já gerados; só treina BERT na GPU. Resumível (pula done).
 set -u
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 cd "$(dirname "$0")/.."
 
 SCENARIOS="covid19br-full,factckbr-full,fakewhatsapp-full"

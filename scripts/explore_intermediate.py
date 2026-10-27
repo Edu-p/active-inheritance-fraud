@@ -22,6 +22,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import gc
 import json
 import random
 import sys
@@ -194,6 +195,7 @@ def main():
                         flush=True,
                     )
                     del metrics
+                    gc.collect()
                     torch.cuda.empty_cache()
 
 
