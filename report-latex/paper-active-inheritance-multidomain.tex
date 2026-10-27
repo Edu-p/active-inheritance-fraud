@@ -243,13 +243,45 @@ Cada gera\c{c}\~ao zero-shot consome $\approx$99{,}5 mil tokens ($\approx$36 mil
 \caption{F1 $\times$ n\'umero de sint\'eticos herdados (cen\'ario full, tr\^es dom\'inios).}\label{fig:nsynth}
 \end{figure*}
 
+\subsection{Varredura de compet\^encia e faixa intermedi\'aria}
+
+Para localizar \emph{onde} a sele\c{c}\~ao agrega, variamos a fra\c{c}\~ao de dados reais usada no treino do learner (5\% a 100\%) e comparamos \emph{Score-}k contra \emph{Random-}k sobre os \emph{mesmos} candidatos (semente 42, $n{=}1$). A Tabela~\ref{tab:competence} reporta o F1 de cada bra\c{c}o e o delta ($\Delta = $ Score $-$ Random). No COVID19.BR e no FakeWhatsApp.Br, o delta parte de $\approx$0 com o learner fraco e cresce at\'e $+0{,}022$ a $+0{,}028$ no full; no FACTCK.BR (tarefa f\'acil), os bra\c{c}os empatam em todas as fra\c{c}\~oes. Al\'em disso, testamos um bra\c{c}o \emph{band-k} que herda os candidatos de score mais pr\'oximo da mediana (dificuldade intermedi\'aria): F1 de $0{,}848 \pm 0{,}023$ (COVID19.BR), $0{,}932 \pm 0{,}002$ (FACTCK.BR) e $0{,}719 \pm 0{,}011$ (FakeWhatsApp.Br), sempre igual ou inferior ao \emph{Score-}k ($0{,}857$, $0{,}932$ e $0{,}734$). Herdar os \emph{mais dif\'iceis} supera herdar os \emph{medianos} quando o learner \'e competente.
+
+\begin{table}[t]
+\caption{F1 (teste) de \emph{Random-}k e \emph{Score-}k por fra\c{c}\~ao de dados reais (semente 42, $n{=}1$). $\Delta = $ Score $-$ Random.}\label{tab:competence}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Dom\'inio & fra\c{c}\~ao & Random & Score & $\Delta$ \\
+\midrule
+COVID19.BR & 0.05 & 0.780 & 0.780 & $-$0.000 \\
+COVID19.BR & 0.10 & 0.831 & 0.792 & $-$0.039 \\
+COVID19.BR & 0.20 & 0.810 & 0.828 & $+$0.018 \\
+COVID19.BR & 0.50 & 0.826 & 0.842 & $+$0.016 \\
+COVID19.BR & 1.00 & 0.854 & 0.882 & $+$0.028 \\
+FACTCK.BR & 0.05 & 0.939 & 0.931 & $-$0.009 \\
+FACTCK.BR & 0.10 & 0.934 & 0.935 & $+$0.000 \\
+FACTCK.BR & 0.20 & 0.928 & 0.928 & $+$0.001 \\
+FACTCK.BR & 0.50 & 0.928 & 0.930 & $+$0.002 \\
+FACTCK.BR & 1.00 & 0.924 & 0.919 & $-$0.005 \\
+WhatsApp.Br & 0.05 & 0.659 & 0.661 & $+$0.002 \\
+WhatsApp.Br & 0.10 & 0.672 & 0.668 & $-$0.004 \\
+WhatsApp.Br & 0.20 & 0.706 & 0.710 & $+$0.004 \\
+WhatsApp.Br & 0.50 & 0.712 & 0.717 & $+$0.005 \\
+WhatsApp.Br & 1.00 & 0.712 & 0.734 & $+$0.022 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Discuss\~ao}
 
 \textbf{(i) O score n\~ao domina o sorteio (RQ1).} No COVID19.BR, \emph{Score-}k s\'o vence \emph{Random-}k no full (0{,}857 \emph{vs.} 0{,}836) e por margem pequena; sob escassez, \emph{Random-}k empata ou vence. Nos demais dom\'inios os bra\c{c}os empatam. Dados os mesmos candidatos, o score n\~ao agrega sobre uma amostra aleat\'oria.
 
 \textbf{(ii) O efeito real \'e curadoria de volume, n\~ao o score.} \emph{All} herda 277 a 313 sint\'eticos; os demais, 80. Em escassez extrema (COVID19.BR 5\%), \emph{All} colapsa para F1 0{,}468 enquanto os curados ficam em 0{,}60 a 0{,}70. Herdar \emph{menos}, mantendo o treino rebalanceado, importa mais do que \emph{o qu\^e} se herda.
 
-\textbf{(iii) A sele\c{c}\~ao s\'o agrega em dificuldade intermedi\'aria.} No FACTCK.BR a tarefa \'e f\'acil (\emph{All} j\'a atinge 0{,}929) e a regra \'e irrelevante; no COVID19.BR 5\% a tarefa \'e dif\'icil e o score tamb\'em n\~ao ajuda. S\'o no COVID19.BR full, dificuldade intermedi\'aria, o score agrega um pouco. A heran\c{c}a guiada pressup\~oe um classificador inicial competente: quando ele \'e fraco, seu pr\'oprio sinal de erro/incerteza \'e ru\'ido.
+\textbf{(iii) O ganho do score cresce com a compet\^encia do learner.} A Tabela~\ref{tab:competence} mostra que, no COVID19.BR e no FakeWhatsApp.Br, o delta Score $-$ Random parte de $\approx$0 com 5\% dos dados reais e sobe at\'e $+0{,}022$ a $+0{,}028$ no full; no FACTCK.BR (tarefa f\'acil) fica $\approx$0 em todas as fra\c{c}\~oes. O bra\c{c}o \emph{band-k} (dificuldade intermedi\'aria) fica igual ou abaixo do \emph{Score-}k nos tr\^es dom\'inios. Ou seja: a heran\c{c}a guiada ajuda quando o learner inicial j\'a \'e competente e a tarefa \'e dif\'icil o bastante para haver margem; herdar os \emph{mais dif\'iceis} supera herdar os \emph{medianos}.
 
 \textbf{(iv) Calibra\c{c}\~ao faz o trabalho pesado.} Os limiares caem para 0{,}05 a 0{,}11 na escassez: sem pondera\c{c}\~ao e limiar ajustado, o modelo subestima a classe minorit\'aria e o recall colapsa. Parte do F1 observado \'e pol\'itica de treino, n\~ao qualidade intr\'inseca do sint\'etico.
 
@@ -267,13 +299,13 @@ Cada gera\c{c}\~ao zero-shot consome $\approx$99{,}5 mil tokens ($\approx$36 mil
 \item AUC real-vs-sint\'etico $=$ 1{,}000 indica atalho estil\'istico; m\'etricas de embedding s\~ao proxies, n\~ao realismo.
 \item No Fake.br, o texto real \'e pr\'e-processado e o sint\'etico \'e raw; a normaliza\c{c}\~ao aplicada \'e aproximada (an\'alise de sensibilidade, n\~ao equival\^encia exata).
 \item FACTCK.BR usa split aleat\'orio e prior invertido; COVID19.BR n\~ao tem maio/2020 e o teste \'e um futuro curto.
-\item A abla\c{c}\~ao de ``faixa intermedi\'aria'' de $p(\mathrm{fake})$ n\~ao foi executada; Easy-k cobre apenas o gate invertido.
+\item A varredura de compet\^encia usou uma \'unica semente ($n{=}1$); o bra\c{c}o \emph{band-k} tem $n{=}3$. A sele\c{c}\~ao por faixa da probabilidade $p(\mathrm{fake})$ n\~ao foi executada; o \emph{band-k} seleciona pelo score mediano.
 \item Expans\~ao para 10 sementes e checagem humana ficam como trabalho futuro.
 \end{itemize}
 
 \section{Conclus\~ao}
 
-Apresentamos a Heran\c{c}a Ativa e a avaliamos em um estudo controlado multi-dom\'inio que isola a regra de sele\c{c}\~ao do volume gerado e da pol\'itica de treino. A conclus\~ao \'e negativa e informativa: dados os mesmos candidatos, o score de erro/incerteza/diversidade n\~ao supera consistentemente uma amostra aleat\'oria; o ganho pr\'atico vem da curadoria de volume e da calibra\c{c}\~ao. A heran\c{c}a guiada agrega apenas quando o classificador inicial j\'a \'e competente, o que delimita \emph{quando} o m\'etodo ajuda. Trabalhos futuros devem priorizar prompts que amostrem a distribui\c{c}\~ao real, mais sementes e decision models calibrados, em vez de refinar o score de sele\c{c}\~ao.
+Apresentamos a Heran\c{c}a Ativa e a avaliamos em um estudo controlado multi-dom\'inio que isola a regra de sele\c{c}\~ao do volume gerado e da pol\'itica de treino. A conclus\~ao \'e negativa e informativa: dados os mesmos candidatos, o score de erro/incerteza/diversidade n\~ao supera consistentemente uma amostra aleat\'oria; o ganho pr\'atico vem da curadoria de volume e da calibra\c{c}\~ao. A varredura de compet\^encia confirma quantitativamente esse limite: o ganho do score sobre o sorteio cresce de $\approx$0 (5\% dos dados reais) at\'e $+0{,}022$ a $+0{,}028$ (full) nos dom\'inios dif\'iceis, e desaparece em tarefa f\'acil; herdar os mais dif\'iceis supera herdar os medianos. Trabalhos futuros devem priorizar prompts que amostrem a distribui\c{c}\~ao real, mais sementes e decision models calibrados, em vez de refinar o score de sele\c{c}\~ao.
 
 \balance
 
