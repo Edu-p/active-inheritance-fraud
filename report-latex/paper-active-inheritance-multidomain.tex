@@ -35,7 +35,7 @@ eaa5@cin.ufpe.br, cz@cin.ufpe.br}}
 \maketitle
 
 \begin{abstract}
-A escassez de exemplos rotulados de desinforma\c{c}\~ao limita classificadores robustos, enquanto a gera\c{c}\~ao sint\'etica indiscriminada pode introduzir redund\^ancia, artefatos e ru\'ido. Este trabalho prop\~oe a \emph{Heran\c{c}a Ativa} (ActiveInheritance): um processo c\'iclico em que um modelo de linguagem gera candidatos falsos e um avaliador adversarial, que combina o erro, a incerteza e a diversidade do classificador downstream, seleciona apenas o top-$k$ para ser herdado no ciclo seguinte de treino. Para isolar o efeito da regra de sele\c{c}\~ao do volume gerado e da pol\'itica de treino, conduzimos um estudo controlado em quatro dom\'inios do portugu\^es (Fake.br, FakeWhatsApp.Br, COVID19.BR e FACTCK.BR). Nos tr\^es dom\'inios novos, uma \'unica gera\c{c}\~ao zero-shot por cen\'ario e semente \'e re-executada offline com quatro regras de heran\c{c}a: herdar tudo (\emph{All}), uma amostra aleat\'oria (\emph{Random-}k), o score top-$k$ (\emph{Score-}k) e o gate invertido (\emph{Easy-}k), em tr\^es n\'iveis de escassez e tr\^es sementes (108 runs). Os resultados mostram que o score n\~ao domina a sele\c{c}\~ao aleat\'oria, que o efeito observado \'e sobretudo curadoria de volume, e que a sele\c{c}\~ao guiada s\'o agrega em regimes de dificuldade intermedi\'aria; a pondera\c{c}\~ao de classes e o limiar ajustado respondem pela maior parte do ganho. Al\'em disso, um classificador linear distingue o texto sint\'etico do real com AUC $=$ 1{,}000, indicando um atalho estil\'istico que a sele\c{c}\~ao n\~ao elimina.
+A escassez de exemplos rotulados de desinforma\c{c}\~ao limita classificadores robustos, enquanto a gera\c{c}\~ao sint\'etica indiscriminada pode introduzir redund\^ancia, artefatos e ru\'ido. Este trabalho prop\~oe a \emph{Heran\c{c}a Ativa} (ActiveInheritance): um processo c\'iclico em que um modelo de linguagem gera candidatos falsos e um avaliador adversarial, que combina o erro, a incerteza e a diversidade do classificador downstream, seleciona apenas o top-$k$ para ser herdado no ciclo seguinte de treino. Para isolar o efeito da regra de sele\c{c}\~ao do volume gerado e da pol\'itica de treino, conduzimos um estudo controlado em quatro dom\'inios do portugu\^es (Fake.br, FakeWhatsApp.Br, COVID19.BR e FACTCK.BR). Nos quatro dom\'inios, uma \'unica gera\c{c}\~ao zero-shot por cen\'ario e semente \'e re-executada offline com quatro regras de heran\c{c}a: herdar tudo (\emph{All}), uma amostra aleat\'oria (\emph{Random-}k), o score top-$k$ (\emph{Score-}k) e o gate invertido (\emph{Easy-}k), em tr\^es n\'iveis de escassez e dez sementes (440 runs). Os resultados mostram que o score n\~ao domina a sele\c{c}\~ao aleat\'oria, que o efeito observado \'e sobretudo curadoria de volume, e que a sele\c{c}\~ao guiada s\'o agrega em regimes de dificuldade intermedi\'aria; a pondera\c{c}\~ao de classes e o limiar ajustado respondem pela maior parte do ganho. Al\'em disso, um classificador linear distingue o texto sint\'etico do real com AUC $=$ 1{,}000, indicando um atalho estil\'istico que a sele\c{c}\~ao n\~ao elimina.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -123,13 +123,13 @@ FACTCK.BR & claims & raw & majorit\'ario & aleat. estrat. \\
 
 \subsection{Protocolo}
 
-\emph{Fake.br (estudo original).} Bra\c{c}os Real, Static ($N{=}158$) e AI, re-executados com pondera\c{c}\~ao de classes e limiar ajustado sobre os pools hist\'oricos (replay explorat\'orio; o AI herda 80 textos).
+\emph{Fake.br.} Al\'em dos bra\c{c}os Real, Static ($N{=}158$) e AI (replay com pondera\c{c}\~ao de classes e limiar ajustado sobre os pools hist\'oricos), o Fake.br tamb\'em entrou no estudo controlado abaixo, com candidates zero-shot gerados no prompt v2 e normaliza\c{c}\~ao aproximada do sint\'etico (\texttt{normalize\_fakebr}).
 
-\emph{Estudo controlado (tr\^es dom\'inios novos).} Para cada cen\'ario (dom\'inio $\times$ escassez) e semente, realizamos uma \'unica gera\c{c}\~ao zero-shot com \texttt{deepseek-chat} ($T{=}5$ ciclos, lote de 64, teto de 100 mil tokens, top-$k{=}16$), prompt v4 (mensagem de WhatsApp anti-template) nos dom\'inios WhatsApp e v2 (not\'icia fict\'icia) no FACTCK.BR. Os lotes s\~ao congelados em \texttt{candidates.json} e, offline, as quatro regras s\~ao re-executadas sobre os \emph{mesmos} candidatos, sem nova chamada \`a API. O classificador downstream \'e o BERTimbau \cite{souza2020bertimbau} (\texttt{neuralmind/bert-base-portuguese-cased}), 3 \'epocas por ajuste, batch 16, comprimento m\'aximo 256. As sementes s\~ao 42 a 44 ($n{=}3$, explorat\'orio): a semente muda a inicializa\c{c}\~ao, a ordem de treino e a amostragem estoc\'astica do servidor LLM, n\~ao os splits (fixos) nem a valida\c{c}\~ao.
+\emph{Estudo controlado (quatro dom\'inios).} Para cada cen\'ario (dom\'inio $\times$ escassez) e semente, realizamos uma \'unica gera\c{c}\~ao zero-shot com \texttt{deepseek-chat} ($T{=}5$ ciclos, lote de 64, teto de 100 mil tokens, top-$k{=}16$), prompt v4 (mensagem de WhatsApp anti-template) nos dom\'inios WhatsApp e v2 (not\'icia/claim) no FACTCK.BR e no Fake.br. Os lotes s\~ao congelados em \texttt{candidates.json} e, offline, as quatro regras s\~ao re-executadas sobre os \emph{mesmos} candidatos, sem nova chamada \`a API. O classificador downstream \'e o BERTimbau \cite{souza2020bertimbau} (\texttt{neuralmind/bert-base-portuguese-cased}), 3 \'epocas por ajuste, batch 16, comprimento m\'aximo 256. As sementes s\~ao 42 a 51 ($n{=}10$): a semente muda a inicializa\c{c}\~ao, a ordem de treino e a amostragem estoc\'astica do servidor LLM, n\~ao os splits (fixos) nem a valida\c{c}\~ao.
 
 \subsection{M\'etricas}
 
-Reportamos F1, precis\~ao e recall da classe falsa, PR-AUC e ROC-AUC, m\'edia e desvio populacional entre sementes, tokens de entrada/sa\'ida e custo estimado, similaridade m\'edia do pool, TTR de trigramas e dist\^ancia de Wasserstein como proxy de fidelidade (n\~ao de veracidade). Com $n{=}3$, o menor $p$ poss\'ivel do Wilcoxon bilateral \'e 0{,}25; os resultados s\~ao explorat\'orios e n\~ao declaramos signific\^ancia.
+Reportamos F1, precis\~ao e recall da classe falsa, PR-AUC e ROC-AUC, m\'edia e desvio populacional entre sementes, tokens de entrada/sa\'ida e custo estimado, similaridade m\'edia do pool, TTR de trigramas e dist\^ancia de Wasserstein como proxy de fidelidade (n\~ao de veracidade). Com $n{=}10$, o menor $p$ poss\'ivel do Wilcoxon bilateral pareado \'e $\approx$0{,}002.
 
 \section{Resultados}
 
@@ -158,10 +158,10 @@ Cen\'ario & Bra\c{c}o & F1 & Recall \\
 
 \subsection{Estudo controlado}
 
-A Tabela~\ref{tab:f1} reporta F1 por dom\'inio, cen\'ario e regra; a Tabela~\ref{tab:aux} traz recall, PR-AUC e o n\'umero de sint\'eticos herdados. O bra\c{c}o \emph{All} herda $\approx$277 a 313 sint\'eticos; os demais herdam 80.
+A Tabela~\ref{tab:f1} reporta F1 por dom\'inio, cen\'ario e regra; a Tabela~\ref{tab:aux} traz recall, PR-AUC e o n\'umero de sint\'eticos herdados. O bra\c{c}o \emph{All} herda $\approx$302 a 313 sint\'eticos; os demais herdam 80.
 
 \begin{table*}[t]
-\caption{F1 (teste) por dom\'inio, cen\'ario e regra de heran\c{c}a. $n{=}3$ sementes.}\label{tab:f1}
+\caption{F1 (teste) por dom\'inio, cen\'ario e regra de heran\c{c}a. $n{=}10$ sementes.}\label{tab:f1}
 \centering
 \footnotesize
 \setlength{\tabcolsep}{6pt}
@@ -169,21 +169,23 @@ A Tabela~\ref{tab:f1} reporta F1 por dom\'inio, cen\'ario e regra; a Tabela~\ref
 \toprule
 Dom\'inio & Cen. & All & Random-k & Score-k & Easy-k \\
 \midrule
-FakeWhatsApp.Br & full & 0.726 $\pm$ 0.007 & 0.724 $\pm$ 0.013 & 0.734 $\pm$ 0.003 & 0.723 $\pm$ 0.004 \\
-FakeWhatsApp.Br & 10\% & 0.416 $\pm$ 0.130 & 0.561 $\pm$ 0.063 & 0.552 $\pm$ 0.045 & 0.519 $\pm$ 0.083 \\
-FakeWhatsApp.Br & 5\% & 0.480 $\pm$ 0.161 & 0.607 $\pm$ 0.059 & 0.532 $\pm$ 0.107 & 0.576 $\pm$ 0.034 \\
-COVID19.BR & full & 0.824 $\pm$ 0.024 & 0.836 $\pm$ 0.013 & 0.857 $\pm$ 0.003 & 0.848 $\pm$ 0.013 \\
-COVID19.BR & 10\% & 0.789 $\pm$ 0.017 & 0.732 $\pm$ 0.049 & 0.805 $\pm$ 0.018 & 0.773 $\pm$ 0.041 \\
-COVID19.BR & 5\% & 0.468 $\pm$ 0.029 & 0.704 $\pm$ 0.039 & 0.668 $\pm$ 0.062 & 0.601 $\pm$ 0.133 \\
-FACTCK.BR & full & 0.929 $\pm$ 0.004 & 0.931 $\pm$ 0.006 & 0.932 $\pm$ 0.010 & 0.926 $\pm$ 0.003 \\
-FACTCK.BR & 10\% & 0.816 $\pm$ 0.044 & 0.931 $\pm$ 0.011 & 0.934 $\pm$ 0.007 & 0.937 $\pm$ 0.008 \\
-FACTCK.BR & 5\% & 0.765 $\pm$ 0.076 & 0.928 $\pm$ 0.010 & 0.935 $\pm$ 0.006 & 0.931 $\pm$ 0.006 \\
+FakeWhatsApp.Br & full & 0.707 $\pm$ 0.029 & 0.721 $\pm$ 0.010 & 0.721 $\pm$ 0.017 & 0.722 $\pm$ 0.012 \\
+FakeWhatsApp.Br & 10\% & 0.440 $\pm$ 0.161 & 0.587 $\pm$ 0.125 & 0.579 $\pm$ 0.137 & 0.582 $\pm$ 0.103 \\
+FakeWhatsApp.Br & 5\% & 0.405 $\pm$ 0.130 & 0.463 $\pm$ 0.175 & 0.411 $\pm$ 0.188 & 0.419 $\pm$ 0.161 \\
+COVID19.BR & full & 0.849 $\pm$ 0.023 & 0.847 $\pm$ 0.025 & 0.858 $\pm$ 0.022 & 0.855 $\pm$ 0.012 \\
+COVID19.BR & 10\% & 0.666 $\pm$ 0.120 & 0.655 $\pm$ 0.125 & 0.728 $\pm$ 0.072 & 0.708 $\pm$ 0.068 \\
+COVID19.BR & 5\% & 0.567 $\pm$ 0.122 & 0.691 $\pm$ 0.056 & 0.692 $\pm$ 0.070 & 0.639 $\pm$ 0.125 \\
+FACTCK.BR & full & 0.926 $\pm$ 0.012 & 0.925 $\pm$ 0.009 & 0.930 $\pm$ 0.011 & 0.922 $\pm$ 0.012 \\
+FACTCK.BR & 10\% & 0.840 $\pm$ 0.056 & 0.936 $\pm$ 0.007 & 0.934 $\pm$ 0.008 & 0.937 $\pm$ 0.006 \\
+FACTCK.BR & 5\% & 0.785 $\pm$ 0.062 & 0.935 $\pm$ 0.008 & 0.936 $\pm$ 0.008 & 0.934 $\pm$ 0.006 \\
+Fake.br & 10\% & 0.917 $\pm$ 0.014 & 0.922 $\pm$ 0.012 & 0.923 $\pm$ 0.014 & 0.920 $\pm$ 0.010 \\
+Fake.br & 5\% & 0.872 $\pm$ 0.025 & 0.874 $\pm$ 0.016 & 0.880 $\pm$ 0.020 & 0.871 $\pm$ 0.015 \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
 \begin{table*}[t]
-\caption{Recall e PR-AUC (m\'edia) da classe falsa e n\'umero de sint\'eticos herdados.}\label{tab:aux}
+\caption{Recall e PR-AUC (m\'edia) da classe falsa e n\'umero de sint\'eticos herdados ($n{=}10$).}\label{tab:aux}
 \centering
 \footnotesize
 \setlength{\tabcolsep}{6pt}
@@ -191,49 +193,57 @@ FACTCK.BR & 5\% & 0.765 $\pm$ 0.076 & 0.928 $\pm$ 0.010 & 0.935 $\pm$ 0.006 & 0.
 \toprule
 Dom\'inio & Cen. & Bra\c{c}o & Recall & PR-AUC & n\_synth \\
 \midrule
-FakeWhatsApp.Br & full & all & 0.820 & 0.762 & 277 \\
-FakeWhatsApp.Br & full & random-k & 0.781 & 0.772 & 80 \\
-FakeWhatsApp.Br & full & score-k & 0.818 & 0.769 & 80 \\
-FakeWhatsApp.Br & full & easy-k & 0.778 & 0.766 & 80 \\
-FakeWhatsApp.Br & 10\% & all & 0.308 & 0.662 & 277 \\
-FakeWhatsApp.Br & 10\% & random-k & 0.488 & 0.676 & 80 \\
-FakeWhatsApp.Br & 10\% & score-k & 0.471 & 0.660 & 80 \\
-FakeWhatsApp.Br & 10\% & easy-k & 0.439 & 0.672 & 80 \\
-FakeWhatsApp.Br & 5\% & all & 0.416 & 0.636 & 276 \\
-FakeWhatsApp.Br & 5\% & random-k & 0.628 & 0.641 & 80 \\
-FakeWhatsApp.Br & 5\% & score-k & 0.493 & 0.638 & 80 \\
-FakeWhatsApp.Br & 5\% & easy-k & 0.523 & 0.648 & 80 \\
-COVID19.BR & full & all & 0.802 & 0.886 & 277 \\
-COVID19.BR & full & random-k & 0.822 & 0.897 & 80 \\
-COVID19.BR & full & score-k & 0.871 & 0.901 & 80 \\
-COVID19.BR & full & easy-k & 0.853 & 0.907 & 80 \\
-COVID19.BR & 10\% & all & 0.791 & 0.853 & 278 \\
-COVID19.BR & 10\% & random-k & 0.653 & 0.848 & 80 \\
-COVID19.BR & 10\% & score-k & 0.789 & 0.853 & 80 \\
-COVID19.BR & 10\% & easy-k & 0.731 & 0.861 & 80 \\
-COVID19.BR & 5\% & all & 0.322 & 0.792 & 278 \\
-COVID19.BR & 5\% & random-k & 0.660 & 0.818 & 80 \\
-COVID19.BR & 5\% & score-k & 0.591 & 0.801 & 80 \\
-COVID19.BR & 5\% & easy-k & 0.498 & 0.806 & 80 \\
-FACTCK.BR & full & all & 0.959 & 0.971 & 313 \\
-FACTCK.BR & full & random-k & 0.969 & 0.968 & 80 \\
-FACTCK.BR & full & score-k & 0.966 & 0.965 & 80 \\
-FACTCK.BR & full & easy-k & 0.952 & 0.967 & 80 \\
-FACTCK.BR & 10\% & all & 0.734 & 0.961 & 312 \\
-FACTCK.BR & 10\% & random-k & 0.978 & 0.961 & 80 \\
-FACTCK.BR & 10\% & score-k & 0.986 & 0.961 & 80 \\
-FACTCK.BR & 10\% & easy-k & 0.986 & 0.963 & 80 \\
-FACTCK.BR & 5\% & all & 0.657 & 0.952 & 312 \\
-FACTCK.BR & 5\% & random-k & 0.969 & 0.955 & 80 \\
+FakeWhatsApp.Br & full & all & 0.758 & 0.751 & 302 \\
+FakeWhatsApp.Br & full & random-k & 0.804 & 0.762 & 80 \\
+FakeWhatsApp.Br & full & score-k & 0.811 & 0.758 & 80 \\
+FakeWhatsApp.Br & full & easy-k & 0.797 & 0.761 & 80 \\
+FakeWhatsApp.Br & 10\% & all & 0.358 & 0.665 & 302 \\
+FakeWhatsApp.Br & 10\% & random-k & 0.571 & 0.679 & 80 \\
+FakeWhatsApp.Br & 10\% & score-k & 0.559 & 0.675 & 80 \\
+FakeWhatsApp.Br & 10\% & easy-k & 0.548 & 0.690 & 80 \\
+FakeWhatsApp.Br & 5\% & all & 0.315 & 0.634 & 302 \\
+FakeWhatsApp.Br & 5\% & random-k & 0.437 & 0.631 & 80 \\
+FakeWhatsApp.Br & 5\% & score-k & 0.369 & 0.626 & 80 \\
+FakeWhatsApp.Br & 5\% & easy-k & 0.350 & 0.625 & 80 \\
+COVID19.BR & full & all & 0.852 & 0.893 & 302 \\
+COVID19.BR & full & random-k & 0.860 & 0.894 & 80 \\
+COVID19.BR & full & score-k & 0.863 & 0.895 & 80 \\
+COVID19.BR & full & easy-k & 0.869 & 0.894 & 80 \\
+COVID19.BR & 10\% & all & 0.592 & 0.815 & 302 \\
+COVID19.BR & 10\% & random-k & 0.561 & 0.825 & 80 \\
+COVID19.BR & 10\% & score-k & 0.666 & 0.823 & 80 \\
+COVID19.BR & 10\% & easy-k & 0.631 & 0.832 & 80 \\
+COVID19.BR & 5\% & all & 0.447 & 0.798 & 302 \\
+COVID19.BR & 5\% & random-k & 0.620 & 0.803 & 80 \\
+COVID19.BR & 5\% & score-k & 0.621 & 0.800 & 80 \\
+COVID19.BR & 5\% & easy-k & 0.547 & 0.800 & 80 \\
+FACTCK.BR & full & all & 0.955 & 0.970 & 313 \\
+FACTCK.BR & full & random-k & 0.957 & 0.968 & 80 \\
+FACTCK.BR & full & score-k & 0.962 & 0.966 & 80 \\
+FACTCK.BR & full & easy-k & 0.944 & 0.967 & 80 \\
+FACTCK.BR & 10\% & all & 0.776 & 0.963 & 312 \\
+FACTCK.BR & 10\% & random-k & 0.989 & 0.963 & 80 \\
+FACTCK.BR & 10\% & score-k & 0.979 & 0.960 & 80 \\
+FACTCK.BR & 10\% & easy-k & 0.985 & 0.963 & 80 \\
+FACTCK.BR & 5\% & all & 0.686 & 0.951 & 312 \\
+FACTCK.BR & 5\% & random-k & 0.986 & 0.955 & 80 \\
 FACTCK.BR & 5\% & score-k & 0.988 & 0.957 & 80 \\
-FACTCK.BR & 5\% & easy-k & 0.978 & 0.960 & 80 \\
+FACTCK.BR & 5\% & easy-k & 0.981 & 0.956 & 80 \\
+Fake.br & 10\% & all & 0.859 & 0.983 & 312 \\
+Fake.br & 10\% & random-k & 0.873 & 0.983 & 80 \\
+Fake.br & 10\% & score-k & 0.873 & 0.987 & 80 \\
+Fake.br & 10\% & easy-k & 0.882 & 0.987 & 80 \\
+Fake.br & 5\% & all & 0.781 & 0.973 & 311 \\
+Fake.br & 5\% & random-k & 0.784 & 0.975 & 80 \\
+Fake.br & 5\% & score-k & 0.792 & 0.979 & 80 \\
+Fake.br & 5\% & easy-k & 0.777 & 0.978 & 80 \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
 \subsection{Custo e figuras}
 
-Cada gera\c{c}\~ao zero-shot consome $\approx$99{,}5 mil tokens ($\approx$36 mil de entrada e $\approx$63 mil de sa\'ida), custando $\approx$\$0{,}08 por cen\'ario/semente. Com $\approx$320 candidatos, isso d\'a $\approx$311 tokens por candidato (gera\c{c}\~ao compartilhada pelos quatro bra\c{c}os; o custo de gera\c{c}\~ao \'e pago uma vez e reutilizado offline). A Figura~\ref{fig:nsynth} mostra o Pareto F1 $\times$ n\'umero de sint\'eticos no cen\'ario full: \emph{All} usa $\approx$277 a 313 textos, enquanto os bra\c{c}os curados usam 80 com F1 semelhante ou superior.
+Cada gera\c{c}\~ao zero-shot consome $\approx$99{,}5 mil tokens ($\approx$36 mil de entrada e $\approx$63 mil de sa\'ida), custando $\approx$\$0{,}08 por cen\'ario/semente. Com $\approx$320 candidatos, isso d\'a $\approx$311 tokens por candidato (gera\c{c}\~ao compartilhada pelos quatro bra\c{c}os; o custo de gera\c{c}\~ao \'e pago uma vez e reutilizado offline). A Figura~\ref{fig:nsynth} mostra o Pareto F1 $\times$ n\'umero de sint\'eticos no cen\'ario full: \emph{All} usa $\approx$302 a 313 textos, enquanto os bra\c{c}os curados usam 80 com F1 semelhante ou superior.
 
 \begin{figure*}[t]
 \centering
@@ -245,14 +255,14 @@ Cada gera\c{c}\~ao zero-shot consome $\approx$99{,}5 mil tokens ($\approx$36 mil
 
 \subsection{Varredura de compet\^encia e faixa intermedi\'aria}
 
-Para localizar \emph{onde} a sele\c{c}\~ao agrega, variamos a fra\c{c}\~ao de dados reais usada no treino do learner (5\% a 100\%) e comparamos \emph{Score-}k contra \emph{Random-}k sobre os \emph{mesmos} candidatos (semente 42, $n{=}1$). A Tabela~\ref{tab:competence} reporta o F1 de cada bra\c{c}o e o delta ($\Delta = $ Score $-$ Random). No COVID19.BR e no FakeWhatsApp.Br, o delta parte de $\approx$0 com o learner fraco e cresce at\'e $+0{,}022$ a $+0{,}028$ no full; no FACTCK.BR (tarefa f\'acil), os bra\c{c}os empatam em todas as fra\c{c}\~oes. Al\'em disso, testamos um bra\c{c}o \emph{band-k} que herda os candidatos de score mais pr\'oximo da mediana (dificuldade intermedi\'aria): F1 de $0{,}848 \pm 0{,}023$ (COVID19.BR), $0{,}932 \pm 0{,}002$ (FACTCK.BR) e $0{,}719 \pm 0{,}011$ (FakeWhatsApp.Br), sempre igual ou inferior ao \emph{Score-}k ($0{,}857$, $0{,}932$ e $0{,}734$). Herdar os \emph{mais dif\'iceis} supera herdar os \emph{medianos} quando o learner \'e competente.
+Para localizar \emph{onde} a sele\c{c}\~ao agrega, variamos a fra\c{c}\~ao de dados reais usada no treino do learner (5\% a 100\%) e comparamos \emph{Score-}k contra \emph{Random-}k sobre os \emph{mesmos} candidatos (semente 42, $n{=}1$). A Tabela~\ref{tab:competence} reporta o F1 de cada bra\c{c}o e o delta ($\Delta = $ Score $-$ Random). No COVID19.BR e no FakeWhatsApp.Br, o delta parte de $\approx$0 com o learner fraco e cresce at\'e $+0{,}022$ a $+0{,}028$ no full; no FACTCK.BR (tarefa f\'acil), os bra\c{c}os empatam em todas as fra\c{c}\~oes. Al\'em disso, testamos um bra\c{c}o \emph{band-k} que herda os candidatos de score mais pr\'oximo da mediana (dificuldade intermedi\'aria): F1 de $0{,}848 \pm 0{,}023$ (COVID19.BR), $0{,}932 \pm 0{,}002$ (FACTCK.BR) e $0{,}719 \pm 0{,}011$ (FakeWhatsApp.Br), sempre igual ou inferior ao \emph{Score-}k ($0{,}858$, $0{,}930$ e $0{,}721$). Herdar os \emph{mais dif\'iceis} supera herdar os \emph{medianos} quando o learner \'e competente.
 
-\begin{table}[t]
+\begin{table*}[!t]
 \caption{F1 (teste) de \emph{Random-}k e \emph{Score-}k por fra\c{c}\~ao de dados reais (semente 42, $n{=}1$). $\Delta = $ Score $-$ Random.}\label{tab:competence}
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}lccccc@{}}
+\begin{tabular}{@{}lcccc@{}}
 \toprule
 Dom\'inio & fra\c{c}\~ao & Random & Score & $\Delta$ \\
 \midrule
@@ -273,19 +283,19 @@ WhatsApp.Br & 0.50 & 0.712 & 0.717 & $+$0.005 \\
 WhatsApp.Br & 1.00 & 0.712 & 0.734 & $+$0.022 \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \section{Discuss\~ao}
 
-\textbf{(i) O score n\~ao domina o sorteio (RQ1).} No COVID19.BR, \emph{Score-}k s\'o vence \emph{Random-}k no full (0{,}857 \emph{vs.} 0{,}836) e por margem pequena; sob escassez, \emph{Random-}k empata ou vence. Nos demais dom\'inios os bra\c{c}os empatam. Dados os mesmos candidatos, o score n\~ao agrega sobre uma amostra aleat\'oria.
+\textbf{(i) O score n\~ao domina o sorteio de forma geral (RQ1).} Com $n{=}10$ sementes, o \emph{Score-}k s\'o se destaca claramente no COVID19.BR 10\% (0{,}728 \emph{vs.} 0{,}655, $\Delta{=}+0{,}073$); no COVID19.BR full o ganho \'e pequeno (0{,}858 \emph{vs.} 0{,}847) e nos demais dom\'inios os bra\c{c}os empatam ou o sorteio vence. Dados os mesmos candidatos, o score n\~ao \'e melhor que uma amostra aleat\'oria na maioria dos cen\'arios.
 
-\textbf{(ii) O efeito real \'e curadoria de volume, n\~ao o score.} \emph{All} herda 277 a 313 sint\'eticos; os demais, 80. Em escassez extrema (COVID19.BR 5\%), \emph{All} colapsa para F1 0{,}468 enquanto os curados ficam em 0{,}60 a 0{,}70. Herdar \emph{menos}, mantendo o treino rebalanceado, importa mais do que \emph{o qu\^e} se herda.
+\textbf{(ii) O efeito real \'e curadoria de volume, n\~ao o score.} \emph{All} herda 302 a 313 sint\'eticos; os demais, 80. O colapso do \emph{All} \'e mais evidente no FACTCK.BR escasso (10\%: 0{,}840 \emph{vs.} 0{,}93--0{,}94 dos curados; 5\%: 0{,}785 \emph{vs.} 0{,}93--0{,}94) e no COVID19.BR 5\% (0{,}567 \emph{vs.} 0{,}64--0{,}69). Herdar \emph{menos}, mantendo o treino rebalanceado, importa mais do que \emph{o qu\^e} se herda.
 
 \textbf{(iii) O ganho do score cresce com a compet\^encia do learner.} A Tabela~\ref{tab:competence} mostra que, no COVID19.BR e no FakeWhatsApp.Br, o delta Score $-$ Random parte de $\approx$0 com 5\% dos dados reais e sobe at\'e $+0{,}022$ a $+0{,}028$ no full; no FACTCK.BR (tarefa f\'acil) fica $\approx$0 em todas as fra\c{c}\~oes. O bra\c{c}o \emph{band-k} (dificuldade intermedi\'aria) fica igual ou abaixo do \emph{Score-}k nos tr\^es dom\'inios. Ou seja: a heran\c{c}a guiada ajuda quando o learner inicial j\'a \'e competente e a tarefa \'e dif\'icil o bastante para haver margem; herdar os \emph{mais dif\'iceis} supera herdar os \emph{medianos}.
 
 \textbf{(iv) Calibra\c{c}\~ao faz o trabalho pesado.} Os limiares caem para 0{,}05 a 0{,}11 na escassez: sem pondera\c{c}\~ao e limiar ajustado, o modelo subestima a classe minorit\'aria e o recall colapsa. Parte do F1 observado \'e pol\'itica de treino, n\~ao qualidade intr\'inseca do sint\'etico.
 
-\textbf{(v) Custo (RQ2).} A sele\c{c}\~ao n\~ao reduz o custo de gera\c{c}\~ao: o mesmo lote \'e gerado para todos os bra\c{c}os. Ela reduz o tamanho do conjunto de treino herdado (80 \emph{vs.} 277 a 313), mas n\~ao o or\c{c}amento de tokens.
+\textbf{(v) Custo (RQ2).} A sele\c{c}\~ao n\~ao reduz o custo de gera\c{c}\~ao: o mesmo lote \'e gerado para todos os bra\c{c}os. Ela reduz o tamanho do conjunto de treino herdado (80 \emph{vs.} 302 a 313), mas n\~ao o or\c{c}amento de tokens.
 
 \textbf{(vi) Artefatos e fidelidade.} No prompt anterior (v3), 91\% a 93\% dos sint\'eticos come\c{c}avam por ``URGENTE'' e 85\% a 86\% continham ``acabei de receber'', contra $\approx$1\% e $\approx$0\% no real; a mensagem falsa real tem $\approx$159 palavras, contra 95 a 100 dos sint\'eticos. O prompt v4 foi desenhado para mitigar esses templates. Ainda assim, o Wasserstein do pool AI n\~ao melhora de forma consistente, e um classificador TF-IDF + regress\~ao log\'istica separa o texto sint\'etico do real com AUC $=$ 1{,}000 nos tr\^es dom\'inios (split aleat\'orio, diagn\'ostico): h\'a um atalho estil\'istico que a diversidade dentro do pool n\~ao elimina.
 
@@ -294,7 +304,7 @@ WhatsApp.Br & 1.00 & 0.712 & 0.734 & $+$0.022 \\
 \section{Limita\c{c}\~oes}
 
 \begin{itemize}
-\item $n{=}3$ sementes: poder estat\'istico insuficiente (menor $p$ do Wilcoxon bilateral = 0{,}25); resultados explorat\'orios.
+\item $n{=}10$ sementes no estudo controlado (o menor $p$ do Wilcoxon bilateral pareado \'e $\approx$0{,}002); a varredura de compet\^encia usa $n{=}1$ e o \emph{band-k} $n{=}3$, portanto esses dois permanecem explorat\'orios.
 \item R\'otulos sint\'eticos assumidos como ``falso'' sem verifica\c{c}\~ao factual humana; a veracidade exige evid\^encia externa.
 \item AUC real-vs-sint\'etico $=$ 1{,}000 indica atalho estil\'istico; m\'etricas de embedding s\~ao proxies, n\~ao realismo.
 \item No Fake.br, o texto real \'e pr\'e-processado e o sint\'etico \'e raw; a normaliza\c{c}\~ao aplicada \'e aproximada (an\'alise de sensibilidade, n\~ao equival\^encia exata).
