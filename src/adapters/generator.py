@@ -93,13 +93,15 @@ class OpenAIGenerator(BaseGenerator):
         # ponytail: preços aproximados USD/1M tokens (in, out); recalibrar se o provedor mudar.
         self._price_in = {
             "deepseek-chat": 0.27, "deepseek-flash": 0.07, "gpt-4o-mini": 0.15, "gpt-4o": 5.0,
-            "openai/gpt-4.1-mini": 0.40, "meta-llama/llama-4-maverick": 0.19,
-            "mistralai/mistral-small-2603": 0.15, "google/gemini-3.5-flash-lite": 0.30,
+            "openai/gpt-6.1-terra": 1.00, "meta-llama/llama-4-maverick": 0.19,
+            "mistralai/mistral-large-4-0": 0.70, "google/gemma-4-31b-it": 0.20,
+            "anthropic/claude-haiku-5.5": 0.10,
         }
         self._price_out = {
             "deepseek-chat": 1.10, "deepseek-flash": 0.27, "gpt-4o-mini": 0.60, "gpt-4o": 15.0,
-            "openai/gpt-4.1-mini": 1.60, "meta-llama/llama-4-maverick": 0.65,
-            "mistralai/mistral-small-2603": 0.60, "google/gemini-3.5-flash-lite": 2.50,
+            "openai/gpt-6.1-terra": 5.00, "meta-llama/llama-4-maverick": 0.65,
+            "mistralai/mistral-large-4-0": 2.10, "google/gemma-4-31b-it": 0.40,
+            "anthropic/claude-haiku-5.5": 0.50,
         }
 
     def _add_cost(self, prompt_tokens, completion_tokens):

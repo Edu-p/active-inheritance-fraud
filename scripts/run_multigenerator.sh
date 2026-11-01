@@ -13,10 +13,11 @@ set -u
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 cd "$(dirname "$0")/.."
 
-# 4 recent models (one per family) that generate CLEAN PT-BR misinformation in smoke
-# tests. Newer GPT/Gemini/Claude in this env return empty text or prepend
-# 'SIMULAÇÃO FICTÍCIA' disclaimers, so they are excluded.
-MODELS="${MODELS:-openai/gpt-4.1-mini meta-llama/llama-4-maverick mistralai/mistral-small-2603 google/gemini-3.5-flash-lite}"
+# 2026 models (one per family) that generate CLEAN PT-BR misinformation in smoke
+# tests. Note: meta-llama has NO 2026 model in OpenRouter, so llama-4-maverick
+# (Apr 2025) is the newest Llama. gemini-3.x-flash (2026) truncates; gpt-6-luna
+# (2026) prepends 'SIMULAÇÃO FICTÍCIA' disclaimers — both excluded.
+MODELS="${MODELS:-openai/gpt-6.1-terra meta-llama/llama-4-maverick mistralai/mistral-large-4-0 google/gemma-4-31b-it anthropic/claude-haiku-5.5}"
 BASE_URL="${BASE_URL:-https://openrouter.ai/api/v1}"
 KEY_ENV="${KEY_ENV:-OPEN_ROUTER_API_KEY}"
 SCENARIOS="${SCENARIOS:-covid19br-10pct factckbr-10pct}"

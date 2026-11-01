@@ -2,41 +2,45 @@
 
 **Repo:** https://github.com/Edu-p/active-inheritance-fraud
 
-Implements **Active Inheritance**: a cyclic LLM generation loop for fraudulent-text detection, guided by an **adversarial evaluator** that scores synthetic samples by the downstream classifier's *error + uncertainty + diversity*, inheriting only the top-k (decision boundary) into the next cycle.
+Implementa **Herança Ativa (ActiveInheritance)**: loop cíclico em que um LLM gera
+textos `fake` e um avaliador adversarial pontua cada candidato por
+`score = 0.4·erro + 0.4·incerteza + 0.2·diversidade`, herdando só o top-k no
+retreino do classificador downstream (BERTimbau).
 
 Baseline: [profile2gen](https://github.com/szanara/profile2gen) (Maynara et al., ICML 2025).
 
-📄 **Histórico completo (ideia, baselines, E1–E10, FakeWhatsApp e conclusões):** [`docs/historico_completo_projeto.md`](docs/historico_completo_projeto.md)
-
-Análises detalhadas: [`docs/analise_completa_experimentos.md`](docs/analise_completa_experimentos.md) · [`docs/analise_fakewhatsapp.md`](docs/analise_fakewhatsapp.md)
-
-Outros docs: [`docs/implementation.md`](docs/implementation.md) · [`planning/PLAN.md`](planning/PLAN.md) · [`planning/RUN.md`](planning/RUN.md) · [`planning/HANDOFF.md`](planning/HANDOFF.md) · [Seguimento noturno](planning/FOLLOWUP_NIGHT.md)
-
-> Seguimento (separado da tabela abaixo): `bash scripts/run_night.sh` cria `outputs/e6-5pct/`, `e7-probe/`, `e8-generators/` sem tocar em `e1`–`e5`. Consulte `planning/FOLLOWUP_NIGHT.md` para status, limites e credenciais indisponíveis.
+📄 **Artigo atual:** [`report-latex/paper-active-inheritance-multidomain.pdf`](report-latex/paper-active-inheritance-multidomain.pdf)
+(estudo controlado 4 domínios × 10 seeds). Vault de estado: `**__active_obsidian/`.
 
 ---
 
-## Results (Fake.br-Corpus, cenário de escassez: 10% fake)
+## Resultado central (estudo controlado, n=10)
 
-| Braço | F1 (teste) | tokens/run |
-|---|---|---|
-| Real (sem sintético) | 0.887 ± 0.026 | 0 |
-| Static N=32 | 0.789 ± 0.113 | ~20k |
-| Static N=79 | 0.852 ± 0.034 | ~53k |
-| Static N=158 | 0.916 ± 0.013 | ~103k |
-| **ActiveInheritance** | **0.924 ± 0.007** | ~645k |
+4 regras de herança (`All` / `Random-k` / `Score-k` / `Easy-k`) sobre os MESMOS
+candidatos zero-shot congelados, 4 domínios PT-BR (Fake.br, FakeWhatsApp.Br,
+COVID19.BR, FACTCK.BR) × 3 escassezes × 10 seeds = **440 runs**.
 
-> ActiveInheritance é o mais consistente (menor desvio entre seeds) e atinge o topo de F1, mas **não** supera o Static em eficiência de tokens na config atual (batch 64 × 5 ciclos). Relatório completo E1–E10 + FakeWhatsApp em [`report-latex/relatorio-completo-active-inheritance.pdf`](report-latex/relatorio-completo-active-inheritance.pdf).
+- **O score NÃO domina o sorteio**: `score-k ≈ random-k` na maioria (nenhuma
+  célula significativa após Holm).
+- **Curadoria de volume é o efeito robusto**: `All` colapsa sob escassez
+  (FACTCK 10%: 0.840 vs 0.94 curado).
+- **Ajuda de verdade só onde o learner é competente e a tarefa é difícil**
+  (COVID19.BR 10%: score-k 0.728 vs random-k 0.655, p=0.084 raw / 0.92 Holm).
+- **Atalho estilístico**: um TF-IDF+LR separa sintético de real com AUC=1.0
+  (comprimento em FACTCK, digit_ratio no Fake.br, deriva semântica no WhatsApp).
+
+Consolidação: `uv run python scripts/analyze_normalized.py` (+ `--latex`).
+Significância: `uv run python scripts/significance.py`.
 
 ---
 
 ## Pipeline
 
-1. **Data 0** — Fake.br-Corpus: treino escasso (10% fake) + holdout balanceado.
-2. **LLM generator** — DeepSeek `deepseek-chat`, condicionado ao pool herdado.
+1. **Data** — 4 domínios PT-BR + LIAR e FakeNewsNet (EN), com escassez full/10%/5%.
+2. **Gerador** — DeepSeek `deepseek-chat` ou OpenRouter (GPT/Llama/Mistral/Gemma/Claude).
 3. **Learner** — BERTimbau (`neuralmind/bert-base-portuguese-cased`).
-4. **Adversarial evaluator** — `score = w1·erro + w2·incerteza + w3·diversidade`.
-5. **Active inheritance** — top-k → pool → retreina → próximo ciclo.
+4. **Avaliador** — `score = w_e·erro + w_u·incerteza + w_d·diversidade`.
+5. **Herança** — top-k → pool → retreina → próximo ciclo.
 
 ---
 
@@ -45,11 +49,11 @@ Outros docs: [`docs/implementation.md`](docs/implementation.md) · [`planning/PL
 ```bash
 git clone https://github.com/Edu-p/active-inheritance-fraud.git
 cd active-inheritance-fraud
-uv sync              # torch cu124 já configurado no pyproject (GPU)
+uv sync              # torch cu124 no pyproject (GPU)
 cp .env.example .env # edite a chave
 ```
 
-`.env`:
+`.env` (DeepSeek, padrão):
 
 ```bash
 OPENAI_API_KEY=sk-...
@@ -57,27 +61,39 @@ OPENAI_BASE_URL=https://api.deepseek.com
 OPENAI_MODEL=deepseek-chat   # NÃO use deepseek-flash (reasoning, recusa fake news)
 ```
 
+OpenRouter (multi-provider): adicione `OPEN_ROUTER_API_KEY=sk-or-...` e passe
+`--base-url https://openrouter.ai/api/v1 --model <id>` (ex.: `openai/gpt-6.1-terra`,
+`anthropic/claude-haiku-5.5`).
+
 ---
 
 ## Usage
 
 ```bash
-# 1. dataset escasso + holdout (uma vez só)
+# datasets escassos (uma vez; LIAR/FakeNewsNet = EN)
 uv run python scripts/make_imbalanced.py
+uv run python scripts/prepare_liar.py
+uv run python scripts/prepare_fakenewsnet.py
 
-# 2. braços
-uv run python baseline.py --arm real --seed 42
-uv run python baseline.py --arm static --generator openai --model deepseek-chat --n-samples 158 --seed 42
-uv run python main.py --generator openai --model deepseek-chat --seed 42
+# estudo controlado (gerar candidatos = API; replay = GPU, resumível)
+uv run python scripts/controlled_curatorship.py --generate --scenario covid19br-10pct --seed 42
+uv run python scripts/controlled_curatorship.py --replay --candidates <candidates.json> --arm score-k
 
-# 3. grade completa E1–E5 (background)
-nohup bash scripts/run_grid.sh > outputs/grid_console.log 2>&1 &
+# pipeline completo PT (resumível)
+bash scripts/run_normalize_all.sh
 
-# 4. figuras + estatística
-uv run python plots.py
-uv run python scripts/stats.py
+# ablações / generalização (tiers NeurIPS, resumíveis)
+bash scripts/run_neurotier.sh                    # styleblind + weights + multilearner + competence + band
+bash scripts/run_multigenerator.sh               # T2.1 multi-LLM (API OpenRouter)
+bash scripts/run_english_gen.sh                  # T3.1 LIAR + FakeNewsNet (API DeepSeek)
 
-# 5. self-check (sem torch)
+# análise
+uv run python scripts/analyze_normalized.py      # tabelas do estudo controlado
+uv run python scripts/analyze_ablations.py       # pesos + style-blind
+uv run python scripts/style_gap.py               # N1: atalho estilístico
+uv run python scripts/significance.py            # T1.3: Wilcoxon + Holm
+
+# self-check (sem torch)
 uv run python -m tests.test_core
 ```
 
@@ -85,25 +101,25 @@ uv run python -m tests.test_core
 
 ```
 outputs/
-├── e1/   # Real
-├── e2/   # Static
-├── e3/   # ActiveInheritance
-├── e4/   # ablação: pesos
-├── e5/   # ablação: top-k
-└── sandbox/
+├── revision-controlled-<scenario>-<prompt>/  # estudo controlado (all/random-k/score-k/easy-k)
+├── ablation-weights-*/   # T1.2 (frozen scorer)
+├── ablation-styleblind-*/# N2  (SemanticProbe scorer)
+├── multilearner-*/       # T2.2
+├── multigenerator-*/     # T2.1
+├── style-gap/            # N1 (JSON por cenário)
+└── revision-candidates/  # candidates.json congelados (fonte dos replays)
 ```
 
-Cada run: `outputs/<exp>/<arm>-s<seed>-<timestamp>/results.json`.
+Cada run: `outputs/<group>/<arm>-s<seed>-<timestamp>/results.json` (imutável).
 
-## Main arguments (`main.py`)
+## Main arguments (`main.py` / `controlled_curatorship.py`)
 
 | Argument | Default | Descrição |
 |---|---|---|
-| `--generator` | `mock` | `mock` \| `openai` |
-| `--epochs` | `5` | ciclos T |
-| `--batch-size` | `64` | lote sintético/ciclo |
+| `--scenario` | — | `fakewhatsapp-full` · `covid19br-10pct` · `factckbr-5pct` · `liar-full` · `fakenewsnet-10pct` … |
+| `--arm` | — | `all` \| `random-k` \| `score-k` \| `easy-k` |
 | `--top-k` | `16` | herdados/ciclo |
-| `--model` | `deepseek-chat` | LLM |
+| `--model` | `deepseek-chat` | LLM gerador (ou id OpenRouter) |
+| `--base-url` | env | endpoint OpenAI-compatible |
 | `--learner-model` | `neuralmind/bert-base-portuguese-cased` | learner |
-| `--embedder` | `semantic` | `semantic` \| `tfidf` |
 | `--seed` | `42` | semente |
