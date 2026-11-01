@@ -84,11 +84,26 @@ def main():
             else:
                 XC = E(pool)
             auc = pool_auc(d0_fakes, pool)
-            r = run_pool(pool, XR, XV, XT, XC, d0_y, va_y, te_y, args.seeds)
-            r.update(pool=f"mix{alpha:g}", learner=learner, auc_char=auc, n_pool=len(pool))
+            r, rdf = run_pool(pool, XR, XV, XT, XC, d0_y, va_y, te_y, args.seeds)
+            # bootstrap CI (paired by seed) for delta(All-Real) and delta(Score-Random)
+            piv = rdf.pivot_table(index="seed", columns="rule", values="test_prauc")
+            real_prauc = r["real_prauc"]
+            def boot_ci(d, n=2000):
+                d = np.asarray(d, dtype=float)
+                d = d[~np.isnan(d)]
+                if len(d) < 2:
+                    return (float("nan"), float("nan"))
+                rng_ = np.random.default_rng(0)
+                ms = np.array([rng_.choice(d, len(d), replace=True).mean() for _ in range(n)])
+                return float(np.percentile(ms, 2.5)), float(np.percentile(ms, 97.5))
+            ci_ar = boot_ci(piv["All"].values - real_prauc)
+            ci_sr = boot_ci(piv["Score"].values - piv["Random"].values)
+            r.update(pool=f"mix{alpha:g}", learner=learner, auc_char=auc, n_pool=len(pool),
+                     ci_all_real=ci_ar, ci_score_random=ci_sr)
             rows.append(r)
             print(f"mix{alpha:g}/{learner}: AUC={auc:.3f} | ΔAll-Real={r['delta_all_real']:+.4f} "
-                  f"ΔScore-Rand={r['delta_score_random']:+.4f} ΔEasy-Rand={r['delta_easy_random']:+.4f}", flush=True)
+                  f"CI{tuple(round(x,4) for x in ci_ar)} | ΔScore-Rand={r['delta_score_random']:+.4f} "
+                  f"CI{tuple(round(x,4) for x in ci_sr)}", flush=True)
 
     df = pd.DataFrame(rows)
     outdir = Path("outputs/decisive")

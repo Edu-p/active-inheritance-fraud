@@ -125,7 +125,7 @@ def run_pool(pool_texts, XR, XV, XT, XC, d0_y, va_y, te_y, seeds):
         def rec(rule, H):
             m = fit(H, seed)
             r = ev(m)
-            r.update(rule=rule, n_H=len(H))
+            r.update(rule=rule, n_H=len(H), seed=seed)
             rows.append(r)
 
         rec("All", list(range(n)))
@@ -158,7 +158,7 @@ def run_pool(pool_texts, XR, XV, XT, XC, d0_y, va_y, te_y, seeds):
     out["delta_all_real"] = out["prauc_All"] - out["real_prauc"]
     out["delta_score_random"] = out["prauc_Score"] - out["prauc_Random"]
     out["delta_easy_random"] = out["prauc_Easy"] - out["prauc_Random"]
-    return out
+    return out, df
 
 
 def main():
@@ -193,7 +193,7 @@ def main():
             else:
                 XC = E(pool)
             auc = pool_auc(d0_fakes, pool)
-            r = run_pool(pool, XR, XV, XT, XC, d0_y, va_y, te_y, args.seeds)
+            r, _ = run_pool(pool, XR, XV, XT, XC, d0_y, va_y, te_y, args.seeds)
             r["pool"] = pname
             r["learner"] = learner
             r["auc_char"] = auc
