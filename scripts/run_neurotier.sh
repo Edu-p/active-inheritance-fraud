@@ -6,9 +6,11 @@
 # Phases (pass one or more names as args; default = all zero-API phases):
 #   styleblind   N2  : SemanticProbe scorer (content-only) vs random-k
 #   weights      T1.2: (w_e,w_u,w_d) grid vs random-k, frozen scorer
-#   multilearner T2.2: mBERT / BERTimbau-small / XLM-R downstream learners
+#   multilearner T2.2: mBERT / BERTimbau-small / XLM-R / lora-llm downstream learners
 #   competence   T1.1: n=10 competence sweep (5 fractions, 3 domains)
 #   band         T1.1: n=10 band-k (3 domains)
+#   real         A1  : real-only baseline, n=10, all 11 scenarios
+#   shortcut     A13 : score-det / score-frozen / realism-k, n=10
 #
 # Usage:
 #   bash scripts/run_neurotier.sh                       # all zero-API
@@ -48,8 +50,16 @@ for ph in $PHASES; do
         --scenarios covid19br-full,factckbr-full,fakewhatsapp-full --seeds "$SEEDS10" \
         --fractions 1.00 --arms band-k --group explore-band
       ;;
+    real)
+      echo "=== [real n=10] A1 ==="
+      uv run python scripts/real_baseline.py --seeds "$SEEDS10"
+      ;;
+    shortcut)
+      echo "=== [shortcut factorial] A13 ==="
+      uv run python scripts/shortcut_factorial.py --seeds "$SEEDS10"
+      ;;
     *)
-      echo "Unknown phase: $ph (styleblind|weights|multilearner|competence|band)"
+      echo "Unknown phase: $ph (styleblind|weights|multilearner|competence|band|real|shortcut)"
       ;;
   esac
 done
