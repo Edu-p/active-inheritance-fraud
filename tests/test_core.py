@@ -163,7 +163,7 @@ def main() -> None:
     assert set(EMBEDDERS) == {"semantic", "tfidf"}
     assert set(SCORERS) == {"learner", "laya"}
     assert _VARIANT_TRAIN["10pct"] == "train-10pct.csv"
-    assert set(_DATASET_FILES) == {"covid19br", "factckbr", "fakewhatsapp"}
+    assert set(_DATASET_FILES) == {"covid19br", "factckbr", "fakewhatsapp", "liar", "fakenewsnet"}
 
     from src.helpers import evaluate, tune_threshold
 

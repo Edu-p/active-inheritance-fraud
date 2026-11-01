@@ -133,6 +133,8 @@ _DATASET_FILES = {
     "covid19br": ("test-june.csv", "validation-june.csv"),
     "factckbr": ("test.csv", "validation.csv"),
     "fakewhatsapp": ("test-october.csv", "validation-september.csv"),
+    "liar": ("test.csv", "validation.csv"),
+    "fakenewsnet": ("test.csv", "validation.csv"),
 }
 
 

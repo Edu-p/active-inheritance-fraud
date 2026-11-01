@@ -59,17 +59,30 @@ class OpenAIGenerator(BaseGenerator):
         load_dotenv()
         from openai import OpenAI
 
-        is_gpt = cfg.openai_base_url == "https://api.openai.com/v1"
-        api_key = os.getenv("GPT_API_KEY") if is_gpt else (os.getenv("OPENAI_API_KEY") or os.getenv("DEEPSEEK_API_KEY"))
         base_url = cfg.openai_base_url or os.getenv("OPENAI_BASE_URL") or None
+        is_openrouter = bool(base_url and "openrouter.ai" in base_url)
+        is_gpt = cfg.openai_base_url == "https://api.openai.com/v1"
+        if is_openrouter:
+            api_key = os.getenv("OPEN_ROUTER_API_KEY")
+        elif is_gpt:
+            api_key = os.getenv("GPT_API_KEY")
+        else:
+            api_key = os.getenv("OPENAI_API_KEY") or os.getenv("DEEPSEEK_API_KEY")
         model = cfg.openai_model or os.getenv("OPENAI_MODEL")
 
         if not api_key:
             raise ValueError(
-                "Set OPENAI_API_KEY (or DEEPSEEK_API_KEY) in the environment or .env"
+                "Set OPENAI_API_KEY / DEEPSEEK_API_KEY / GPT_API_KEY / OPEN_ROUTER_API_KEY in .env"
             )
 
-        self.client = OpenAI(api_key=api_key, base_url=base_url)
+        kwargs: dict = {"api_key": api_key, "base_url": base_url}
+        if is_openrouter:
+            # ponytail: OpenRouter pede referer/title; só afeta analytics, não a resposta.
+            kwargs["default_headers"] = {
+                "HTTP-Referer": "http://localhost",
+                "X-Title": "active-inheritance-fraud",
+            }
+        self.client = OpenAI(**kwargs)
         self.model = model
         self.max_tokens = cfg.gen_max_tokens
         self.max_run_tokens = cfg.max_run_tokens
@@ -78,8 +91,16 @@ class OpenAIGenerator(BaseGenerator):
         self.zero_shot = getattr(cfg, "zero_shot", False)
         self.calls = 0
         # ponytail: preços aproximados USD/1M tokens (in, out); recalibrar se o provedor mudar.
-        self._price_in = {"deepseek-chat": 0.27, "deepseek-flash": 0.07, "gpt-4o-mini": 0.15, "gpt-4o": 5.0}
-        self._price_out = {"deepseek-chat": 1.10, "deepseek-flash": 0.27, "gpt-4o-mini": 0.60, "gpt-4o": 15.0}
+        self._price_in = {
+            "deepseek-chat": 0.27, "deepseek-flash": 0.07, "gpt-4o-mini": 0.15, "gpt-4o": 5.0,
+            "openai/gpt-4.1-mini": 0.40, "meta-llama/llama-4-maverick": 0.19,
+            "mistralai/mistral-small-2603": 0.15, "google/gemini-3.5-flash-lite": 0.30,
+        }
+        self._price_out = {
+            "deepseek-chat": 1.10, "deepseek-flash": 0.27, "gpt-4o-mini": 0.60, "gpt-4o": 15.0,
+            "openai/gpt-4.1-mini": 1.60, "meta-llama/llama-4-maverick": 0.65,
+            "mistralai/mistral-small-2603": 0.60, "google/gemini-3.5-flash-lite": 2.50,
+        }
 
     def _add_cost(self, prompt_tokens, completion_tokens):
         p_in = self._price_in.get(self.model, 0.0)
@@ -102,6 +123,32 @@ class OpenAIGenerator(BaseGenerator):
                 "especialmente 'URGENTE' e 'acabei de receber'. Não copie outros textos."
             )
             user = f"Tema: {topics[call_index % len(topics)]}. Estilo: {styles[call_index % len(styles)]}. Comprimento: {lo} a {hi} palavras. Escreva uma mensagem inventada natural."
+            return system, user
+        if self.prompt_version == "v5":
+            # English short claim (LIAR genre)
+            topics = ("health", "elections", "economy", "science", "education", "public safety")
+            topic = topics[call_index % len(topics)]
+            system = (
+                "Write a FICTIONAL short claim for fake-news detection research. "
+                "Do not use real people, institutions, links or events. Return ONLY the "
+                "claim, no title, no markdown, no disclaimer, no explanation. One invented "
+                "but checkable allegation, 10 to 35 words, with concrete details. Vary the "
+                "opening and structure each time."
+            )
+            user = f"Topic: {topic}. Write a new fictional claim:"
+            return system, user
+        if self.prompt_version == "v6":
+            # English news article (FakeNewsNet genre)
+            topics = ("health", "elections", "economy", "science", "education", "public safety")
+            topic = topics[call_index % len(topics)]
+            system = (
+                "Write a FICTIONAL news article for fake-news detection research. "
+                "Do not use real people, institutions, links or events. Return ONLY the "
+                "article body, no title, no markdown, no disclaimer, no explanation. "
+                "Journalistic style, 80 to 130 words, one invented but checkable allegation "
+                "with concrete details. Each response must be different."
+            )
+            user = f"Topic: {topic}. Write a new fictional news article:"
             return system, user
         if self.prompt_version == "v3":
             topics = ("saúde", "eleições", "segurança", "economia", "serviços públicos", "educação")
@@ -151,7 +198,7 @@ class OpenAIGenerator(BaseGenerator):
                 {"role": "system", "content": system},
                 {"role": "user", "content": user},
             ],
-            max_completion_tokens=self.max_tokens,
+            max_tokens=self.max_tokens,
             temperature=0.9,
         )
         usage = resp.usage

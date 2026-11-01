@@ -41,6 +41,12 @@ SCENARIOS = {
     "factckbr-full": ("dataset/factckbr/train-full.csv", "dataset/factckbr/validation.csv", "dataset/factckbr/test.csv", "news"),
     "factckbr-10pct": ("dataset/factckbr/train-10pct.csv", "dataset/factckbr/validation.csv", "dataset/factckbr/test.csv", "news"),
     "factckbr-5pct": ("dataset/factckbr/train-5pct.csv", "dataset/factckbr/validation.csv", "dataset/factckbr/test.csv", "news"),
+    "liar-full": ("dataset/liar/train-full.csv", "dataset/liar/validation.csv", "dataset/liar/test.csv", "claim-en"),
+    "liar-10pct": ("dataset/liar/train-10pct.csv", "dataset/liar/validation.csv", "dataset/liar/test.csv", "claim-en"),
+    "liar-5pct": ("dataset/liar/train-5pct.csv", "dataset/liar/validation.csv", "dataset/liar/test.csv", "claim-en"),
+    "fakenewsnet-full": ("dataset/fakenewsnet/train-full.csv", "dataset/fakenewsnet/validation.csv", "dataset/fakenewsnet/test.csv", "news-en"),
+    "fakenewsnet-10pct": ("dataset/fakenewsnet/train-10pct.csv", "dataset/fakenewsnet/validation.csv", "dataset/fakenewsnet/test.csv", "news-en"),
+    "fakenewsnet-5pct": ("dataset/fakenewsnet/train-5pct.csv", "dataset/fakenewsnet/validation.csv", "dataset/fakenewsnet/test.csv", "news-en"),
 }
 
 
@@ -60,9 +66,11 @@ def dump(path, obj):
 
 def generate(args):
     csv, val, test, kind = paths(args.scenario)
-    prompt = "v2" if kind in ("fakebr", "news") else args.prompt
+    kind_prompt = {"fakebr": "v2", "news": "v2", "claim-en": "v5", "news-en": "v6"}
+    prompt = kind_prompt.get(kind, args.prompt)
     cfg = Config(csv_path=Path(csv), val_csv_path=Path(val), test_csv_path=Path(test),
                  random_state=args.seed, generator="openai", openai_model=args.model,
+                 openai_base_url=args.base_url or "",
                  prompt_version=prompt, zero_shot=True,
                  gen_max_tokens=512 if prompt == "v4" else 256,
                  generator_workers=4, max_run_tokens=args.max_run_tokens)
@@ -165,6 +173,7 @@ def main():
     ap.add_argument("--scenario", choices=SCENARIOS)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--model", default="deepseek-chat")
+    ap.add_argument("--base-url", default="", help="override OpenAI-compatible base URL (else env OPENAI_BASE_URL)")
     ap.add_argument("--prompt", choices=["v2", "v3", "v4"], default="v3")
     ap.add_argument("--cycles", type=int, default=5)
     ap.add_argument("--batch-size", type=int, default=64)
