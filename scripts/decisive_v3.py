@@ -34,7 +34,7 @@ def load_data(ds):
     d0_texts, d0_y = csv("train-10pct.csv")
     va_texts, va_y = csv("validation.csv")
     te_texts, te_y = csv("test.csv")
-    held_file = "heldout_fakes.csv" if ds == "fakebr-raw" else "heldout_toxic.csv"
+    held_file = {"fakebr-raw": "heldout_fakes.csv", "toldbr": "heldout_toxic.csv", "b2w": "heldout_negative.csv"}[ds]
     heldout = pd.read_csv(root / held_file).iloc[:, 0].astype(str).tolist()
     return d0_texts, d0_y, va_texts, va_y, te_texts, te_y, heldout
 
@@ -45,8 +45,9 @@ def load_synth(ds):
         src = find_candidate_source("fakebr-10pct", 42)
         meta = json.loads(src.read_text())
         return [t for b in meta["batches"] for t in b if t and t.strip()]
-    # ToLD-Br: free-generated toxic pool
-    pf = Path("outputs/decisive/toxic_synth.jsonl")
+    # ToLD-Br / B2W: free-generated pool
+    fname = "toxic_synth.jsonl" if ds == "toldbr" else "b2w_synth.jsonl"
+    pf = Path("outputs/decisive") / fname
     if not pf.exists():
         return []
     return [json.loads(l)["text"] for l in pf.read_text().splitlines() if json.loads(l).get("text", "").strip()]
@@ -54,7 +55,7 @@ def load_synth(ds):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dataset", default="fakebr-raw", choices=["fakebr-raw", "toldbr"])
+    ap.add_argument("--dataset", default="fakebr-raw", choices=["fakebr-raw", "toldbr", "b2w"])
     ap.add_argument("--learners", default="minilm,tfidf")
     ap.add_argument("--seeds", type=int, default=10)
     args = ap.parse_args()
