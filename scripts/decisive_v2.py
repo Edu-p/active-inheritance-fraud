@@ -120,7 +120,7 @@ def run_pool(pool_texts, XR, XV, XT, XC, d0_y, va_y, te_y, seeds):
                 d = 1 - np.clip(A.max(axis=1), 0, 1)
             return W[0] * e + W[1] * u + W[2] * d
 
-        batches = [np.arange(t * B, (t + 1) * B) for t in range(T)]
+        batches = [np.arange(t * B, min((t + 1) * B, n)) for t in range(T)]
 
         def rec(rule, H):
             m = fit(H, seed)
