@@ -1,8 +1,12 @@
-# Active-Inheritance Guided Synthetic Generation 🧬🤖
+# Guided Synthetic Selection (GSS) 🧬🤖
 
 **Repo:** https://github.com/Edu-p/active-inheritance-fraud
 
-Implementa **Herança Ativa (ActiveInheritance)**: loop cíclico em que um LLM gera
+> **Nota de nomenclatura:** o método era chamado *Herança Ativa (ActiveInheritance)*
+> e foi renomeado para **Guided Synthetic Selection (GSS)** para evitar colisão com
+> Shimabucoro et al., *Active Inheritance*, EMNLP 2024 (doi 10.18653/v1/2024.emnlp-main.521).
+
+Implementa **GSS**: loop cíclico em que um LLM gera
 textos `fake` e um avaliador adversarial pontua cada candidato por
 `score = 0.4·erro + 0.4·incerteza + 0.2·diversidade`, herdando só o top-k no
 retreino do classificador downstream (BERTimbau).
