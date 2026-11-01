@@ -18,7 +18,7 @@ class SemanticProbe:
                 self.cache[text] = vector
         return np.asarray([self.cache[t] for t in texts])
 
-    def fit(self, texts, y, epochs=3):
+    def fit(self, texts, y, epochs=3, from_scratch=False):
         self.model.fit(self._vectors(texts), y)
         probs = self.predict(texts)
         return float(-np.log(np.clip(probs[np.arange(len(y)), y], 1e-12, 1)).mean())

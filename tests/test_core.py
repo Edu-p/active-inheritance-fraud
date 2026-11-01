@@ -159,7 +159,7 @@ def main() -> None:
     )
     assert set(DATASETS) == {"fakebr", "covid19br", "factckbr", "fakewhatsapp"}
     assert set(GENERATORS) == {"mock", "openai"}
-    assert set(LEARNERS) == {"bert", "semantic-probe"}
+    assert set(LEARNERS) == {"bert", "semantic-probe", "lora-llm"}
     assert set(EMBEDDERS) == {"semantic", "tfidf"}
     assert set(SCORERS) == {"learner", "laya"}
     assert _VARIANT_TRAIN["10pct"] == "train-10pct.csv"

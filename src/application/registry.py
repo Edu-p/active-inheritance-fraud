@@ -22,6 +22,7 @@ from ..adapters.embedder import SemanticEmbedder, TfidfEmbedder
 from ..domain.evaluator import AdversarialEvaluator
 from ..adapters.generator import MockGenerator, OpenAIGenerator
 from ..adapters.learner import Learner
+from ..adapters.llm_learner import LoraLLMLearner
 from ..adapters.probe import SemanticProbe
 
 GENERATORS: dict = {}
@@ -97,6 +98,22 @@ def _probe_learner(cfg, embedder=None):
     if cfg.embedder != "semantic" or embedder is None:
         raise ValueError("semantic-probe exige --embedder semantic")
     return SemanticProbe(embedder)
+
+
+@register_learner("lora-llm")
+def _lora_learner(cfg, embedder=None):
+    # Jev-style: frozen LLM backbone + LoRA + classification head. LoRA needs a
+    # higher lr and smaller batch than BERT; keep the CLI learner_model as the
+    # backbone id (e.g. Qwen/Qwen2.5-0.5B-Instruct).
+    return LoraLLMLearner(
+        model_name=cfg.learner_model,
+        lr=2e-4,
+        batch_size=8,
+        max_length=cfg.max_length,
+        device=cfg.device or None,
+        random_state=cfg.random_state,
+        class_weight=cfg.class_weight,
+    )
 
 
 # ---- Embedders (cfg) -> EmbedderPort ----

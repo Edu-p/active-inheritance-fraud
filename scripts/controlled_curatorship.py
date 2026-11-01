@@ -24,6 +24,7 @@ from src.evaluator import AdversarialEvaluator
 from src.generator import OpenAIGenerator
 from src.learner import Learner
 from src.metrics import best_threshold, classification_metrics, probabilistic_metrics
+from src.registry import LEARNERS
 from src.runs import save_run
 from src.text import normalize_fakebr
 
@@ -126,8 +127,7 @@ def replay(args):
                  top_k=args.top_k)
     train, validation, holdout = load_experiment_data(cfg)
     embedder = SemanticEmbedder(cfg.semantic_model) if args.arm in ("score-k", "easy-k") else None
-    learner = Learner(model_name=args.learner_model, random_state=seed,
-                      class_weight=True, device=args.device or None)
+    learner = LEARNERS[args.learner_kind](cfg, embedder if args.learner_kind == "semantic-probe" else None)
     learner.fit(*train, epochs=cfg.learner_epochs)
     inherited = []
     selections = []
@@ -183,6 +183,7 @@ def main():
     ap.add_argument("--top-k", type=int, default=16)
     ap.add_argument("--run-group", default="revision-controlled")
     ap.add_argument("--learner-model", default="neuralmind/bert-base-portuguese-cased")
+    ap.add_argument("--learner-kind", choices=["bert", "lora-llm", "semantic-probe"], default="bert")
     ap.add_argument("--device", default="")
     args = ap.parse_args()
     if args.generate:
