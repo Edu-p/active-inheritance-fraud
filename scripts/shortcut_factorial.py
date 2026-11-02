@@ -93,13 +93,13 @@ def minmax(x):
 
 
 def select_by_det(batches, pdet, flat, k):
-    """Precompute per-cycle selection by lowest detectability."""
+    """Precompute per-cycle selection by lowest detectability (batch-local indices)."""
     selections = []
     off = 0
     for b in batches:
         idx = list(range(off, off + len(b)))
         order = np.argsort(pdet[idx])[: min(k, len(idx))]
-        selections.append([idx[i] for i in order])
+        selections.append(order.tolist())  # batch-local, matches warm_start_final
         off += len(b)
     return selections
 
