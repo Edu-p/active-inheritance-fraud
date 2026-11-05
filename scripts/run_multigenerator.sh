@@ -68,7 +68,7 @@ for model in $MODELS; do
     prompt=$(prompt_for "$sc")
     grp="multigenerator-${sc}-${san}"
     for seed in $SEEDS; do
-      gen "$sc" "$seed" "$model" "$prompt"
+      case "$PHASES" in *gen*) gen "$sc" "$seed" "$model" "$prompt" ;; *) ;; esac
       cand=$(find_cand "$sc" "$seed" "$model")
       [ -z "$cand" ] && { echo "FAILED gen $sc s$seed $model"; continue; }
       case "$PHASES" in *replay*) ;; *) continue ;; esac

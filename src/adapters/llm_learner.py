@@ -49,8 +49,10 @@ class LoraLLMLearner:
         self.model = self._build()
 
     def _build(self):
+        # ponytail: fp32 everywhere — fp16 base + fp32 LoRA mixed dtypes (Half vs Float).
+        # 0.5B in fp32 (~2GB) still fits the 8GB GPU with a LoRA adapter.
         base = AutoModelForSequenceClassification.from_pretrained(
-            self.model_name, num_labels=2, dtype=torch.float16 if self.device == "cuda" else torch.float32
+            self.model_name, num_labels=2, dtype=torch.float32
         )
         if getattr(base.config, "pad_token_id", None) is None:
             base.config.pad_token_id = self.tokenizer.pad_token_id
