@@ -13,10 +13,10 @@ SEEDS="42 43 44 45 46"
 # kind:model pairs — BERT-family + a Jev-style LLM (non-BERT decision models)
 LEARNERS=(
   "bert:bert-base-multilingual-cased"
-  "bert:neuralmind/bert-small-portuguese-cased"
   "bert:xlm-roberta-base"
   "lora-llm:Qwen/Qwen2.5-0.5B-Instruct"
 )
+# ponytail: bert-small-portuguese-cased é gated (401 sem login HF); removido.
 ARMS="score-k random-k"
 
 find_cand() {
