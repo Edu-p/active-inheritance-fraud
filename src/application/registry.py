@@ -108,8 +108,8 @@ def _lora_learner(cfg, embedder=None):
     return LoraLLMLearner(
         model_name=cfg.learner_model,
         lr=2e-4,
-        batch_size=8,
-        max_length=cfg.max_length,
+        batch_size=4,  # ponytail: 8GB GPU; batch 4 evita OOM no warm-start com 0.5B
+        max_length=128,  # ponytail: sequências longas do Fake.br estouravam memória
         device=cfg.device or None,
         random_state=cfg.random_state,
         class_weight=cfg.class_weight,
