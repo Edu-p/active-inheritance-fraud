@@ -26,7 +26,7 @@
 
 \begin{document}
 
-\title{Sele\c{c}\~ao Guiada de Sint\'eticos (GSS) para Gera\c{c}\~ao de Desinforma\c{c}\~ao:\\um Estudo Controlado Multi-dom\'inio\thanks{M\'etodo anteriormente denominado \emph{Heran\c{c}a Ativa}; renomeado para evitar colis\~ao de nomenclatura com Shimabucoro et al., \emph{Active Inheritance}, EMNLP 2024 (doi 10.18653/v1/2024.emnlp-main.521).}}
+\title{Sele\c{c}\~ao Guiada de Sint\'eticos (GSS) para Gera\c{c}\~ao de Desinforma\c{c}\~ao:\\um Estudo Controlado Multi-dom\'inio\thanks{M\'etodo anteriormente denominado \emph{Sele\c{c}\~ao Guiada de Sint\x27eticos (GSS)}; renomeado para evitar colis\~ao de nomenclatura com Shimabucoro et al., \emph{Active Inheritance}, EMNLP 2024 (doi 10.18653/v1/2024.emnlp-main.521).}}
 
 \author{\IEEEauthorblockN{Eduardo Alexandre de Amorim\textsuperscript{1} e Cleber Zanchettin\textsuperscript{1}}
 \IEEEauthorblockA{\textsuperscript{1}Centro de Inform\'atica, Universidade Federal de Pernambuco (CIn/UFPE), Recife, PE, Brasil\\
@@ -35,7 +35,7 @@ eaa5@cin.ufpe.br, cz@cin.ufpe.br}}
 \maketitle
 
 \begin{abstract}
-A escassez de exemplos rotulados de desinforma\c{c}\~ao limita classificadores robustos, enquanto a gera\c{c}\~ao sint\'etica indiscriminada pode introduzir redund\^ancia, artefatos e ru\'ido. Este trabalho prop\~oe a \emph{Heran\c{c}a Ativa} (ActiveInheritance): um processo c\'iclico em que um modelo de linguagem gera candidatos falsos e um avaliador adversarial, que combina o erro, a incerteza e a diversidade do classificador downstream, seleciona apenas o top-$k$ para ser herdado no ciclo seguinte de treino. Para isolar o efeito da regra de sele\c{c}\~ao do volume gerado e da pol\'itica de treino, conduzimos um estudo controlado em quatro dom\'inios do portugu\^es (Fake.br, FakeWhatsApp.Br, COVID19.BR e FACTCK.BR). Nos quatro dom\'inios, uma \'unica gera\c{c}\~ao zero-shot por cen\'ario e semente \'e re-executada offline com quatro regras de heran\c{c}a: herdar tudo (\emph{All}), uma amostra aleat\'oria (\emph{Random-}k), o score top-$k$ (\emph{Score-}k) e o gate invertido (\emph{Easy-}k), em tr\^es n\'iveis de escassez e dez sementes (440 runs). Os resultados mostram que o score n\~ao domina a sele\c{c}\~ao aleat\'oria, que o efeito observado \'e sobretudo curadoria de volume, e que a sele\c{c}\~ao guiada s\'o agrega em regimes de dificuldade intermedi\'aria; a pondera\c{c}\~ao de classes e o limiar ajustado respondem pela maior parte do ganho. Al\'em disso, um classificador linear distingue o texto sint\'etico do real com AUC $=$ 1{,}000, indicando um atalho estil\'istico que a sele\c{c}\~ao n\~ao elimina.
+Selecionar os exemplos sint\'eticos ``dif\'iceis''---por erro e incerteza do pr\'oprio classificador---\'e uma receita comum em aumento de dados por LLMs. Testamos essa receita em um estudo controlado: para quatro dom\'inios de desinforma\c{c}\~ao em portugu\^es e tr\^es n\'iveis de escassez, um \'unico lote zero-shot \'e congelado e re-executado sob quatro regras de heran\c{c}a (\emph{All}, \emph{Random-}k, \emph{Score-}k, \emph{Easy-}k), com dez sementes e pol\'itica de treino id\^entica. Resultados: (i) o score \textbf{n\~ao supera o sorteio} em nenhuma c\'elula ap\'os corre\c{c}\~ao de Holm; (ii) a PR-AUC \'e pr\'aticamente id\^entica entre as regras (amplitude $\le 0{,}018$), logo as diferen\c{c}as de F1 (at\'e 0{,}15) s\~ao \textbf{efeito de limiar/calibra\c{c}\~ao}, n\~ao de qualidade; (iii) a sele\c{c}\~ao por dificuldade \'e um \textbf{\'im\~a de r\'otulos errados} (herda ~2$\times$ mais candidatos ``n\~ao-fake''), e o \emph{Easy-}k \'e t\~ao bom ou melhor; (iv) em um experimento decisivo com detectabilidade graduada, o valor do sint\'etico ($\Delta$ All$-$Real) \textbf{cai monotonicamente com a detectabilidade da fonte} (Fake.br: $+0{,}022\to-0{,}100$; ToLD-Br: $+0{,}016\to-0{,}001$; B2W: nulo), com CIs de bootstrap que excluem zero. O texto gerado \'e separ\'avel do real com AUC $=$ 1{,}000 mesmo ap\'os normaliza\c{c}\~ao e m\'ascara de entidades, por causa do \emph{registro} (o LLM escreve \emph{sobre} o boato). Recomenda\c{c}\~ao pr\'atica: herdar os \emph{f\'aceis} ou filtrar por detectabilidade, e sempre reportar o bra\c{c}o \emph{Real}.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -46,7 +46,7 @@ data-centric AI, synthetic data, misinformation, active inheritance, controlled 
 
 Detectar desinforma\c{c}\~ao em texto \'e uma classifica\c{c}\~ao bin\'aria (verdadeiro \emph{vs.} falso) que sofre de escassez e desbalanceamento da classe de interesse: os exemplos falsos s\~ao poucos, mudam de dom\'inio rapidamente e custam caro para rotular. Modelos de linguagem permitem produzir dados sint\'eticos, mas volume n\~ao garante utilidade: gera\c{c}\~oes podem repetir templates, afastar-se da distribui\c{c}\~ao real e receber r\'otulos presumidos incorretos \cite{shumailov2024collapse}. O ponto fr\'agil \'e, portanto, a sele\c{c}\~ao do que gerar e do que usar.
 
-Este trabalho prop\~oe a \emph{Heran\c{c}a Ativa} (ActiveInheritance), inspirada na perspectiva \emph{data-centric} do Profile2Gen \cite{souza2025profile2gen}. Em ciclos, um gerador produz um lote de textos falsos; um avaliador pontua cada candidato pelo erro do classificador downstream, pela incerteza da predi\c{c}\~ao e pela diversidade em rela\c{c}\~ao ao pool herdado; apenas o top-$k$ \'e herdado e o classificador \'e retreinado sobre os dados reais somados ao pool herdado. A hip\'otese \'e a de treino deliberado: gastar o or\c{c}amento com exemplos que o modelo ainda acha dif\'iceis, n\~ao com exemplos f\'aceis ou repetitivos.
+Este trabalho prop\~oe a \emph{Sele\c{c}\~ao Guiada de Sint\x27eticos (GSS)} (GSS), inspirada na perspectiva \emph{data-centric} do Profile2Gen \cite{souza2025profile2gen}. Em ciclos, um gerador produz um lote de textos falsos; um avaliador pontua cada candidato pelo erro do classificador downstream, pela incerteza da predi\c{c}\~ao e pela diversidade em rela\c{c}\~ao ao pool herdado; apenas o top-$k$ \'e herdado e o classificador \'e retreinado sobre os dados reais somados ao pool herdado. A hip\'otese \'e a de treino deliberado: gastar o or\c{c}amento com exemplos que o modelo ainda acha dif\'iceis, n\~ao com exemplos f\'aceis ou repetitivos.
 
 As perguntas de pesquisa (RQs) s\~ao:
 
@@ -68,7 +68,7 @@ As contribui\c{c}\~oes s\~ao: (i) um pipeline completo de heran\c{c}a ativa para
 
 \section{M\'etodo}
 
-\subsection{Loop de Heran\c{c}a Ativa}
+\subsection{Loop de Sele\c{c}\~ao Guiada de Sint\x27eticos (GSS)}
 
 Seja $D_0 = \{(\mathbf{x}_i, y_i)\}$ o treino real escasso, com $y_i \in \{0,1\}$ ($1$ = falso). A cada ciclo $t=0,\dots,T-1$: (1) um gerador $G$ produz um lote de candidatos falsos $\hat{X}_t$ de tamanho $b$; (2) o avaliador pontua cada candidato por
 \begin{equation}
@@ -82,7 +82,7 @@ em que $e$ \'e o erro do classificador (log-loss da classe falsa, normalizado po
 \begin{itemize}
 \item \textbf{Real}: BERTimbau treinado apenas nos dados reais (zero sint\'eticos);
 \item \textbf{Static}: o gerador produz $N$ textos e todos entram no treino, sem sele\c{c}\~ao;
-\item \textbf{ActiveInheritance (AI)}: somente o top-$k$ pela Equa\c{c}\~ao~\ref{eq:score} \'e herdado.
+\item \textbf{GSS (AI)}: somente o top-$k$ pela Equa\c{c}\~ao~\ref{eq:score} \'e herdado.
 \end{itemize}
 
 Para isolar a regra de sele\c{c}\~ao, fixamos os candidatos e comparamos quatro regras sobre os \emph{mesmos} lotes:
@@ -287,35 +287,32 @@ WhatsApp.Br & 1.00 & 0.712 & 0.734 & $+$0.022 \\
 
 \section{Discuss\~ao}
 
-\textbf{(i) O score n\~ao domina o sorteio de forma geral (RQ1).} Com $n{=}10$ sementes, o \emph{Score-}k s\'o se destaca claramente no COVID19.BR 10\% (0{,}728 \emph{vs.} 0{,}655, $\Delta{=}+0{,}073$); no COVID19.BR full o ganho \'e pequeno (0{,}858 \emph{vs.} 0{,}847) e nos demais dom\'inios os bra\c{c}os empatam ou o sorteio vence. Dados os mesmos candidatos, o score n\~ao \'e melhor que uma amostra aleat\'oria na maioria dos cen\'arios.
+\textbf{(i) O score n\~ao supera o sorteio (RQ1).} Wilcoxon pareado por semente + corre\c{c}\~ao de Holm sobre os 11 cen\'arios: \textbf{nenhuma} c\'elula Score$-$Random \'e significativa ($p_{\mathrm{Holm}}\ge 0{,}92$). O maior $\Delta$ (COVID19.BR 10\%, $+0{,}073$) tem $p{=}0{,}084$ bruto. Isso vale para \emph{todos} os learners testados (mBERT, XLM-R e um LLM com LoRA), para qualquer combina\c{c}\~ao de pesos do score e para um scorer sem estilo (style-blind) --- a falha n\~ao \'e artefato do BERT nem da calibra\c{c}\~ao dos pesos.
 
-\textbf{(ii) O efeito real \'e curadoria de volume, n\~ao o score.} \emph{All} herda 302 a 313 sint\'eticos; os demais, 80. O colapso do \emph{All} \'e mais evidente no FACTCK.BR escasso (10\%: 0{,}840 \emph{vs.} 0{,}93--0{,}94 dos curados; 5\%: 0{,}785 \emph{vs.} 0{,}93--0{,}94) e no COVID19.BR 5\% (0{,}567 \emph{vs.} 0{,}64--0{,}69). Herdar \emph{menos}, mantendo o treino rebalanceado, importa mais do que \emph{o qu\^e} se herda.
+\textbf{(ii) As diferen\c{c}as de F1 s\~ao de limiar, n\~ao de qualidade.} A PR-AUC \'e pr\'aticamente id\^entica entre as regras em todos os cen\'arios (amplitude $\le 0{,}018$), enquanto o F1 varia at\'e 0{,}151. O ``colapso do All'' \'e o limiar escolhido na valida\c{c}\~ao n\~ao transferindo para o teste; no FACTCK.BR (classe falsa majorit\'aria), o F1 trivial ``sempre falso'' ($2\pi/(1{+}\pi){=}0{,}939$) j\'a iguala os bra\c{c}os curados. Portanto, n\~ao h\'a ``curadoria de volume'' como ganho real de qualidade: h\'a \emph{deslocamento de calibra\c{c}\~ao} causado por herdar $\approx$300 sint\'eticos.
 
-\textbf{(iii) O ganho do score cresce com a compet\^encia do learner.} A Tabela~\ref{tab:competence} mostra que, no COVID19.BR e no FakeWhatsApp.Br, o delta Score $-$ Random parte de $\approx$0 com 5\% dos dados reais e sobe at\'e $+0{,}022$ a $+0{,}028$ no full; no FACTCK.BR (tarefa f\'acil) fica $\approx$0 em todas as fra\c{c}\~oes. O bra\c{c}o \emph{band-k} (dificuldade intermedi\'aria) fica igual ou abaixo do \emph{Score-}k nos tr\^es dom\'inios. Ou seja: a heran\c{c}a guiada ajuda quando o learner inicial j\'a \'e competente e a tarefa \'e dif\'icil o bastante para haver margem; herdar os \emph{mais dif\'iceis} supera herdar os \emph{medianos}.
+\textbf{(iii) A dificuldade \'e um \'im\~a de r\'otulos errados (A1).} Um learner treinado s\'o em dados reais (proxy D0) marca como ``n\~ao-fake'' uma fra\c{c}\~ao maior do pool herdado pelo \emph{Score-}k do que pelo \emph{Random-}k em 10/11 cen\'arios (ex.: 0{,}484 \emph{vs.} 0{,}361 no FakeWhatsApp full), e o \emph{Easy-}k herda a menor fra\c{c}\~ao (0{,}169). No semi-sint\'etico do pacote de valida\c{c}\~ao, o Score herda 0{,}334 de r\'otulos errados contra 0{,}165 da base. Por isso \emph{Easy} $\ge$ \emph{Random} $\ge$ \emph{Score} quando o atalho \'e forte.
 
-\textbf{(iv) Calibra\c{c}\~ao faz o trabalho pesado.} Os limiares caem para 0{,}05 a 0{,}11 na escassez: sem pondera\c{c}\~ao e limiar ajustado, o modelo subestima a classe minorit\'aria e o recall colapsa. Parte do F1 observado \'e pol\'itica de treino, n\~ao qualidade intr\'inseca do sint\'etico.
+\textbf{(iv) O valor do sint\'etico \'e fun\c{c}\~ao da detectabilidade (A2).} Em um experimento decisivo (detectabilidade graduada por mistura $\alpha$ de falsos reais retidos e gera\c{c}\~ao livre, 20 sementes, CI bootstrap 95\%), $\Delta$(All$-$Real) cai monotonicamente com a AUC de detectabilidade do pool: Fake.br $+0{,}022\to-0{,}100$; ToLD-Br $+0{,}016\to-0{,}001$; B2W $\approx0$ (tarefa f\'acil). A lei vale em texto \emph{dependente de registro} e some quando a tarefa \'e trivial. O $\Delta$(Score$-$Random) tem forma de \emph{U invertida}: positivo no regime de mistura (o Score pega os reais genuinamente dif\'iceis) e negativo no sint\'etico puro.
 
-\textbf{(v) Custo (RQ2).} A sele\c{c}\~ao n\~ao reduz o custo de gera\c{c}\~ao: o mesmo lote \'e gerado para todos os bra\c{c}os. Ela reduz o tamanho do conjunto de treino herdado (80 \emph{vs.} 302 a 313), mas n\~ao o or\c{c}amento de tokens.
+\textbf{(v) O atalho \'e o registro, e generaliza.} O texto gerado \'e separ\'avel do real com AUC $=$ 1{,}000 mesmo ap\'os normaliza\c{c}\~ao, m\'ascara de entidades e truncamento: o LLM escreve \emph{sobre} o boato (``um texto que circula afirma\ldots'') e a restri\c{c}\~ao ``sem entidades reais'' piora o registro. A detectabilidade AUC $=$ 1{,}000 se mant\'em em \textbf{5 geradores} (GPT, Llama, Mistral, Gemma, Claude) e em ingl\^es (LIAR, FakeNewsNet). O colapso da incerteza (ap\'os o ciclo 1) depende do learner: BERT satura, LR linear n\~ao.
 
-\textbf{(vi) Artefatos e fidelidade.} No prompt anterior (v3), 91\% a 93\% dos sint\'eticos come\c{c}avam por ``URGENTE'' e 85\% a 86\% continham ``acabei de receber'', contra $\approx$1\% e $\approx$0\% no real; a mensagem falsa real tem $\approx$159 palavras, contra 95 a 100 dos sint\'eticos. O prompt v4 foi desenhado para mitigar esses templates. Ainda assim, o Wasserstein do pool AI n\~ao melhora de forma consistente, e um classificador TF-IDF + regress\~ao log\'istica separa o texto sint\'etico do real com AUC $=$ 1{,}000 nos tr\^es dom\'inios (split aleat\'orio, diagn\'ostico): h\'a um atalho estil\'istico que a diversidade dentro do pool n\~ao elimina.
-
-\textbf{(vii) Satura\c{c}\~ao da incerteza.} A incerteza m\'edia dos lotes cai quase a zero ap\'os o primeiro ciclo: o learner aprende o estilo sint\'etico e o termo de entropia deixa de contribuir, o que sustenta early stopping ou recalibra\c{c}\~ao.
+\textbf{(vi) Custo (RQ2).} A sele\c{c}\~ao n\~ao reduz o custo de gera\c{c}\~ao (o mesmo lote \'e gerado para todos); ela s\'o reduz o conjunto herdado (80 \emph{vs.} $\approx$300). Nenhuma regra supera o treino s\'o com dados reais nos cen\'arios dif\'iceis.
 
 \section{Limita\c{c}\~oes}
 
 \begin{itemize}
-\item $n{=}10$ sementes no estudo controlado (o menor $p$ do Wilcoxon bilateral pareado \'e $\approx$0{,}002); a varredura de compet\^encia usa $n{=}1$ e o \emph{band-k} $n{=}3$, portanto esses dois permanecem explorat\'orios.
-\item R\'otulos sint\'eticos assumidos como ``falso'' sem verifica\c{c}\~ao factual humana; a veracidade exige evid\^encia externa.
-\item AUC real-vs-sint\'etico $=$ 1{,}000 indica atalho estil\'istico; m\'etricas de embedding s\~ao proxies, n\~ao realismo.
-\item No Fake.br, o texto real \'e pr\'e-processado e o sint\'etico \'e raw; a normaliza\c{c}\~ao aplicada \'e aproximada (an\'alise de sensibilidade, n\~ao equival\^encia exata).
-\item FACTCK.BR usa split aleat\'orio e prior invertido; COVID19.BR n\~ao tem maio/2020 e o teste \'e um futuro curto.
-\item A varredura de compet\^encia usou uma \'unica semente ($n{=}1$); o bra\c{c}o \emph{band-k} tem $n{=}3$. A sele\c{c}\~ao por faixa da probabilidade $p(\mathrm{fake})$ n\~ao foi executada; o \emph{band-k} seleciona pelo score mediano.
-\item Expans\~ao para 10 sementes e checagem humana ficam como trabalho futuro.
+\item $n{=}10$ sementes no estudo controlado (menor $p$ do Wilcoxon pareado $\approx$0{,}002); as curvas de detectabilidade usam 20 sementes com CI bootstrap. A varredura de compet\^encia e o \emph{band-}k foram re-executados com $n{=}10$.
+\item R\'otulos sint\'eticos assumidos ``falso'' sem verifica\c{c}\~ao humana; a auditoria com LLM-juiz ficou ruidosa e n\~ao confirmou o A1 de forma limpa (o A1 se sustenta no semi-sint\'etico e no proxy D0).
+\item As curvas de detectabilidade usam learners leves (TF-IDF/MiniLM); o BERT aparece s\'o no estudo controlado.
+\item AUC real-vs-sint\'etico $=$ 1{,}000 indica atalho de registro; m\'etricas de embedding s\~ao proxy de realismo, n\~ao veracidade.
+\item No Fake.br o texto real \'e pr\'e-processado e o sint\'etico raw (normaliza\c{c}\~ao aproximada); os cen\'arios WhatsApp misturam candidatos v2/v4 entre sementes (ver ap\^endice de higiene).
+\item O LLM com LoRA (Jev-style) rodou em 26/30 runs por candidatos ausentes no FakeWhatsApp (sementes 45--51 t\^em s\'o prompt v2).
 \end{itemize}
 
 \section{Conclus\~ao}
 
-Apresentamos a Heran\c{c}a Ativa e a avaliamos em um estudo controlado multi-dom\'inio que isola a regra de sele\c{c}\~ao do volume gerado e da pol\'itica de treino. A conclus\~ao \'e negativa e informativa: dados os mesmos candidatos, o score de erro/incerteza/diversidade n\~ao supera consistentemente uma amostra aleat\'oria; o ganho pr\'atico vem da curadoria de volume e da calibra\c{c}\~ao. A varredura de compet\^encia confirma quantitativamente esse limite: o ganho do score sobre o sorteio cresce de $\approx$0 (5\% dos dados reais) at\'e $+0{,}022$ a $+0{,}028$ (full) nos dom\'inios dif\'iceis, e desaparece em tarefa f\'acil; herdar os mais dif\'iceis supera herdar os medianos. Trabalhos futuros devem priorizar prompts que amostrem a distribui\c{c}\~ao real, mais sementes e decision models calibrados, em vez de refinar o score de sele\c{c}\~ao.
+Avaliamos a \emph{Sele\c{c}\~ao Guiada de Sint\'eticos} (GSS) em um estudo controlado que isola a regra de sele\c{c}\~ao do volume e da pol\'itica de treino. A conclus\~ao \'e negativa e explicada: o score de erro/incerteza/diversidade n\~ao supera o sorteio, as diferen\c{c}as de F1 s\~ao efeito de limiar (PR-AUC id\^entica), e a sele\c{c}\~ao por dificuldade atrai r\'otulos errados. O mecanismo \'e a \emph{detectabilidade} do texto gerado---fun\c{c}\~ao do registro---que faz o valor do sint\'etico cair monotonicamente com a AUC de detec\c{c}\~ao, replicado em tr\^es tarefas com CI. Recomenda\c{c}\~ao pr\'atica: herdar os \emph{f\'aceis} (ou filtrar por detectabilidade) e sempre reportar o bra\c{c}o \emph{Real}. Trabalhos futuros: valida\c{c}\~ao humana dos r\'otulos, alavancas de detectabilidade graduada com texto LLM real e a curva $\Delta\times$AUC como lei preditiva pr\'e-registrada.
 
 \balance
 
