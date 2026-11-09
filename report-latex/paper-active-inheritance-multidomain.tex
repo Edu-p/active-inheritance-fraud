@@ -26,7 +26,7 @@
 
 \begin{document}
 
-\title{Sele\c{c}\~ao Guiada de Sint\'eticos (GSS) para Gera\c{c}\~ao de Desinforma\c{c}\~ao:\\um Estudo Controlado Multi-dom\'inio\thanks{M\'etodo anteriormente denominado \emph{Sele\c{c}\~ao Guiada de Sint\x27eticos (GSS)}; renomeado para evitar colis\~ao de nomenclatura com Shimabucoro et al., \emph{Active Inheritance}, EMNLP 2024 (doi 10.18653/v1/2024.emnlp-main.521).}}
+\title{Sele\c{c}\~ao Guiada de Sint\'eticos (GSS) para Gera\c{c}\~ao de Desinforma\c{c}\~ao:\\um Estudo Controlado Multi-dom\'inio\thanks{M\'etodo anteriormente denominado \emph{Sele\c{c}\~ao Guiada de Sint\'eticos (GSS)}; renomeado para evitar colis\~ao de nomenclatura com Shimabucoro et al., \emph{Active Inheritance}, EMNLP 2024 (doi 10.18653/v1/2024.emnlp-main.521).}}
 
 \author{\IEEEauthorblockN{Eduardo Alexandre de Amorim\textsuperscript{1} e Cleber Zanchettin\textsuperscript{1}}
 \IEEEauthorblockA{\textsuperscript{1}Centro de Inform\'atica, Universidade Federal de Pernambuco (CIn/UFPE), Recife, PE, Brasil\\
@@ -46,7 +46,7 @@ data-centric AI, synthetic data, misinformation, active inheritance, controlled 
 
 Detectar desinforma\c{c}\~ao em texto \'e uma classifica\c{c}\~ao bin\'aria (verdadeiro \emph{vs.} falso) que sofre de escassez e desbalanceamento da classe de interesse: os exemplos falsos s\~ao poucos, mudam de dom\'inio rapidamente e custam caro para rotular. Modelos de linguagem permitem produzir dados sint\'eticos, mas volume n\~ao garante utilidade: gera\c{c}\~oes podem repetir templates, afastar-se da distribui\c{c}\~ao real e receber r\'otulos presumidos incorretos \cite{shumailov2024collapse}. O ponto fr\'agil \'e, portanto, a sele\c{c}\~ao do que gerar e do que usar.
 
-Este trabalho prop\~oe a \emph{Sele\c{c}\~ao Guiada de Sint\x27eticos (GSS)} (GSS), inspirada na perspectiva \emph{data-centric} do Profile2Gen \cite{souza2025profile2gen}. Em ciclos, um gerador produz um lote de textos falsos; um avaliador pontua cada candidato pelo erro do classificador downstream, pela incerteza da predi\c{c}\~ao e pela diversidade em rela\c{c}\~ao ao pool herdado; apenas o top-$k$ \'e herdado e o classificador \'e retreinado sobre os dados reais somados ao pool herdado. A hip\'otese \'e a de treino deliberado: gastar o or\c{c}amento com exemplos que o modelo ainda acha dif\'iceis, n\~ao com exemplos f\'aceis ou repetitivos.
+Este trabalho prop\~oe a \emph{Sele\c{c}\~ao Guiada de Sint\'eticos (GSS)} (GSS), inspirada na perspectiva \emph{data-centric} do Profile2Gen \cite{souza2025profile2gen}. Em ciclos, um gerador produz um lote de textos falsos; um avaliador pontua cada candidato pelo erro do classificador downstream, pela incerteza da predi\c{c}\~ao e pela diversidade em rela\c{c}\~ao ao pool herdado; apenas o top-$k$ \'e herdado e o classificador \'e retreinado sobre os dados reais somados ao pool herdado. A hip\'otese \'e a de treino deliberado: gastar o or\c{c}amento com exemplos que o modelo ainda acha dif\'iceis, n\~ao com exemplos f\'aceis ou repetitivos.
 
 As perguntas de pesquisa (RQs) s\~ao:
 
@@ -68,7 +68,7 @@ As contribui\c{c}\~oes s\~ao: (i) um pipeline completo de heran\c{c}a ativa para
 
 \section{M\'etodo}
 
-\subsection{Loop de Sele\c{c}\~ao Guiada de Sint\x27eticos (GSS)}
+\subsection{Loop de Sele\c{c}\~ao Guiada de Sint\'eticos (GSS)}
 
 Seja $D_0 = \{(\mathbf{x}_i, y_i)\}$ o treino real escasso, com $y_i \in \{0,1\}$ ($1$ = falso). A cada ciclo $t=0,\dots,T-1$: (1) um gerador $G$ produz um lote de candidatos falsos $\hat{X}_t$ de tamanho $b$; (2) o avaliador pontua cada candidato por
 \begin{equation}
