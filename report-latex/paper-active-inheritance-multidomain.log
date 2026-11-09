@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.5.27)  31 OCT 2026 13:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.5.27)  9 NOV 2026 08:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -487,23 +487,98 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 36.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-) [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texm
-f-dist/fonts/enc/dvips/base/8r.enc}
+)
+** WARNING: \thanks is locked out when in conference mode (line 36).
+
+LaTeX Warning: Citation `shumailov2024collapse' on page 1 undefined on input li
+ne 47.
+
+
+LaTeX Warning: Citation `souza2025profile2gen' on page 1 undefined on input lin
+e 49.
+
+
+LaTeX Warning: Citation `ye2022zerogen' on page 1 undefined on input line 63.
+
+
+LaTeX Warning: Citation `meng2022progen' on page 1 undefined on input line 63.
+
+
+LaTeX Warning: Citation `gao2023sungen' on page 1 undefined on input line 63.
+
+
+LaTeX Warning: Citation `settles2009active' on page 1 undefined on input line 6
+5.
+
+
+LaTeX Warning: Citation `swayamdipta2020cartography' on page 1 undefined on inp
+ut line 65.
+
+
+LaTeX Warning: Citation `souza2025profile2gen' on page 1 undefined on input lin
+e 67.
+
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-
+dist/fonts/enc/dvips/base/8r.enc}
 
 
 ]
+
+LaTeX Warning: Reference `eq:score' on page 2 undefined on input line 85.
+
+
+LaTeX Warning: Reference `tab:datasets' on page 2 undefined on input line 105.
+
+
+LaTeX Warning: Citation `monteiro2018fakebr' on page 2 undefined on input line 
+105.
+
+
+LaTeX Warning: Citation `cabral2021fakewhatsapp' on page 2 undefined on input l
+ine 105.
+
+
+LaTeX Warning: Citation `cabral2020covid19br' on page 2 undefined on input line
+ 105.
+
+
+LaTeX Warning: Citation `moreno2019factckbr' on page 2 undefined on input line 
+105.
+
 LaTeX Font Info:    Trying to load font information for T1+pcr on input line 10
 5.
- (/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1pcr.fd
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1pcr.fd
 File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 )
 Overfull \hbox (9.07327pt too wide) in paragraph at lines 112--122
  [][] 
  []
 
+
+LaTeX Warning: Citation `souza2020bertimbau' on page 2 undefined on input line 
+128.
+
+
+Underfull \hbox (badness 5417) in paragraph at lines 128--129
+\T1/ptm/m/n/10 [\T1/ptm/b/n/10 ?\T1/ptm/m/n/10 ] (\T1/pcr/m/n/10 neuralmind/ber
+t-base-portuguese-cased\T1/ptm/m/n/10 ),
+ []
+
+
+LaTeX Warning: Reference `tab:fakebr' on page 2 undefined on input line 138.
+
+
+LaTeX Warning: Reference `tab:f1' on page 2 undefined on input line 161.
+
+
+LaTeX Warning: Reference `tab:aux' on page 2 undefined on input line 161.
+
+
+LaTeX Warning: Reference `fig:nsynth' on page 2 undefined on input line 246.
+
 [2]
 <../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-f1-vs
--n_synthetic-20261026T120542Z.png, id=142, 397.485pt x 231.264pt>
+-n_synthetic-20261026T120542Z.png, id=47, 397.485pt x 231.264pt>
 File: ../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-
 f1-vs-n_synthetic-20261026T120542Z.png Graphic file (type png)
 <use ../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-f
@@ -513,7 +588,7 @@ Package pdftex.def Info: ../figures/revision/revision-controlled-covid19br-full
 50.
 (pdftex.def)             Requested size: 165.12378pt x 96.0751pt.
 <../figures/revision/revision-controlled-factckbr-full-v2-factckbr-full-f1-vs-n
-_synthetic-20261026T120546Z.png, id=144, 397.485pt x 231.264pt>
+_synthetic-20261026T120546Z.png, id=49, 397.485pt x 231.264pt>
 File: ../figures/revision/revision-controlled-factckbr-full-v2-factckbr-full-f1
 -vs-n_synthetic-20261026T120546Z.png Graphic file (type png)
 <use ../figures/revision/revision-controlled-factckbr-full-v2-factckbr-full-f1-
@@ -523,7 +598,7 @@ v2-factckbr-full-f1-vs-n_synthetic-20261026T120546Z.png  used on input line 251
 .
 (pdftex.def)             Requested size: 165.12378pt x 96.0751pt.
 <../figures/revision/revision-controlled-fakewhatsapp-full-v4-fakewhatsapp-full
--f1-vs-n_synthetic-20261026T120548Z.png, id=145, 397.485pt x 231.264pt>
+-f1-vs-n_synthetic-20261026T120548Z.png, id=50, 397.485pt x 231.264pt>
 File: ../figures/revision/revision-controlled-fakewhatsapp-full-v4-fakewhatsapp
 -full-f1-vs-n_synthetic-20261026T120548Z.png Graphic file (type png)
 <use ../figures/revision/revision-controlled-fakewhatsapp-full-v4-fakewhatsapp-
@@ -534,19 +609,33 @@ line 252.
 (pdftex.def)             Requested size: 165.12378pt x 96.0751pt.
 
 
-LaTeX Font Warning: Font shape `T1/ptm/m/scit' undefined
-(Font)              using `T1/ptm/m/it' instead on input line 261.
+LaTeX Warning: Reference `tab:competence' on page 3 undefined on input line 258
+.
 
 
 LaTeX Font Warning: Font shape `T1/ptm/m/scit' undefined
 (Font)              using `T1/ptm/m/it' instead on input line 261.
 
 
-Underfull \hbox (badness 3333) in paragraph at lines 311--312
-[]\T1/ptm/m/n/10 FACTCK.BR usa split aleatório e prior in-ver-tido;
- []
+LaTeX Font Warning: Font shape `T1/ptm/m/scit' undefined
+(Font)              using `T1/ptm/m/it' instead on input line 261.
 
 [3]
+
+LaTeX Warning: Text page 4 contains only floats.
+
+
+Overfull \vbox (6.66776pt too high) has occurred while \output is active []
+
+
+
+LaTeX Warning: Text page 4 contains only floats.
+
+
+Overfull \vbox (6.66776pt too high) has occurred while \output is active []
+
+
+[4]
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -558,68 +647,41 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-
-Overfull \vbox (1.43187pt too high) has occurred while \output is active []
-
-
-[4 <../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-f1
+[5 <../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-f1
 -vs-n_synthetic-20261026T120542Z.png> <../figures/revision/revision-controlled-
 factckbr-full-v2-factckbr-full-f1-vs-n_synthetic-20261026T120546Z.png> <../figu
 res/revision/revision-controlled-fakewhatsapp-full-v4-fakewhatsapp-full-f1-vs-n
-_synthetic-20261026T120548Z.png>]
-
-LaTeX Warning: Text page 5 contains only floats.
-
-
-Overfull \vbox (6.66776pt too high) has occurred while \output is active []
-
-
-
-LaTeX Warning: Text page 5 contains only floats.
-
-
-Overfull \vbox (1.33551pt too high) has occurred while \output is active []
-
-
-Overfull \vbox (6.0pt too high) has occurred while \output is active []
-
-
-Overfull \vbox (6.0pt too high) has occurred while \output is active []
-
-
-Overfull \vbox (0.66776pt too high) has occurred while \output is active []
-
-
-[5]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Overfull \vbox (6.0pt too high) has occurred while \output is active []
-
-
-Overfull \vbox (6.0pt too high) has occurred while \output is active []
-
- [6]
-(./paper-active-inheritance-multidomain.aux)
+_synthetic-20261026T120548Z.png>] (./paper-active-inheritance-multidomain.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
-Package rerunfilecheck Info: File `paper-active-inheritance-multidomain.out' ha
-s not changed.
-(rerunfilecheck)             Checksum: 4552FD2C1581C9D701B977A0AC66C636;2515.
+
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `paper-active-inheritance-multidomain.out'
+ has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `paper-active-inheritance-multidomai
+n.out':
+(rerunfilecheck)             Before: D41D8CD98F00B204E9800998ECF8427E;0
+(rerunfilecheck)             After:  2C433B403E8F559C643CE7B069100F8B;2641.
  ) 
 Here is how much of TeX's memory you used:
- 11552 strings out of 474222
- 180732 string characters out of 5748733
- 1963975 words of memory out of 5000000
- 33593 multiletter control sequences out of 15000+600000
+ 11533 strings out of 474222
+ 180489 string characters out of 5748733
+ 1964975 words of memory out of 5000000
+ 33575 multiletter control sequences out of 15000+600000
  680775 words of font info for 176 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,11n,79p,1597b,471s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,11n,79p,1649b,528s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texli
@@ -631,16 +693,16 @@ lic/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
 onts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
 cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.
 pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></u
-sr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texl
-ive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/
-fonts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/ur
-w/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a
-.pfb>
-Output written on paper-active-inheritance-multidomain.pdf (6 pages, 428303 byt
+sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/tex
+mf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times
+/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on paper-active-inheritance-multidomain.pdf (5 pages, 438776 byt
 es).
 PDF statistics:
- 255 PDF objects out of 1000 (max. 8388607)
- 204 compressed objects within 3 object streams
- 45 named destinations out of 1000 (max. 500000)
- 168 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 176 PDF objects out of 1000 (max. 8388607)
+ 125 compressed objects within 2 object streams
+ 44 named destinations out of 1000 (max. 500000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
