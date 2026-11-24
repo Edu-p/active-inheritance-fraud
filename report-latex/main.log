@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.5.27)  21 OCT 2026 08:06
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.5.27)  24 NOV 2026 07:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -418,56 +418,47 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 Package: balance 1999/02/23 4.3 (PWD)
 \oldvsize=\dimen192
 )
-(/usr/share/texlive/texmf-dist/tex/latex/enumitem/enumitem.sty
-Package: enumitem 2019/06/20 v3.9 Customized lists
-\labelindent=\skip55
-\enit@outerparindent=\dimen193
-\enit@toks=\toks26
-\enit@inbox=\box55
-\enit@count@id=\count296
-\enitdp@description=\count297
-)
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count298
-\l__pdf_internal_box=\box56
+\l__color_backend_stack_int=\count296
+\l__pdf_internal_box=\box55
 )
 (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
 
 -- Lines per column: 56 (exact).
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count299
-\scratchdimen=\dimen194
-\scratchbox=\box57
-\nofMPsegments=\count300
-\nofMParguments=\count301
-\everyMPshowfont=\toks27
-\MPscratchCnt=\count302
-\MPscratchDim=\dimen195
-\MPnumerator=\count303
-\makeMPintoPDFobject=\count304
-\everyMPtoPDFconversion=\toks28
+\scratchcounter=\count297
+\scratchdimen=\dimen193
+\scratchbox=\box56
+\nofMPsegments=\count298
+\nofMParguments=\count299
+\everyMPshowfont=\toks26
+\MPscratchCnt=\count300
+\MPscratchDim=\dimen194
+\MPnumerator=\count301
+\makeMPintoPDFobject=\count302
+\everyMPtoPDFconversion=\toks27
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
@@ -477,60 +468,167 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Package hyperref Info: Link coloring OFF on input line 22.
+Package hyperref Info: Link coloring OFF on input line 27.
 
 (./main.out) (./main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
-LaTeX Font Info:    Calculating math sizes for size <11> on input line 33.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 33.
+LaTeX Font Info:    Calculating math sizes for size <11> on input line 36.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 36.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 33.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 36.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Trying to load font information for T1+pcr on input line 67
-.
+** WARNING: \thanks is locked out when in conference mode (line 36).
 
-(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1pcr.fd
-File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
-) [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texm
-f-dist/fonts/enc/dvips/base/8r.enc}
+LaTeX Warning: Citation `shumailov2024collapse' on page 1 undefined on input li
+ne 47.
+
+
+LaTeX Warning: Citation `souza2025profile2gen' on page 1 undefined on input lin
+e 49.
+
+
+LaTeX Warning: Citation `ye2022zerogen' on page 1 undefined on input line 63.
+
+
+LaTeX Warning: Citation `meng2022progen' on page 1 undefined on input line 63.
+
+
+LaTeX Warning: Citation `gao2023sungen' on page 1 undefined on input line 63.
+
+
+LaTeX Warning: Citation `settles2009active' on page 1 undefined on input line 6
+5.
+
+
+LaTeX Warning: Citation `swayamdipta2020cartography' on page 1 undefined on inp
+ut line 65.
+
+
+LaTeX Warning: Citation `souza2025profile2gen' on page 1 undefined on input lin
+e 67.
+
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-
+dist/fonts/enc/dvips/base/8r.enc}
 
 
 ]
-<./images/full_performance.png, id=123, 860.013pt x 259.6902pt>
-File: ./images/full_performance.png Graphic file (type png)
-<use ./images/full_performance.png>
-Package pdftex.def Info: ./images/full_performance.png  used on input line 190.
 
-(pdftex.def)             Requested size: 505.6778pt x 152.69678pt.
-<./images/full_recall.png, id=126, 513.117pt x 245.2362pt>
-File: ./images/full_recall.png Graphic file (type png)
-<use ./images/full_recall.png>
-Package pdftex.def Info: ./images/full_recall.png  used on input line 227.
-(pdftex.def)             Requested size: 252.0pt x 120.43994pt.
- [2]
-<./images/full_uncertainty.png, id=142, 513.5988pt x 259.4493pt>
-File: ./images/full_uncertainty.png Graphic file (type png)
-<use ./images/full_uncertainty.png>
-Package pdftex.def Info: ./images/full_uncertainty.png  used on input line 240.
+LaTeX Warning: Reference `tab:datasets' on page 2 undefined on input line 105.
 
-(pdftex.def)             Requested size: 252.0pt x 127.29752pt.
-<./images/full_templates.png, id=145, 469.9959pt x 245.2362pt>
-File: ./images/full_templates.png Graphic file (type png)
-<use ./images/full_templates.png>
-Package pdftex.def Info: ./images/full_templates.png  used on input line 274.
-(pdftex.def)             Requested size: 252.0pt x 131.49007pt.
- [3 <./images/full_performance.png> <./images/full_recall.png> <./images/full_u
-ncertainty.png>]
+
+LaTeX Warning: Citation `monteiro2018fakebr' on page 2 undefined on input line 
+105.
+
+
+LaTeX Warning: Citation `cabral2021fakewhatsapp' on page 2 undefined on input l
+ine 105.
+
+
+LaTeX Warning: Citation `cabral2020covid19br' on page 2 undefined on input line
+ 105.
+
+
+LaTeX Warning: Citation `moreno2019factckbr' on page 2 undefined on input line 
+105.
+
+LaTeX Font Info:    Trying to load font information for T1+pcr on input line 10
+5.
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1pcr.fd
+File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
+)
+Overfull \hbox (9.07327pt too wide) in paragraph at lines 112--122
+ [][] 
+ []
+
+
+LaTeX Warning: Citation `souza2020bertimbau' on page 2 undefined on input line 
+128.
+
+
+Underfull \hbox (badness 5417) in paragraph at lines 128--129
+\T1/ptm/m/n/10 [\T1/ptm/b/n/10 ?\T1/ptm/m/n/10 ] (\T1/pcr/m/n/10 neuralmind/ber
+t-base-portuguese-cased\T1/ptm/m/n/10 ),
+ []
+
+
+LaTeX Warning: Reference `tab:f1' on page 2 undefined on input line 161.
+
+
+LaTeX Warning: Reference `tab:aux' on page 2 undefined on input line 161.
+
+
+LaTeX Warning: Reference `fig:nsynth' on page 2 undefined on input line 246.
+
+[2]
+<../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-f1-vs
+-n_synthetic-20261026T120542Z.png, id=130, 397.485pt x 231.264pt>
+File: ../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-
+f1-vs-n_synthetic-20261026T120542Z.png Graphic file (type png)
+<use ../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-f
+1-vs-n_synthetic-20261026T120542Z.png>
+Package pdftex.def Info: ../figures/revision/revision-controlled-covid19br-full
+-v4-covid19br-full-f1-vs-n_synthetic-20261026T120542Z.png  used on input line 2
+50.
+(pdftex.def)             Requested size: 165.12378pt x 96.0751pt.
+<../figures/revision/revision-controlled-factckbr-full-v2-factckbr-full-f1-vs-n
+_synthetic-20261026T120546Z.png, id=132, 397.485pt x 231.264pt>
+File: ../figures/revision/revision-controlled-factckbr-full-v2-factckbr-full-f1
+-vs-n_synthetic-20261026T120546Z.png Graphic file (type png)
+<use ../figures/revision/revision-controlled-factckbr-full-v2-factckbr-full-f1-
+vs-n_synthetic-20261026T120546Z.png>
+Package pdftex.def Info: ../figures/revision/revision-controlled-factckbr-full-
+v2-factckbr-full-f1-vs-n_synthetic-20261026T120546Z.png  used on input line 251
+.
+(pdftex.def)             Requested size: 165.12378pt x 96.0751pt.
+<../figures/revision/revision-controlled-fakewhatsapp-full-v4-fakewhatsapp-full
+-f1-vs-n_synthetic-20261026T120548Z.png, id=133, 397.485pt x 231.264pt>
+File: ../figures/revision/revision-controlled-fakewhatsapp-full-v4-fakewhatsapp
+-full-f1-vs-n_synthetic-20261026T120548Z.png Graphic file (type png)
+<use ../figures/revision/revision-controlled-fakewhatsapp-full-v4-fakewhatsapp-
+full-f1-vs-n_synthetic-20261026T120548Z.png>
+Package pdftex.def Info: ../figures/revision/revision-controlled-fakewhatsapp-f
+ull-v4-fakewhatsapp-full-f1-vs-n_synthetic-20261026T120548Z.png  used on input 
+line 252.
+(pdftex.def)             Requested size: 165.12378pt x 96.0751pt.
+
+
+LaTeX Warning: Reference `tab:competence' on page 3 undefined on input line 258
+.
+
+
+LaTeX Font Warning: Font shape `T1/ptm/m/scit' undefined
+(Font)              using `T1/ptm/m/it' instead on input line 261.
+
+
+LaTeX Font Warning: Font shape `T1/ptm/m/scit' undefined
+(Font)              using `T1/ptm/m/it' instead on input line 261.
+
+[3]
+
+LaTeX Warning: Text page 4 contains only floats.
+
+
+Overfull \vbox (15.1172pt too high) has occurred while \output is active []
+
+
+
+LaTeX Warning: Text page 4 contains only floats.
+
+
+Overfull \vbox (15.1172pt too high) has occurred while \output is active []
+
+
+[4]
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -542,47 +640,107 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-
-Package balance Warning: You have called \balance in second column
-(balance)                Columns might not be balanced.
-
-[4 <./images/full_templates.png>] (./main.aux)
+[5 <../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-f1
+-vs-n_synthetic-20261026T120542Z.png> <../figures/revision/revision-controlled-
+factckbr-full-v2-factckbr-full-f1-vs-n_synthetic-20261026T120546Z.png> <../figu
+res/revision/revision-controlled-fakewhatsapp-full-v4-fakewhatsapp-full-f1-vs-n
+_synthetic-20261026T120548Z.png>] (./main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
-Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 1C9D5EDFED2DBC222BD259D874C01C5B;3476.
+
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `main.out':
+(rerunfilecheck)             Before: 1C9D5EDFED2DBC222BD259D874C01C5B;3476
+(rerunfilecheck)             After:  2C433B403E8F559C643CE7B069100F8B;2641.
  ) 
 Here is how much of TeX's memory you used:
- 11897 strings out of 474222
- 183729 string characters out of 5748733
- 1954975 words of memory out of 5000000
- 33931 multiletter control sequences out of 15000+600000
- 685248 words of font info for 181 fonts, out of 8000000 for 9000
+ 11582 strings out of 474222
+ 180517 string characters out of 5748733
+ 1964975 words of memory out of 5000000
+ 33612 multiletter control sequences out of 15000+600000
+ 680775 words of font info for 176 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,13n,79p,1534b,472s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/t
-ype1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
-/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.
-pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></u
-sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/ur
-w/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a
-.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (4 pages, 612943 bytes).
+ 75i,11n,79p,1617b,528s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+pdfTeX warning (dest): name{equation.2.1} has been referenced but does not exis
+t, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{section*.2} has been referenced but does not exist,
+ replaced by a fixed one
+
+
+pdfTeX warning (dest): name{section.10} has been referenced but does not exist,
+ replaced by a fixed one
+
+
+pdfTeX warning (dest): name{section.9} has been referenced but does not exist, 
+replaced by a fixed one
+
+
+pdfTeX warning (dest): name{subsection.8.3} has been referenced but does not ex
+ist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{subsection.8.2} has been referenced but does not ex
+ist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{subsection.8.1} has been referenced but does not ex
+ist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{subsection.7.3} has been referenced but does not ex
+ist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{subsection.7.2} has been referenced but does not ex
+ist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{subsection.7.1} has been referenced but does not ex
+ist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{subsection.2.2} has been referenced but does not ex
+ist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{subsection.2.1} has been referenced but does not ex
+ist, replaced by a fixed one
+
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+sy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr
+/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf
+-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/u
+tmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on main.pdf (5 pages, 440553 bytes).
 PDF statistics:
- 262 PDF objects out of 1000 (max. 8388607)
- 207 compressed objects within 3 object streams
- 46 named destinations out of 1000 (max. 500000)
- 197 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 260 PDF objects out of 1000 (max. 8388607)
+ 208 compressed objects within 3 object streams
+ 56 named destinations out of 1000 (max. 500000)
+ 192 words of extra memory for PDF output out of 10000 (max. 10000000)
 
