@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.5.27)  24 NOV 2026 08:00
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.5.27)  24 NOV 2026 08:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -519,17 +519,19 @@ LaTeX Font Warning: Font shape `T1/ptm/m/scit' undefined
 LaTeX Font Warning: Font shape `T1/ptm/m/scit' undefined
 (Font)              using `T1/ptm/m/it' instead on input line 259.
 
+
+LaTeX Warning: Reference `tab:calib' on page 3 undefined on input line 290.
+
+<../figures/revision/fig_decisive_3tasks.png, id=144, 650.43pt x 361.35pt>
+File: ../figures/revision/fig_decisive_3tasks.png Graphic file (type png)
+<use ../figures/revision/fig_decisive_3tasks.png>
+Package pdftex.def Info: ../figures/revision/fig_decisive_3tasks.png  used on i
+nput line 318.
+(pdftex.def)             Requested size: 516.0pt x 286.68742pt.
 [3]
 
-** Conference Paper **
-Before submitting the final camera ready copy, remember to:
-
- 1. Manually equalize the lengths of two columns on the last page
- of your paper;
-
- 2. Ensure that any PostScript and/or PDF output post-processing
- uses only Type 1 fonts and that every step in the generation
- process uses the appropriate paper size.
+Package balance Warning: You have called \balance in second column
+(balance)                Columns might not be balanced.
 
 [4 <../figures/revision/fig_controlled_arms.png>]
 
@@ -546,16 +548,16 @@ LaTeX Warning: Text page 5 contains only floats.
 Overfull \vbox (18.2344pt too high) has occurred while \output is active []
 
 
-Overfull \vbox (6.0pt too high) has occurred while \output is active []
+Overfull \vbox (4.5pt too high) has occurred while \output is active []
 
 
-Overfull \vbox (6.0pt too high) has occurred while \output is active []
+Overfull \vbox (4.5pt too high) has occurred while \output is active []
 
 
-Overfull \vbox (9.1172pt too high) has occurred while \output is active []
+Overfull \vbox (10.6172pt too high) has occurred while \output is active []
 
 
-Overfull \vbox (1.91734pt too high) has occurred while \output is active []
+Overfull \vbox (3.41734pt too high) has occurred while \output is active []
 
 
 [5]
@@ -565,32 +567,53 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
-Overfull \vbox (6.0pt too high) has occurred while \output is active []
+Overfull \vbox (74.02495pt too high) has occurred while \output is active []
 
 
-Overfull \vbox (6.0pt too high) has occurred while \output is active []
+Overfull \vbox (74.02495pt too high) has occurred while \output is active []
 
- [6]
-(./main.aux)
+
+[6 <../figures/revision/fig_decisive_3tasks.png>]
+
+** Conference Paper **
+Before submitting the final camera ready copy, remember to:
+
+ 1. Manually equalize the lengths of two columns on the last page
+ of your paper;
+
+ 2. Ensure that any PostScript and/or PDF output post-processing
+ uses only Type 1 fonts and that every step in the generation
+ process uses the appropriate paper size.
+
+[7] (./main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 
 
+LaTeX Warning: There were undefined references.
+
+
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
-Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 2C433B403E8F559C643CE7B069100F8B;2641.
+
+Package rerunfilecheck Warning: File `main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `main.out':
+(rerunfilecheck)             Before: 2C433B403E8F559C643CE7B069100F8B;2641
+(rerunfilecheck)             After:  E76EBE6C5C882E17FB0E6B8F4757FF39;3025.
  ) 
 Here is how much of TeX's memory you used:
- 11536 strings out of 474222
- 177463 string characters out of 5748733
- 1965975 words of memory out of 5000000
- 33577 multiletter control sequences out of 15000+600000
+ 11551 strings out of 474222
+ 177930 string characters out of 5748733
+ 1969975 words of memory out of 5000000
+ 33588 multiletter control sequences out of 15000+600000
  680775 words of font info for 176 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,11n,79p,1617b,450s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,11n,79p,1617b,589s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texli
@@ -607,10 +630,10 @@ e/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/tex
 mf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/t
 ype1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times
 /utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (6 pages, 305905 bytes).
+Output written on main.pdf (7 pages, 380845 bytes).
 PDF statistics:
- 255 PDF objects out of 1000 (max. 8388607)
- 206 compressed objects within 3 object streams
- 45 named destinations out of 1000 (max. 500000)
- 158 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 267 PDF objects out of 1000 (max. 8388607)
+ 215 compressed objects within 3 object streams
+ 49 named destinations out of 1000 (max. 500000)
+ 163 words of extra memory for PDF output out of 10000 (max. 10000000)
 
