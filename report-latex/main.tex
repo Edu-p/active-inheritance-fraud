@@ -125,7 +125,7 @@ FACTCK.BR & claims & raw & majorit\'ario & aleat. estrat. \\
 
 \emph{Fake.br.} Al\'em dos bra\c{c}os Real, Static ($N{=}158$) e AI (replay com pondera\c{c}\~ao de classes e limiar ajustado sobre os pools hist\'oricos), o Fake.br tamb\'em entrou no estudo controlado abaixo, com candidates zero-shot gerados no prompt v2 e normaliza\c{c}\~ao aproximada do sint\'etico (\texttt{normalize\_fakebr}).
 
-\emph{Estudo controlado (quatro dom\'inios).} Para cada cen\'ario (dom\'inio $\times$ escassez) e semente, realizamos uma \'unica gera\c{c}\~ao zero-shot com \texttt{deepseek-chat} ($T{=}5$ ciclos, lote de 64, teto de 100 mil tokens, top-$k{=}16$), prompt v4 (mensagem de WhatsApp anti-template) nos dom\'inios WhatsApp e v2 (not\'icia/claim) no FACTCK.BR e no Fake.br. Os lotes s\~ao congelados em \texttt{candidates.json} e, offline, as quatro regras s\~ao re-executadas sobre os \emph{mesmos} candidatos, sem nova chamada \`a API. O classificador downstream \'e o BERTimbau \cite{souza2020bertimbau} (\texttt{neuralmind/bert-base-portuguese-cased}), 3 \'epocas por ajuste, batch 16, comprimento m\'aximo 256. As sementes s\~ao 42 a 51 ($n{=}10$): a semente muda a inicializa\c{c}\~ao, a ordem de treino e a amostragem estoc\'astica do servidor LLM, n\~ao os splits (fixos) nem a valida\c{c}\~ao.
+\emph{Estudo controlado (quatro dom\'inios).} Para cada cen\'ario (dom\'inio $\times$ escassez) e semente, realizamos uma \'unica gera\c{c}\~ao zero-shot com \texttt{deepseek-chat} ($T{=}5$ ciclos, lote de 64, teto de 100 mil tokens, top-$k{=}16$), prompt v4 (mensagem de WhatsApp anti-template) nos dom\'inios WhatsApp e v2 (not\'icia/claim) no FACTCK.BR e no Fake.br. Os lotes s\~ao congelados em \texttt{candidates.json} e, offline, as quatro regras s\~ao re-executadas sobre os \emph{mesmos} candidatos, sem nova chamada \`a API. O classificador downstream \'e o BERTimbau \cite{souza2020bertimbau} (\texttt{neuralmind/bert-base-portuguese-cased}), 3 \'epocas por ajuste, batch 16, comprimento m\'aximo 256. As sementes s\~ao 42 a 51 ($n{=}10$): a semente muda a inicializa\c{c}\~ao, a ordem de treino e a amostragem estoc\'astica do servidor LLM, n\~ao os splits (fixos) nem a valida\c{c}\~ao. Como o lote \'e zero-shot e congelado, o estudo isola a \emph{regra de sele\c{c}\~ao}; o condicionamento do gerador nos herdados (a metade ``gera\c{c}\~ao'' do m\'etodo) fica fora do escopo e \'e apontado como trabalho futuro.
 
 \subsection{M\'etricas}
 
@@ -165,21 +165,21 @@ A Tabela~\ref{tab:f1} reporta F1 por dom\'inio, cen\'ario e regra; a Tabela~\ref
 \centering
 \footnotesize
 \setlength{\tabcolsep}{6pt}
-\begin{tabular}{@{}llcccc@{}}
+\begin{tabular}{@{}llcccccc@{}}
 \toprule
-Dom\'inio & Cen. & All & Random-k & Score-k & Easy-k \\
+Dom\'inio & Cen. & Real & All & Random-k & Score-k & Easy-k \\
 \midrule
-FakeWhatsApp.Br & full & 0.707 $\pm$ 0.029 & 0.721 $\pm$ 0.010 & 0.721 $\pm$ 0.017 & 0.722 $\pm$ 0.012 \\
-FakeWhatsApp.Br & 10\% & 0.440 $\pm$ 0.161 & 0.587 $\pm$ 0.125 & 0.579 $\pm$ 0.137 & 0.582 $\pm$ 0.103 \\
-FakeWhatsApp.Br & 5\% & 0.405 $\pm$ 0.130 & 0.463 $\pm$ 0.175 & 0.411 $\pm$ 0.188 & 0.419 $\pm$ 0.161 \\
-COVID19.BR & full & 0.849 $\pm$ 0.023 & 0.847 $\pm$ 0.025 & 0.858 $\pm$ 0.022 & 0.855 $\pm$ 0.012 \\
-COVID19.BR & 10\% & 0.666 $\pm$ 0.120 & 0.655 $\pm$ 0.125 & 0.728 $\pm$ 0.072 & 0.708 $\pm$ 0.068 \\
-COVID19.BR & 5\% & 0.567 $\pm$ 0.122 & 0.691 $\pm$ 0.056 & 0.692 $\pm$ 0.070 & 0.639 $\pm$ 0.125 \\
-FACTCK.BR & full & 0.926 $\pm$ 0.012 & 0.925 $\pm$ 0.009 & 0.930 $\pm$ 0.011 & 0.922 $\pm$ 0.012 \\
-FACTCK.BR & 10\% & 0.840 $\pm$ 0.056 & 0.936 $\pm$ 0.007 & 0.934 $\pm$ 0.008 & 0.937 $\pm$ 0.006 \\
-FACTCK.BR & 5\% & 0.785 $\pm$ 0.062 & 0.935 $\pm$ 0.008 & 0.936 $\pm$ 0.008 & 0.934 $\pm$ 0.006 \\
-Fake.br & 10\% & 0.917 $\pm$ 0.014 & 0.922 $\pm$ 0.012 & 0.923 $\pm$ 0.014 & 0.920 $\pm$ 0.010 \\
-Fake.br & 5\% & 0.872 $\pm$ 0.025 & 0.874 $\pm$ 0.016 & 0.880 $\pm$ 0.020 & 0.871 $\pm$ 0.015 \\
+FakeWhatsApp.Br & full & 0.725 $\pm$ 0.007 & 0.707 $\pm$ 0.029 & 0.721 $\pm$ 0.010 & 0.721 $\pm$ 0.017 & 0.722 $\pm$ 0.012 \\
+FakeWhatsApp.Br & 10\% & 0.636 $\pm$ 0.059 & 0.440 $\pm$ 0.161 & 0.587 $\pm$ 0.125 & 0.579 $\pm$ 0.137 & 0.582 $\pm$ 0.103 \\
+FakeWhatsApp.Br & 5\% & 0.593 $\pm$ 0.136 & 0.405 $\pm$ 0.130 & 0.463 $\pm$ 0.175 & 0.411 $\pm$ 0.188 & 0.419 $\pm$ 0.161 \\
+COVID19.BR & full & 0.841 $\pm$ 0.039 & 0.849 $\pm$ 0.023 & 0.847 $\pm$ 0.025 & 0.858 $\pm$ 0.022 & 0.855 $\pm$ 0.012 \\
+COVID19.BR & 10\% & 0.751 $\pm$ 0.069 & 0.666 $\pm$ 0.120 & 0.655 $\pm$ 0.125 & 0.728 $\pm$ 0.072 & 0.708 $\pm$ 0.068 \\
+COVID19.BR & 5\% & 0.714 $\pm$ 0.062 & 0.567 $\pm$ 0.122 & 0.691 $\pm$ 0.056 & 0.692 $\pm$ 0.070 & 0.639 $\pm$ 0.125 \\
+FACTCK.BR & full & 0.926 $\pm$ 0.008 & 0.926 $\pm$ 0.012 & 0.925 $\pm$ 0.009 & 0.930 $\pm$ 0.011 & 0.922 $\pm$ 0.012 \\
+FACTCK.BR & 10\% & 0.936 $\pm$ 0.008 & 0.840 $\pm$ 0.056 & 0.936 $\pm$ 0.007 & 0.934 $\pm$ 0.008 & 0.937 $\pm$ 0.006 \\
+FACTCK.BR & 5\% & 0.938 $\pm$ 0.006 & 0.785 $\pm$ 0.062 & 0.935 $\pm$ 0.008 & 0.936 $\pm$ 0.008 & 0.934 $\pm$ 0.006 \\
+Fake.br & 10\% & 0.924 $\pm$ 0.012 & 0.917 $\pm$ 0.014 & 0.922 $\pm$ 0.012 & 0.923 $\pm$ 0.014 & 0.920 $\pm$ 0.010 \\
+Fake.br & 5\% & 0.874 $\pm$ 0.033 & 0.872 $\pm$ 0.025 & 0.874 $\pm$ 0.016 & 0.880 $\pm$ 0.020 & 0.871 $\pm$ 0.015 \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -306,7 +306,7 @@ WhatsApp.Br & 1.00 & 0.712 & 0.734 & $+$0.022 \\
 \item R\'otulos sint\'eticos assumidos ``falso'' sem verifica\c{c}\~ao humana; a auditoria com LLM-juiz ficou ruidosa e n\~ao confirmou o A1 de forma limpa (o A1 se sustenta no semi-sint\'etico e no proxy D0).
 \item As curvas de detectabilidade usam learners leves (TF-IDF/MiniLM); o BERT aparece s\'o no estudo controlado.
 \item AUC real-vs-sint\'etico $=$ 1{,}000 indica atalho de registro; m\'etricas de embedding s\~ao proxy de realismo, n\~ao veracidade.
-\item No Fake.br o texto real \'e pr\'e-processado e o sint\'etico raw (normaliza\c{c}\~ao aproximada); os cen\'arios WhatsApp misturam candidatos v2/v4 entre sementes (ver ap\^endice de higiene).
+\item No Fake.br o texto real \'e pr\'e-processado e o sint\'etico raw: um classificador linear separa real de sint\'etico com AUC 0{,}996 \textbf{s\'o pelo digit\_ratio} (o corpus pr\'e-processado n\~ao tem d\'igitos, o sint\'etico tem), logo a normaliza\c{c}\~ao aplicada n\~ao \'e equivalente. Os cen\'arios WhatsApp tamb\'em misturam candidatos v2/v4 entre sementes (ver ap\^endice de higiene).
 \item O LLM com LoRA (Jev-style) rodou em 26/30 runs por candidatos ausentes no FakeWhatsApp (sementes 45--51 t\^em s\'o prompt v2).
 \end{itemize}
 
@@ -324,7 +324,7 @@ M. de Souza and C. Zanchettin, ``Breaking the Barrier of Hard Samples: A Data-Ce
 J. Ye, J. Gao, Q. Li, H. Xu, J. Feng, Z. Wu, T. Yu, and L. Kong, ``ZeroGen: Efficient Zero-shot Learning via Dataset Generation,'' in \emph{Proc. EMNLP}, 2022.
 
 \bibitem{meng2022progen}
-Y. Meng, J. Huang, Y. Zhang, and J. Han, ``ProGen: Progressive Zero-shot Dataset Generation via In-context Feedback,'' in \emph{Findings of EMNLP}, 2022.
+J. Ye, J. Gao, J. Feng, Z. Wu, T. Yu, and L. Kong, ``ProGen: Progressive Zero-shot Dataset Generation via In-context Feedback,'' in \emph{Findings of EMNLP}, 2022.
 
 \bibitem{gao2023sungen}
 J. Gao, R. Pi, Y. Lin, H. Xu, J. Ye, Z. Wu, W. Zhang, X. Liang, Z. Li, and L. Kong, ``Self-Guided Noise-Free Data Generation for Efficient Zero-Shot Learning,'' in \emph{Proc. ICLR}, 2023.
@@ -342,7 +342,7 @@ R. Monteiro, R. Santos, T. Pardo, T. de Almeida, E. Ruiz, and O. Vale, ``Contrib
 L. Cabral et al., ``FakeWhatsApp.Br: NLP and Machine Learning Techniques for Misinformation Detection in Brazilian Portuguese WhatsApp Messages,'' in \emph{Proc. ICEIS}, 2021.
 
 \bibitem{cabral2020covid19br}
-L. Cabral et al., ``COVID19.BR: A Dataset of Misinformation about COVID-19 in Brazilian Portuguese WhatsApp Messages,'' Zenodo, 2020.
+A. D. F. Martins, L. Cabral, P. J. C. Mour\~ao, I. C. de S\'a, J. M. Monteiro, and J. Machado, ``COVID19.BR: A Dataset of Misinformation about COVID-19 in Brazilian Portuguese WhatsApp Messages,'' in \emph{Proc. III Dataset Showcase Workshop (DSW)}, SBC, 2021, pp. 138--147.
 
 \bibitem{moreno2019factckbr}
 J. G. Moreno and G. Bressan, ``FACTCK.BR: A Dataset to Study Fake News,'' in \emph{Proc. WebMedia}, 2019.

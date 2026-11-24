@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.5.27)  24 NOV 2026 07:43
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.5.27)  24 NOV 2026 07:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -488,61 +488,14 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 36.
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 ** WARNING: \thanks is locked out when in conference mode (line 36).
-
-LaTeX Warning: Citation `shumailov2024collapse' on page 1 undefined on input li
-ne 47.
-
-
-LaTeX Warning: Citation `souza2025profile2gen' on page 1 undefined on input lin
-e 49.
-
-
-LaTeX Warning: Citation `ye2022zerogen' on page 1 undefined on input line 63.
-
-
-LaTeX Warning: Citation `meng2022progen' on page 1 undefined on input line 63.
-
-
-LaTeX Warning: Citation `gao2023sungen' on page 1 undefined on input line 63.
-
-
-LaTeX Warning: Citation `settles2009active' on page 1 undefined on input line 6
-5.
-
-
-LaTeX Warning: Citation `swayamdipta2020cartography' on page 1 undefined on inp
-ut line 65.
-
-
-LaTeX Warning: Citation `souza2025profile2gen' on page 1 undefined on input lin
-e 67.
-
 [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-
 dist/fonts/enc/dvips/base/8r.enc}
 
 
 ]
-
-LaTeX Warning: Reference `tab:datasets' on page 2 undefined on input line 105.
-
-
-LaTeX Warning: Citation `monteiro2018fakebr' on page 2 undefined on input line 
-105.
-
-
-LaTeX Warning: Citation `cabral2021fakewhatsapp' on page 2 undefined on input l
-ine 105.
-
-
-LaTeX Warning: Citation `cabral2020covid19br' on page 2 undefined on input line
- 105.
-
-
-LaTeX Warning: Citation `moreno2019factckbr' on page 2 undefined on input line 
-105.
-
 LaTeX Font Info:    Trying to load font information for T1+pcr on input line 10
 5.
+
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1pcr.fd
 File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 )
@@ -550,28 +503,9 @@ Overfull \hbox (9.07327pt too wide) in paragraph at lines 112--122
  [][] 
  []
 
-
-LaTeX Warning: Citation `souza2020bertimbau' on page 2 undefined on input line 
-128.
-
-
-Underfull \hbox (badness 5417) in paragraph at lines 128--129
-\T1/ptm/m/n/10 [\T1/ptm/b/n/10 ?\T1/ptm/m/n/10 ] (\T1/pcr/m/n/10 neuralmind/ber
-t-base-portuguese-cased\T1/ptm/m/n/10 ),
- []
-
-
-LaTeX Warning: Reference `tab:f1' on page 2 undefined on input line 161.
-
-
-LaTeX Warning: Reference `tab:aux' on page 2 undefined on input line 161.
-
-
-LaTeX Warning: Reference `fig:nsynth' on page 2 undefined on input line 246.
-
 [2]
 <../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-f1-vs
--n_synthetic-20261026T120542Z.png, id=130, 397.485pt x 231.264pt>
+-n_synthetic-20261026T120542Z.png, id=141, 397.485pt x 231.264pt>
 File: ../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-
 f1-vs-n_synthetic-20261026T120542Z.png Graphic file (type png)
 <use ../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-f
@@ -581,7 +515,7 @@ Package pdftex.def Info: ../figures/revision/revision-controlled-covid19br-full
 50.
 (pdftex.def)             Requested size: 165.12378pt x 96.0751pt.
 <../figures/revision/revision-controlled-factckbr-full-v2-factckbr-full-f1-vs-n
-_synthetic-20261026T120546Z.png, id=132, 397.485pt x 231.264pt>
+_synthetic-20261026T120546Z.png, id=143, 397.485pt x 231.264pt>
 File: ../figures/revision/revision-controlled-factckbr-full-v2-factckbr-full-f1
 -vs-n_synthetic-20261026T120546Z.png Graphic file (type png)
 <use ../figures/revision/revision-controlled-factckbr-full-v2-factckbr-full-f1-
@@ -591,7 +525,7 @@ v2-factckbr-full-f1-vs-n_synthetic-20261026T120546Z.png  used on input line 251
 .
 (pdftex.def)             Requested size: 165.12378pt x 96.0751pt.
 <../figures/revision/revision-controlled-fakewhatsapp-full-v4-fakewhatsapp-full
--f1-vs-n_synthetic-20261026T120548Z.png, id=133, 397.485pt x 231.264pt>
+-f1-vs-n_synthetic-20261026T120548Z.png, id=144, 397.485pt x 231.264pt>
 File: ../figures/revision/revision-controlled-fakewhatsapp-full-v4-fakewhatsapp
 -full-f1-vs-n_synthetic-20261026T120548Z.png Graphic file (type png)
 <use ../figures/revision/revision-controlled-fakewhatsapp-full-v4-fakewhatsapp-
@@ -600,10 +534,6 @@ Package pdftex.def Info: ../figures/revision/revision-controlled-fakewhatsapp-f
 ull-v4-fakewhatsapp-full-f1-vs-n_synthetic-20261026T120548Z.png  used on input 
 line 252.
 (pdftex.def)             Requested size: 165.12378pt x 96.0751pt.
-
-
-LaTeX Warning: Reference `tab:competence' on page 3 undefined on input line 258
-.
 
 
 LaTeX Font Warning: Font shape `T1/ptm/m/scit' undefined
@@ -615,21 +545,6 @@ LaTeX Font Warning: Font shape `T1/ptm/m/scit' undefined
 
 [3]
 
-LaTeX Warning: Text page 4 contains only floats.
-
-
-Overfull \vbox (15.1172pt too high) has occurred while \output is active []
-
-
-
-LaTeX Warning: Text page 4 contains only floats.
-
-
-Overfull \vbox (15.1172pt too high) has occurred while \output is active []
-
-
-[4]
-
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
 
@@ -640,107 +555,94 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[5 <../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-f1
+
+Overfull \vbox (1.50984pt too high) has occurred while \output is active []
+
+
+[4 <../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-f1
 -vs-n_synthetic-20261026T120542Z.png> <../figures/revision/revision-controlled-
 factckbr-full-v2-factckbr-full-f1-vs-n_synthetic-20261026T120546Z.png> <../figu
 res/revision/revision-controlled-fakewhatsapp-full-v4-fakewhatsapp-full-f1-vs-n
-_synthetic-20261026T120548Z.png>] (./main.aux)
+_synthetic-20261026T120548Z.png>]
+
+LaTeX Warning: Text page 5 contains only floats.
+
+
+Overfull \vbox (15.1172pt too high) has occurred while \output is active []
+
+
+
+LaTeX Warning: Text page 5 contains only floats.
+
+
+Overfull \vbox (18.2344pt too high) has occurred while \output is active []
+
+
+Overfull \vbox (6.0pt too high) has occurred while \output is active []
+
+
+Overfull \vbox (6.0pt too high) has occurred while \output is active []
+
+
+Overfull \vbox (9.1172pt too high) has occurred while \output is active []
+
+
+Overfull \vbox (1.91734pt too high) has occurred while \output is active []
+
+
+[5]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \vbox (6.0pt too high) has occurred while \output is active []
+
+
+Overfull \vbox (6.0pt too high) has occurred while \output is active []
+
+ [6]
+(./main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 
 
-LaTeX Warning: There were undefined references.
-
-
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
-
-Package rerunfilecheck Warning: File `main.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `main.out':
-(rerunfilecheck)             Before: 1C9D5EDFED2DBC222BD259D874C01C5B;3476
-(rerunfilecheck)             After:  2C433B403E8F559C643CE7B069100F8B;2641.
+Package rerunfilecheck Info: File `main.out' has not changed.
+(rerunfilecheck)             Checksum: 2C433B403E8F559C643CE7B069100F8B;2641.
  ) 
 Here is how much of TeX's memory you used:
- 11582 strings out of 474222
- 180517 string characters out of 5748733
- 1964975 words of memory out of 5000000
- 33612 multiletter control sequences out of 15000+600000
+ 11554 strings out of 474222
+ 180149 string characters out of 5748733
+ 1965975 words of memory out of 5000000
+ 33595 multiletter control sequences out of 15000+600000
  680775 words of font info for 176 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,11n,79p,1617b,528s stack positions out of 10000i,1000n,20000p,200000b,200000s
-
-pdfTeX warning (dest): name{equation.2.1} has been referenced but does not exis
-t, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{section*.2} has been referenced but does not exist,
- replaced by a fixed one
-
-
-pdfTeX warning (dest): name{section.10} has been referenced but does not exist,
- replaced by a fixed one
-
-
-pdfTeX warning (dest): name{section.9} has been referenced but does not exist, 
-replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsection.8.3} has been referenced but does not ex
-ist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsection.8.2} has been referenced but does not ex
-ist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsection.8.1} has been referenced but does not ex
-ist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsection.7.3} has been referenced but does not ex
-ist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsection.7.2} has been referenced but does not ex
-ist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsection.7.1} has been referenced but does not ex
-ist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsection.2.2} has been referenced but does not ex
-ist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsection.2.1} has been referenced but does not ex
-ist, replaced by a fixed one
-
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/
-share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/
-texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/typ
-e1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-sy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pf
-b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/
-texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf
--dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/typ
-e1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/u
-tmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (5 pages, 440553 bytes).
+ 75i,11n,79p,1617b,450s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.
+pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></u
+sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/tex
+mf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times
+/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on main.pdf (6 pages, 441017 bytes).
 PDF statistics:
- 260 PDF objects out of 1000 (max. 8388607)
- 208 compressed objects within 3 object streams
- 56 named destinations out of 1000 (max. 500000)
- 192 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 259 PDF objects out of 1000 (max. 8388607)
+ 206 compressed objects within 3 object streams
+ 45 named destinations out of 1000 (max. 500000)
+ 168 words of extra memory for PDF output out of 10000 (max. 10000000)
 
