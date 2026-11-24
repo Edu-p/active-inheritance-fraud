@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.5.27)  24 NOV 2026 07:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.5.27)  24 NOV 2026 08:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -504,44 +504,20 @@ Overfull \hbox (9.07327pt too wide) in paragraph at lines 112--122
  []
 
 [2]
-<../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-f1-vs
--n_synthetic-20261026T120542Z.png, id=141, 397.485pt x 231.264pt>
-File: ../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-
-f1-vs-n_synthetic-20261026T120542Z.png Graphic file (type png)
-<use ../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-f
-1-vs-n_synthetic-20261026T120542Z.png>
-Package pdftex.def Info: ../figures/revision/revision-controlled-covid19br-full
--v4-covid19br-full-f1-vs-n_synthetic-20261026T120542Z.png  used on input line 2
-50.
-(pdftex.def)             Requested size: 165.12378pt x 96.0751pt.
-<../figures/revision/revision-controlled-factckbr-full-v2-factckbr-full-f1-vs-n
-_synthetic-20261026T120546Z.png, id=143, 397.485pt x 231.264pt>
-File: ../figures/revision/revision-controlled-factckbr-full-v2-factckbr-full-f1
--vs-n_synthetic-20261026T120546Z.png Graphic file (type png)
-<use ../figures/revision/revision-controlled-factckbr-full-v2-factckbr-full-f1-
-vs-n_synthetic-20261026T120546Z.png>
-Package pdftex.def Info: ../figures/revision/revision-controlled-factckbr-full-
-v2-factckbr-full-f1-vs-n_synthetic-20261026T120546Z.png  used on input line 251
-.
-(pdftex.def)             Requested size: 165.12378pt x 96.0751pt.
-<../figures/revision/revision-controlled-fakewhatsapp-full-v4-fakewhatsapp-full
--f1-vs-n_synthetic-20261026T120548Z.png, id=144, 397.485pt x 231.264pt>
-File: ../figures/revision/revision-controlled-fakewhatsapp-full-v4-fakewhatsapp
--full-f1-vs-n_synthetic-20261026T120548Z.png Graphic file (type png)
-<use ../figures/revision/revision-controlled-fakewhatsapp-full-v4-fakewhatsapp-
-full-f1-vs-n_synthetic-20261026T120548Z.png>
-Package pdftex.def Info: ../figures/revision/revision-controlled-fakewhatsapp-f
-ull-v4-fakewhatsapp-full-f1-vs-n_synthetic-20261026T120548Z.png  used on input 
-line 252.
-(pdftex.def)             Requested size: 165.12378pt x 96.0751pt.
+<../figures/revision/fig_controlled_arms.png, id=141, 794.97pt x 303.534pt>
+File: ../figures/revision/fig_controlled_arms.png Graphic file (type png)
+<use ../figures/revision/fig_controlled_arms.png>
+Package pdftex.def Info: ../figures/revision/fig_controlled_arms.png  used on i
+nput line 250.
+(pdftex.def)             Requested size: 516.0pt x 197.02148pt.
 
 
 LaTeX Font Warning: Font shape `T1/ptm/m/scit' undefined
-(Font)              using `T1/ptm/m/it' instead on input line 261.
+(Font)              using `T1/ptm/m/it' instead on input line 259.
 
 
 LaTeX Font Warning: Font shape `T1/ptm/m/scit' undefined
-(Font)              using `T1/ptm/m/it' instead on input line 261.
+(Font)              using `T1/ptm/m/it' instead on input line 259.
 
 [3]
 
@@ -555,15 +531,7 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-
-Overfull \vbox (1.50984pt too high) has occurred while \output is active []
-
-
-[4 <../figures/revision/revision-controlled-covid19br-full-v4-covid19br-full-f1
--vs-n_synthetic-20261026T120542Z.png> <../figures/revision/revision-controlled-
-factckbr-full-v2-factckbr-full-f1-vs-n_synthetic-20261026T120546Z.png> <../figu
-res/revision/revision-controlled-fakewhatsapp-full-v4-fakewhatsapp-full-f1-vs-n
-_synthetic-20261026T120548Z.png>]
+[4 <../figures/revision/fig_controlled_arms.png>]
 
 LaTeX Warning: Text page 5 contains only floats.
 
@@ -616,10 +584,10 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 2C433B403E8F559C643CE7B069100F8B;2641.
  ) 
 Here is how much of TeX's memory you used:
- 11554 strings out of 474222
- 180149 string characters out of 5748733
+ 11536 strings out of 474222
+ 177463 string characters out of 5748733
  1965975 words of memory out of 5000000
- 33595 multiletter control sequences out of 15000+600000
+ 33577 multiletter control sequences out of 15000+600000
  680775 words of font info for 176 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,11n,79p,1617b,450s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -639,10 +607,10 @@ e/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/tex
 mf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/t
 ype1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times
 /utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (6 pages, 441017 bytes).
+Output written on main.pdf (6 pages, 305905 bytes).
 PDF statistics:
- 259 PDF objects out of 1000 (max. 8388607)
+ 255 PDF objects out of 1000 (max. 8388607)
  206 compressed objects within 3 object streams
  45 named destinations out of 1000 (max. 500000)
- 168 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 158 words of extra memory for PDF output out of 10000 (max. 10000000)
 

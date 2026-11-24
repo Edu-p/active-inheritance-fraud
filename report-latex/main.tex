@@ -243,19 +243,17 @@ Fake.br & 5\% & easy-k & 0.777 & 0.978 & 80 \\
 
 \subsection{Custo e figuras}
 
-Cada gera\c{c}\~ao zero-shot consome $\approx$99{,}5 mil tokens ($\approx$36 mil de entrada e $\approx$63 mil de sa\'ida), custando $\approx$\$0{,}08 por cen\'ario/semente. Com $\approx$320 candidatos, isso d\'a $\approx$311 tokens por candidato (gera\c{c}\~ao compartilhada pelos quatro bra\c{c}os; o custo de gera\c{c}\~ao \'e pago uma vez e reutilizado offline). A Figura~\ref{fig:nsynth} mostra o Pareto F1 $\times$ n\'umero de sint\'eticos no cen\'ario full: \emph{All} usa $\approx$302 a 313 textos, enquanto os bra\c{c}os curados usam 80 com F1 semelhante ou superior.
+Cada gera\c{c}\~ao zero-shot consome $\approx$99{,}5 mil tokens ($\approx$36 mil de entrada e $\approx$63 mil de sa\'ida), custando $\approx$\$0{,}08 por cen\'ario/semente. Com $\approx$320 candidatos, isso d\'a $\approx$311 tokens por candidato (gera\c{c}\~ao compartilhada pelos quatro bra\c{c}os; o custo de gera\c{c}\~ao \'e pago uma vez e reutilizado offline). A Figura~\ref{fig:nsynth} mostra F1 e PR-AUC por regra e cen\'ario. A PR-AUC \'e pr\'aticamente id\^entica entre as regras (e o bra\c{c}o \emph{Real} \'e igual ou superior \`as regras com sint\'etico), enquanto o F1 separa os bra\c{c}os por limiar, n\~ao por qualidade --- como discutido na Se\c{c}\~ao de Discuss\~ao.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.32\textwidth]{revision-controlled-covid19br-full-v4-covid19br-full-f1-vs-n_synthetic-20261026T120542Z.png}\hfill
-\includegraphics[width=0.32\textwidth]{revision-controlled-factckbr-full-v2-factckbr-full-f1-vs-n_synthetic-20261026T120546Z.png}\hfill
-\includegraphics[width=0.32\textwidth]{revision-controlled-fakewhatsapp-full-v4-fakewhatsapp-full-f1-vs-n_synthetic-20261026T120548Z.png}
-\caption{F1 $\times$ n\'umero de sint\'eticos herdados (cen\'ario full, tr\^es dom\'inios).}\label{fig:nsynth}
+\includegraphics[width=\textwidth]{fig_controlled_arms.png}
+\caption{F1 e PR-AUC (m\'edia $\pm$ IC 95\%) por regra de heran\c{c}a e cen\'ario ($n{=}10$; coluna \emph{Real} = treino s\'o com dados reais).}\label{fig:nsynth}
 \end{figure*}
 
 \subsection{Varredura de compet\^encia e faixa intermedi\'aria}
 
-Como an\'alise explorat\'oria, variamos a fra\c{c}\~ao de dados reais usada no treino do learner (5\% a 100\%) e comparamos \emph{Score-}k contra \emph{Random-}k sobre os \emph{mesmos} candidatos. A vers\~ao com uma semente ($n{=}1$) sugeria que o delta crescia com a compet\^encia, mas, re-executada com $n{=}10$ sementes, essa tend\^encia \textbf{n\~ao se sustenta} (a semente 42 era favor\'avel); a Tabela~\ref{tab:competence} reporta os valores da semente 42 apenas como refer\^encia explorat\'oria. O bra\c{c}o \emph{band-k} (dificuldade intermedi\'aria) fica estatisticamente indistingu\'ivel do \emph{Score-}k nos tr\^es dom\'inios.
+Como an\'alise explorat\'oria, variamos a fra\c{c}\~ao de dados reais usada no treino do learner (5\% a 100\%) e comparamos \emph{Score-}k contra \emph{Random-}k sobre os \emph{mesmos} candidatos. A vers\~ao com uma semente ($n{=}1$) sugeria que o delta crescia com a compet\^encia, mas, re-executada com $n{=}10$ sementes, essa tend\^encia \textbf{n\~ao se sustenta} (a semente 42 era favor\'avel); a Tabela~\ref{tab:competence} reporta os valores da semente 42 apenas como refer\^encia explorat\'oria. O bra\c{c}o \emph{band-k} (dificuldade intermedi\'aria, $n{=}10$) fica estatisticamente indistingu\'ivel do \emph{Score-}k: F1 de $0{,}860 \pm 0{,}019$ vs. $0{,}858$ (COVID19.BR full), $0{,}928 \pm 0{,}009$ vs. $0{,}930$ (FACTCK.BR full) e $0{,}716 \pm 0{,}014$ vs. $0{,}721$ (FakeWhatsApp.Br full).
 
 \begin{table*}[!t]
 \caption{F1 (teste) de \emph{Random-}k e \emph{Score-}k por fra\c{c}\~ao de dados reais (semente 42, $n{=}1$; explorat\'orio --- a tend\^encia n\~ao se mant\'em com $n{=}10$). $\Delta = $ Score $-$ Random.}\label{tab:competence}
