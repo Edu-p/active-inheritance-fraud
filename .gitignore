@@ -5,6 +5,11 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 
+# arquivos temporários de visualizadores (PDF/Office)
+~lock.*
+*.pdf#
+.~lock.*
+
 # uv (venv local; uv.lock é versionado de propósito)
 .venv/
 .kev-venv/
