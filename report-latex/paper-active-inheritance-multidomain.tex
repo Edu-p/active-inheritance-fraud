@@ -26,7 +26,7 @@
 
 \begin{document}
 
-\title{Sele\c{c}\~ao Guiada de Sint\'eticos (GSS) para Gera\c{c}\~ao de Desinforma\c{c}\~ao:\\um Estudo Controlado Multi-dom\'inio\thanks{M\'etodo anteriormente denominado \emph{Sele\c{c}\~ao Guiada de Sint\'eticos (GSS)}; renomeado para evitar colis\~ao de nomenclatura com Shimabucoro et al., \emph{Active Inheritance}, EMNLP 2024 (doi 10.18653/v1/2024.emnlp-main.521).}}
+\title{Sele\c{c}\~ao Guiada de Sint\'eticos (GSS) para Gera\c{c}\~ao de Desinforma\c{c}\~ao:\\um Estudo Controlado Multi-dom\'inio\thanks{M\'etodo anteriormente denominado \emph{Heran\c{c}a Ativa}; renomeado para evitar colis\~ao de nomenclatura com Shimabucoro et al., \emph{Active Inheritance}, EMNLP 2024 (doi 10.18653/v1/2024.emnlp-main.521).}}
 
 \author{\IEEEauthorblockN{Eduardo Alexandre de Amorim\textsuperscript{1} e Cleber Zanchettin\textsuperscript{1}}
 \IEEEauthorblockA{\textsuperscript{1}Centro de Inform\'atica, Universidade Federal de Pernambuco (CIn/UFPE), Recife, PE, Brasil\\
@@ -46,7 +46,7 @@ data-centric AI, synthetic data, misinformation, active inheritance, controlled 
 
 Detectar desinforma\c{c}\~ao em texto \'e uma classifica\c{c}\~ao bin\'aria (verdadeiro \emph{vs.} falso) que sofre de escassez e desbalanceamento da classe de interesse: os exemplos falsos s\~ao poucos, mudam de dom\'inio rapidamente e custam caro para rotular. Modelos de linguagem permitem produzir dados sint\'eticos, mas volume n\~ao garante utilidade: gera\c{c}\~oes podem repetir templates, afastar-se da distribui\c{c}\~ao real e receber r\'otulos presumidos incorretos \cite{shumailov2024collapse}. O ponto fr\'agil \'e, portanto, a sele\c{c}\~ao do que gerar e do que usar.
 
-Este trabalho prop\~oe a \emph{Sele\c{c}\~ao Guiada de Sint\'eticos (GSS)} (GSS), inspirada na perspectiva \emph{data-centric} do Profile2Gen \cite{souza2025profile2gen}. Em ciclos, um gerador produz um lote de textos falsos; um avaliador pontua cada candidato pelo erro do classificador downstream, pela incerteza da predi\c{c}\~ao e pela diversidade em rela\c{c}\~ao ao pool herdado; apenas o top-$k$ \'e herdado e o classificador \'e retreinado sobre os dados reais somados ao pool herdado. A hip\'otese \'e a de treino deliberado: gastar o or\c{c}amento com exemplos que o modelo ainda acha dif\'iceis, n\~ao com exemplos f\'aceis ou repetitivos.
+Este trabalho prop\~oe a \emph{Sele\c{c}\~ao Guiada de Sint\'eticos (GSS)}, inspirada na perspectiva \emph{data-centric} do Profile2Gen \cite{souza2025profile2gen}. Em ciclos, um gerador produz um lote de textos falsos; um avaliador pontua cada candidato pelo erro do classificador downstream, pela incerteza da predi\c{c}\~ao e pela diversidade em rela\c{c}\~ao ao pool herdado; apenas o top-$k$ \'e herdado e o classificador \'e retreinado sobre os dados reais somados ao pool herdado. A hip\'otese \'e a de treino deliberado: gastar o or\c{c}amento com exemplos que o modelo ainda acha dif\'iceis, n\~ao com exemplos f\'aceis ou repetitivos.
 
 As perguntas de pesquisa (RQs) s\~ao:
 
@@ -255,10 +255,10 @@ Cada gera\c{c}\~ao zero-shot consome $\approx$99{,}5 mil tokens ($\approx$36 mil
 
 \subsection{Varredura de compet\^encia e faixa intermedi\'aria}
 
-Para localizar \emph{onde} a sele\c{c}\~ao agrega, variamos a fra\c{c}\~ao de dados reais usada no treino do learner (5\% a 100\%) e comparamos \emph{Score-}k contra \emph{Random-}k sobre os \emph{mesmos} candidatos (semente 42, $n{=}1$). A Tabela~\ref{tab:competence} reporta o F1 de cada bra\c{c}o e o delta ($\Delta = $ Score $-$ Random). No COVID19.BR e no FakeWhatsApp.Br, o delta parte de $\approx$0 com o learner fraco e cresce at\'e $+0{,}022$ a $+0{,}028$ no full; no FACTCK.BR (tarefa f\'acil), os bra\c{c}os empatam em todas as fra\c{c}\~oes. Al\'em disso, testamos um bra\c{c}o \emph{band-k} que herda os candidatos de score mais pr\'oximo da mediana (dificuldade intermedi\'aria): F1 de $0{,}848 \pm 0{,}023$ (COVID19.BR), $0{,}932 \pm 0{,}002$ (FACTCK.BR) e $0{,}719 \pm 0{,}011$ (FakeWhatsApp.Br), sempre igual ou inferior ao \emph{Score-}k ($0{,}858$, $0{,}930$ e $0{,}721$). Herdar os \emph{mais dif\'iceis} supera herdar os \emph{medianos} quando o learner \'e competente.
+Como an\'alise explorat\'oria, variamos a fra\c{c}\~ao de dados reais usada no treino do learner (5\% a 100\%) e comparamos \emph{Score-}k contra \emph{Random-}k sobre os \emph{mesmos} candidatos. A vers\~ao com uma semente ($n{=}1$) sugeria que o delta crescia com a compet\^encia, mas, re-executada com $n{=}10$ sementes, essa tend\^encia \textbf{n\~ao se sustenta} (a semente 42 era favor\'avel); a Tabela~\ref{tab:competence} reporta os valores da semente 42 apenas como refer\^encia explorat\'oria. O bra\c{c}o \emph{band-k} (dificuldade intermedi\'aria) fica estatisticamente indistingu\'ivel do \emph{Score-}k nos tr\^es dom\'inios.
 
 \begin{table*}[!t]
-\caption{F1 (teste) de \emph{Random-}k e \emph{Score-}k por fra\c{c}\~ao de dados reais (semente 42, $n{=}1$). $\Delta = $ Score $-$ Random.}\label{tab:competence}
+\caption{F1 (teste) de \emph{Random-}k e \emph{Score-}k por fra\c{c}\~ao de dados reais (semente 42, $n{=}1$; explorat\'orio --- a tend\^encia n\~ao se mant\'em com $n{=}10$). $\Delta = $ Score $-$ Random.}\label{tab:competence}
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
